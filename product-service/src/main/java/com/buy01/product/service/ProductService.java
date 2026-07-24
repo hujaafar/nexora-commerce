@@ -3,6 +3,8 @@ package com.buy01.product.service;
 import com.buy01.product.domain.Product;
 import com.buy01.product.dto.ProductRequest;
 import com.buy01.product.dto.ProductResponse;
+import com.buy01.product.event.ProductEvent;
+import com.buy01.product.event.ProductEventPublisher;
 import com.buy01.product.exception.ProductNotFoundException;
 import com.buy01.product.repository.ProductRepository;
 import java.time.Instant;
@@ -13,9 +15,13 @@ import org.springframework.stereotype.Service;
 public class ProductService {
 
     private final ProductRepository repository;
+    private final ProductEventPublisher eventPublisher;
 
-    public ProductService(ProductRepository repository) {
+    public ProductService(
+            ProductRepository repository,
+            ProductEventPublisher eventPublisher) {
         this.repository = repository;
+        this.eventPublisher = eventPublisher;
     }
 
     public List<ProductResponse> listPublic() {
@@ -44,7 +50,12 @@ public class ProductService {
                 sellerId,
                 normalizedImages(request.imageUrls()),
                 now);
-        return ProductResponse.from(repository.save(product));
+        Product saved = repository.save(product);
+        eventPublisher.publish(ProductEvent.of(
+                ProductEvent.EventType.PRODUCT_CREATED,
+                saved.getId(),
+                saved.getSellerId()));
+        return ProductResponse.from(saved);
     }
 
     public ProductResponse update(
@@ -59,12 +70,21 @@ public class ProductService {
                 request.quantity(),
                 normalizedImages(request.imageUrls()),
                 Instant.now());
-        return ProductResponse.from(repository.save(product));
+        Product saved = repository.save(product);
+        eventPublisher.publish(ProductEvent.of(
+                ProductEvent.EventType.PRODUCT_UPDATED,
+                saved.getId(),
+                saved.getSellerId()));
+        return ProductResponse.from(saved);
     }
 
     public void delete(String productId, String sellerId) {
         Product product = findOwned(productId, sellerId);
         repository.delete(product);
+        eventPublisher.publish(ProductEvent.of(
+                ProductEvent.EventType.PRODUCT_DELETED,
+                product.getId(),
+                product.getSellerId()));
     }
 
     private Product findOwned(String productId, String sellerId) {
