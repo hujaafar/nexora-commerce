@@ -1,0 +1,99 @@
+<section class="page-shell">
+  <header class="media-header">
+    <div>
+      <p class="eyebrow">Media service</p>
+      <h1>Your image library.</h1>
+      <p>
+        Every file is checked in the browser and verified again by its real byte
+        signature before object storage accepts it.
+      </p>
+    </div>
+  </header>
+
+  <div class="media-layout">
+    <form class="uploader surface-card" [formGroup]="form" (ngSubmit)="upload()">
+      <p class="eyebrow">Secure upload</p>
+      <h2>Add an image</h2>
+
+      <button class="drop-area" type="button" (click)="fileInput.click()">
+        @if (previewUrl()) {
+          <img [src]="previewUrl()" alt="Selected image preview" />
+          <span>{{ selectedFile()?.name }}</span>
+        } @else {
+          <strong>Choose an image</strong>
+          <span>JPEG, PNG, GIF, or WebP · maximum 2 MB</span>
+        }
+      </button>
+      <input
+        #fileInput
+        class="visually-hidden"
+        type="file"
+        accept="image/jpeg,image/png,image/gif,image/webp"
+        (change)="chooseFile($event)"
+      />
+
+      <div class="mb-3">
+        <label class="form-label" for="purpose">Purpose</label>
+        <select class="form-select" id="purpose" formControlName="purpose">
+          <option value="PRODUCT_IMAGE">Product image</option>
+          <option value="AVATAR">Seller avatar</option>
+        </select>
+      </div>
+
+      <div class="mb-4">
+        <label class="form-label" for="product-id">Product ID (optional)</label>
+        <input
+          class="form-control"
+          id="product-id"
+          formControlName="productId"
+          placeholder="Link metadata to a product"
+        />
+      </div>
+
+      <button
+        class="btn btn-brand w-100 py-2"
+        type="submit"
+        [disabled]="uploading() || !selectedFile()"
+      >
+        {{ uploading() ? 'Verifying and uploading…' : 'Upload securely' }}
+      </button>
+    </form>
+
+    <section>
+      <div class="library-heading">
+        <div>
+          <p class="eyebrow">Stored assets</p>
+          <h2>Available images</h2>
+        </div>
+        <span>{{ assets().length }}</span>
+      </div>
+
+      @if (loading()) {
+        <div class="empty-state">Loading your media…</div>
+      } @else if (assets().length === 0) {
+        <div class="empty-state">
+          <h3>No images uploaded</h3>
+          <p>Your private media list will appear here.</p>
+        </div>
+      } @else {
+        <div class="media-grid">
+          @for (asset of assets(); track asset.id) {
+            <article>
+              <a [href]="asset.url" target="_blank" rel="noopener">
+                <img [src]="asset.url" [alt]="asset.originalFilename" loading="lazy" />
+              </a>
+              <div>
+                <h3>{{ asset.originalFilename }}</h3>
+                <p>{{ asset.purpose === 'AVATAR' ? 'Avatar' : 'Product' }} · {{ sizeLabel(asset.size) }}</p>
+                @if (asset.productId) {
+                  <small>Product {{ asset.productId }}</small>
+                }
+              </div>
+              <button type="button" (click)="delete(asset)" aria-label="Delete image">×</button>
+            </article>
+          }
+        </div>
+      }
+    </section>
+  </div>
+</section>

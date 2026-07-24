@@ -1,0 +1,65 @@
+<section class="page-shell profile-page">
+  <div class="profile-intro">
+    <p class="eyebrow">Account profile</p>
+    <h1>Make the account yours.</h1>
+    <p>
+      Your email and role define the secure identity inside every JWT. Your
+      display name—and seller avatar—can change here.
+    </p>
+  </div>
+
+  <form class="profile-card surface-card" [formGroup]="form" (ngSubmit)="submit()">
+    <div class="identity">
+      <button
+        class="avatar"
+        type="button"
+        [disabled]="!authService.isSeller()"
+        (click)="avatarInput.click()"
+      >
+        @if (avatarPreview() || avatarUrl()) {
+          <img [src]="avatarPreview() || avatarUrl()" alt="Profile avatar" />
+        } @else {
+          <span>{{ authService.currentUser()?.name?.charAt(0)?.toUpperCase() }}</span>
+        }
+        @if (authService.isSeller()) {
+          <small>Change</small>
+        }
+      </button>
+      <input
+        #avatarInput
+        class="visually-hidden"
+        type="file"
+        accept="image/jpeg,image/png,image/gif,image/webp"
+        (change)="chooseAvatar($event)"
+      />
+      <div>
+        <h2>{{ authService.currentUser()?.email }}</h2>
+        <p>{{ authService.currentUser()?.role === 'SELLER' ? 'Seller account' : 'Client account' }}</p>
+        @if (authService.isSeller() && (avatarPreview() || avatarUrl())) {
+          <button class="remove-avatar" type="button" (click)="removeAvatar()">Remove avatar</button>
+        }
+      </div>
+    </div>
+
+    <hr />
+
+    <div class="mb-4">
+      <label class="form-label" for="profile-name">Display name</label>
+      <input class="form-control" id="profile-name" formControlName="name" />
+      @if (form.controls.name.touched && form.controls.name.invalid) {
+        <div class="field-error">Name must be between 2 and 80 characters.</div>
+      }
+    </div>
+
+    @if (authService.isSeller()) {
+      <p class="avatar-help">
+        Seller avatars are uploaded through the Media Service and checked against
+        the same 2 MB and real-image rules as product media.
+      </p>
+    }
+
+    <button class="btn btn-brand px-4 py-2" type="submit" [disabled]="saving()">
+      {{ saving() ? 'Saving profile…' : 'Save profile' }}
+    </button>
+  </form>
+</section>
