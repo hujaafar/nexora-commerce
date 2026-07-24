@@ -1,0 +1,41 @@
+package com.buy01.media.event;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.stereotype.Component;
+
+@Component
+public class MediaEventPublisher {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MediaEventPublisher.class);
+
+    private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final String topic;
+
+    public MediaEventPublisher(
+            KafkaTemplate<String, Object> kafkaTemplate,
+            @Value("${app.events.media-topic}") String topic) {
+        this.kafkaTemplate = kafkaTemplate;
+        this.topic = topic;
+    }
+
+    public void publish(MediaEvent event) {
+        kafkaTemplate.send(topic, event.mediaId(), event)
+                .whenComplete((result, failure) -> {
+                    if (failure == null) {
+                        LOGGER.debug(
+                                "Published {} for media {}",
+                                event.type(),
+                                event.mediaId());
+                    } else {
+                        LOGGER.error(
+                                "Could not publish {} for media {}",
+                                event.type(),
+                                event.mediaId(),
+                                failure);
+                    }
+                });
+    }
+}
