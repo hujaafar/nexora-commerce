@@ -1,18 +1,32 @@
+<div class="signal-bar" aria-label="Platform highlights">
+  <div class="signal-shell">
+    <span><i></i> Platform live</span>
+    <p>Independent sellers · verified media · secure ownership</p>
+    <strong>BUY/01</strong>
+  </div>
+</div>
+
 <header class="site-header">
   <nav class="nav-shell" aria-label="Primary navigation">
     <a class="brand" routerLink="/products" aria-label="BUY-01 home">
-      <span class="brand-mark">01</span>
-      <span>
-        <strong>BUY</strong>
-        <small>Independent marketplace</small>
+      <span class="brand-mark"><b>01</b></span>
+      <span class="brand-copy">
+        <strong>BUY<span>/01</span></strong>
+        <small>Future-facing marketplace</small>
       </span>
     </a>
 
     <div class="nav-links">
-      <a routerLink="/products" routerLinkActive="active">Shop</a>
+      <a routerLink="/products" routerLinkActive="active">
+        <span>Discover</span>
+      </a>
       @if (authService.isSeller()) {
-        <a routerLink="/seller" routerLinkActive="active">Dashboard</a>
-        <a routerLink="/media" routerLinkActive="active">Media</a>
+        <a routerLink="/seller" routerLinkActive="active">
+          <span>Studio</span>
+        </a>
+        <a routerLink="/media" routerLinkActive="active">
+          <span>Assets</span>
+        </a>
       }
     </div>
 
@@ -35,13 +49,15 @@
         </button>
       } @else {
         <a class="text-link" routerLink="/login">Sign in</a>
-        <a class="btn btn-sm btn-brand px-3" routerLink="/register">Join BUY</a>
+        <a class="btn btn-sm btn-brand px-3" routerLink="/register">
+          Join the market <span aria-hidden="true">↗</span>
+        </a>
       }
     </div>
   </nav>
 </header>
 
-<main>
+<main class="route-frame">
   <router-outlet />
 </main>
 
@@ -52,7 +68,9 @@
     [class.toast-error]="notification.kind === 'error'"
     role="status"
   >
-    <span class="toast-dot"></span>
+    <span class="toast-icon">
+      {{ notification.kind === 'error' ? '!' : notification.kind === 'success' ? '✓' : 'i' }}
+    </span>
     <p>{{ notification.message }}</p>
     <button
       type="button"
@@ -66,7 +84,14 @@
 
 <footer>
   <div class="footer-shell">
-    <span>BUY-01</span>
-    <p>Built to learn secure microservices, one commit at a time.</p>
+    <div class="footer-brand">
+      <span>BUY/01</span>
+      <p>A secure market for independent ideas.</p>
+    </div>
+    <div class="footer-status">
+      <span><i></i> All systems operational</span>
+      <small>Built on isolated microservices</small>
+    </div>
   </div>
+  <div class="footer-word" aria-hidden="true">BUY DIFFERENT</div>
 </footer>
