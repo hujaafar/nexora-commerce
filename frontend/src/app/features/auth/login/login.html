@@ -1,0 +1,57 @@
+<section class="auth-page">
+  <div class="auth-story">
+    <p class="eyebrow">Your marketplace, secured</p>
+    <h1>Come back to what you’re building.</h1>
+    <p>
+      Clients discover the catalog. Sellers control only their own products and
+      images—enforced at every service boundary.
+    </p>
+    <div class="security-note">
+      <span>✓</span>
+      BCrypt passwords · short-lived signed sessions
+    </div>
+  </div>
+
+  <form class="auth-card surface-card" [formGroup]="form" (ngSubmit)="submit()">
+    <p class="eyebrow">Member access</p>
+    <h2>Sign in</h2>
+    <p>Use your client or seller account.</p>
+
+    <div class="mb-3">
+      <label class="form-label" for="email">Email address</label>
+      <input
+        class="form-control"
+        id="email"
+        type="email"
+        formControlName="email"
+        autocomplete="email"
+        placeholder="you@example.com"
+      />
+      @if (form.controls.email.touched && form.controls.email.invalid) {
+        <div class="field-error">Enter a valid email address.</div>
+      }
+    </div>
+
+    <div class="mb-4">
+      <label class="form-label" for="password">Password</label>
+      <input
+        class="form-control"
+        id="password"
+        type="password"
+        formControlName="password"
+        autocomplete="current-password"
+        placeholder="Your password"
+      />
+      @if (form.controls.password.touched && form.controls.password.invalid) {
+        <div class="field-error">Password is required.</div>
+      }
+    </div>
+
+    <button class="btn btn-brand w-100 py-2" type="submit" [disabled]="submitting()">
+      {{ submitting() ? 'Signing in…' : 'Sign in securely' }}
+    </button>
+    <p class="auth-switch">
+      New here? <a routerLink="/register">Create an account</a>
+    </p>
+  </form>
+</section>

@@ -1,0 +1,114 @@
+.auth-page {
+  display: grid;
+  min-height: calc(100vh - 9.8rem);
+  padding: 3rem 1rem;
+  grid-template-columns: minmax(0, 0.9fr) minmax(22rem, 30rem);
+  place-content: center;
+  gap: clamp(2rem, 7vw, 7rem);
+}
+
+.auth-story {
+  max-width: 35rem;
+  align-self: center;
+}
+
+.auth-story h1 {
+  margin-bottom: 1.25rem;
+  font-size: clamp(2.6rem, 6vw, 5.5rem);
+  line-height: 0.94;
+}
+
+.auth-story p {
+  max-width: 30rem;
+  color: var(--muted);
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.security-note {
+  display: flex;
+  margin-top: 2rem;
+  align-items: center;
+  color: var(--brand);
+  gap: 0.7rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.security-note span {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(23, 107, 85, 0.12);
+}
+
+.auth-card {
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+.auth-card h2 {
+  margin-bottom: 0.4rem;
+  font-size: 2rem;
+}
+
+.auth-card > p {
+  margin-bottom: 1.8rem;
+  color: var(--muted);
+}
+
+.role-picker {
+  display: grid;
+  margin-bottom: 1.25rem;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.65rem;
+}
+
+.role-picker label {
+  position: relative;
+  padding: 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: 0.9rem;
+  cursor: pointer;
+  text-align: center;
+}
+
+.role-picker label:has(input:checked) {
+  border-color: var(--brand);
+  color: var(--brand);
+  background: rgba(23, 107, 85, 0.08);
+}
+
+.role-picker input {
+  position: absolute;
+  opacity: 0;
+}
+
+.role-picker strong,
+.role-picker small {
+  display: block;
+}
+
+.role-picker small {
+  margin-top: 0.15rem;
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.auth-switch {
+  margin: 1.25rem 0 0;
+  color: var(--muted);
+  text-align: center;
+  font-size: 0.88rem;
+}
+
+@media (max-width: 850px) {
+  .auth-page {
+    grid-template-columns: minmax(0, 31rem);
+  }
+
+  .auth-story {
+    display: none;
+  }
+}
