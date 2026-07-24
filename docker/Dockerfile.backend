@@ -1,0 +1,32 @@
+FROM maven:3.9.11-eclipse-temurin-17 AS build
+
+ARG SERVICE
+WORKDIR /workspace
+
+COPY pom.xml ./
+COPY discovery-service/pom.xml discovery-service/pom.xml
+COPY gateway-service/pom.xml gateway-service/pom.xml
+COPY user-service/pom.xml user-service/pom.xml
+COPY product-service/pom.xml product-service/pom.xml
+COPY media-service/pom.xml media-service/pom.xml
+
+RUN mvn -B -q -pl "${SERVICE}" -am dependency:go-offline
+
+COPY discovery-service/src discovery-service/src
+COPY gateway-service/src gateway-service/src
+COPY user-service/src user-service/src
+COPY product-service/src product-service/src
+COPY media-service/src media-service/src
+
+RUN mvn -B -q -pl "${SERVICE}" -am package -DskipTests \
+    && cp "${SERVICE}"/target/*.jar /workspace/application.jar
+
+FROM eclipse-temurin:17-jre-jammy
+
+RUN useradd --system --uid 10001 --create-home spring
+WORKDIR /app
+COPY --from=build /workspace/application.jar /app/application.jar
+USER spring
+
+EXPOSE 8080
+ENTRYPOINT ["java", "-XX:MaxRAMPercentage=75.0", "-jar", "/app/application.jar"]

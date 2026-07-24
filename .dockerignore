@@ -1,0 +1,10 @@
+.git
+.gitignore
+.idea
+.vscode
+**/target
+frontend/node_modules
+frontend/dist
+data
+certs
+*.log
