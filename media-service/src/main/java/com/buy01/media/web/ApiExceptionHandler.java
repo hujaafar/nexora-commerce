@@ -1,0 +1,78 @@
+package com.buy01.media.web;
+
+import com.buy01.media.exception.InvalidMediaException;
+import com.buy01.media.exception.MediaNotFoundException;
+import com.buy01.media.exception.ObjectStorageException;
+import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
+
+@RestControllerAdvice
+public class ApiExceptionHandler {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ApiExceptionHandler.class);
+
+    @ExceptionHandler({
+            InvalidMediaException.class,
+            MaxUploadSizeExceededException.class,
+            MissingServletRequestPartException.class,
+            MissingServletRequestParameterException.class,
+            MethodArgumentTypeMismatchException.class
+    })
+    ResponseEntity<ApiError> handleBadRequest(
+            Exception exception,
+            HttpServletRequest request) {
+        String message = exception instanceof MaxUploadSizeExceededException
+                ? "The image must be 2 MB or smaller"
+                : exception.getMessage();
+        return error(HttpStatus.BAD_REQUEST, message, request);
+    }
+
+    @ExceptionHandler(MediaNotFoundException.class)
+    ResponseEntity<ApiError> handleNotFound(
+            MediaNotFoundException exception,
+            HttpServletRequest request) {
+        return error(HttpStatus.NOT_FOUND, exception.getMessage(), request);
+    }
+
+    @ExceptionHandler(ObjectStorageException.class)
+    ResponseEntity<ApiError> handleStorage(
+            ObjectStorageException exception,
+            HttpServletRequest request) {
+        LOGGER.error("Object storage failure while processing {}", request.getRequestURI(), exception);
+        return error(
+                HttpStatus.SERVICE_UNAVAILABLE,
+                "Image storage is temporarily unavailable",
+                request);
+    }
+
+    @ExceptionHandler(Exception.class)
+    ResponseEntity<ApiError> handleUnexpected(
+            Exception exception,
+            HttpServletRequest request) {
+        LOGGER.error("Unhandled error while processing {}", request.getRequestURI(), exception);
+        return error(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                "An unexpected error occurred",
+                request);
+    }
+
+    private ResponseEntity<ApiError> error(
+            HttpStatus status,
+            String message,
+            HttpServletRequest request) {
+        return ResponseEntity.status(status).body(ApiError.of(
+                status.value(),
+                status.getReasonPhrase(),
+                message,
+                request.getRequestURI()));
+    }
+}
