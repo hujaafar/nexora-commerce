@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -51,6 +52,13 @@ public class ApiExceptionHandler {
             ProductNotFoundException exception,
             HttpServletRequest request) {
         return error(HttpStatus.NOT_FOUND, exception.getMessage(), request);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    ResponseEntity<ApiError> handleForbidden(
+            AccessDeniedException exception,
+            HttpServletRequest request) {
+        return error(HttpStatus.FORBIDDEN, "Access is denied", request);
     }
 
     @ExceptionHandler(Exception.class)
