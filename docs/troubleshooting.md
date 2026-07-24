@@ -14,8 +14,9 @@ gateway waits for all three domain services.
 
 ## Port already in use
 
-The local stack uses 4200, 8080–8083, 8761, 9000–9001, 9092, and 27017. Stop the
-other application or change the left side of the relevant `ports` mapping.
+The default stack ports are configurable. Change the matching
+`*_HOST_PORT` value in `.env`; there is no need to edit `compose.yml`. If the
+gateway port changes, update `MEDIA_PUBLIC_BASE_URL` too.
 
 ## Java reports a PKIX/certificate error
 

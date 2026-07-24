@@ -7,7 +7,7 @@ services:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME:-marketplace}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:-marketplace-dev-password}
     ports:
-      - "27017:27017"
+      - "${MONGO_HOST_PORT:-27017}:27017"
     volumes:
       - mongo-data:/data/db
     healthcheck:
@@ -26,7 +26,7 @@ services:
       KAFKA_NODE_ID: 1
       KAFKA_PROCESS_ROLES: broker,controller
       KAFKA_LISTENERS: PLAINTEXT://:29092,CONTROLLER://:29093,PLAINTEXT_HOST://:9092
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:${KAFKA_HOST_PORT:-9092}
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:29093
@@ -36,7 +36,7 @@ services:
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
       CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
     ports:
-      - "9092:9092"
+      - "${KAFKA_HOST_PORT:-9092}:9092"
     volumes:
       - kafka-data:/var/lib/kafka/data
     healthcheck:
@@ -56,8 +56,8 @@ services:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER:-marketplace}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-marketplace-dev-password}
     ports:
-      - "9000:9000"
-      - "9001:9001"
+      - "${MINIO_API_HOST_PORT:-9000}:9000"
+      - "${MINIO_CONSOLE_HOST_PORT:-9001}:9001"
     volumes:
       - minio-data:/data
     healthcheck:
@@ -82,7 +82,7 @@ services:
       PORT: 8761
       EUREKA_HOSTNAME: discovery-service
     ports:
-      - "8761:8761"
+      - "${DISCOVERY_HOST_PORT:-8761}:8761"
     healthcheck:
       test:
         [
@@ -106,7 +106,7 @@ services:
       JWT_SECRET: ${JWT_SECRET:-change-this-development-secret-to-at-least-32-characters}
       SEED_DEMO_USERS: "true"
     ports:
-      - "8081:8081"
+      - "${USER_SERVICE_HOST_PORT:-8081}:8081"
     depends_on:
       mongo:
         condition: service_healthy
@@ -135,7 +135,7 @@ services:
       KAFKA_BOOTSTRAP_SERVERS: kafka:29092
       JWT_SECRET: ${JWT_SECRET:-change-this-development-secret-to-at-least-32-characters}
     ports:
-      - "8082:8082"
+      - "${PRODUCT_SERVICE_HOST_PORT:-8082}:8082"
     depends_on:
       mongo:
         condition: service_healthy
@@ -168,9 +168,9 @@ services:
       S3_ENDPOINT: http://minio:9000
       S3_ACCESS_KEY: ${MINIO_ROOT_USER:-marketplace}
       S3_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-marketplace-dev-password}
-      MEDIA_PUBLIC_BASE_URL: http://localhost:8080/media/images
+      MEDIA_PUBLIC_BASE_URL: ${MEDIA_PUBLIC_BASE_URL:-http://localhost:8080/media/images}
     ports:
-      - "8083:8083"
+      - "${MEDIA_SERVICE_HOST_PORT:-8083}:8083"
     depends_on:
       mongo:
         condition: service_healthy
@@ -202,7 +202,7 @@ services:
       JWT_SECRET: ${JWT_SECRET:-change-this-development-secret-to-at-least-32-characters}
       ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:4200,http://localhost}
     ports:
-      - "8080:8080"
+      - "${GATEWAY_HOST_PORT:-8080}:8080"
     depends_on:
       user-service:
         condition: service_healthy
@@ -225,7 +225,7 @@ services:
       context: frontend
       dockerfile: Dockerfile
     ports:
-      - "4200:80"
+      - "${FRONTEND_HOST_PORT:-4200}:80"
     depends_on:
       gateway-service:
         condition: service_healthy

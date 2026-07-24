@@ -36,6 +36,11 @@ settle, open:
 | Eureka dashboard | <http://localhost:8761> |
 | MinIO console | <http://localhost:9001> |
 
+If another application uses a default host port, change the matching
+`*_HOST_PORT` value in `.env`. Container-to-container ports do not change. When
+changing `GATEWAY_HOST_PORT`, update `MEDIA_PUBLIC_BASE_URL` to use the same
+port.
+
 Demo identities are created only in the Docker development environment:
 
 | Role | Email | Password |
