@@ -1,0 +1,52 @@
+<section class="page-shell">
+  <a class="back-link" routerLink="/products">← Back to the catalog</a>
+
+  @if (loading()) {
+    <div class="detail-grid loading-detail"></div>
+  } @else if (product(); as item) {
+    <div class="detail-grid">
+      <div>
+        <div class="main-image">
+          @if (activeImage()) {
+            <img [src]="activeImage()" [alt]="item.name" />
+          } @else {
+            <span>{{ item.name.charAt(0) }}</span>
+          }
+        </div>
+        @if (item.imageUrls.length > 1) {
+          <div class="thumbnail-row">
+            @for (image of item.imageUrls; track image) {
+              <button
+                type="button"
+                [class.active]="image === activeImage()"
+                (click)="activeImage.set(image)"
+              >
+                <img [src]="image" alt="" />
+              </button>
+            }
+          </div>
+        }
+      </div>
+
+      <article class="detail-copy surface-card">
+        <p class="eyebrow">Published product</p>
+        <h1>{{ item.name }}</h1>
+        <strong class="price">{{ item.price | currency: 'USD' }}</strong>
+        <p class="description">{{ item.description }}</p>
+        <div class="stock" [class.out]="item.quantity === 0">
+          <span></span>
+          {{
+            item.quantity > 0
+              ? item.quantity + ' available now'
+              : 'Currently sold out'
+          }}
+        </div>
+        <hr />
+        <p class="assurance">
+          Product information and inventory are managed directly by the seller.
+          Public browsing never requires an account.
+        </p>
+      </article>
+    </div>
+  }
+</section>

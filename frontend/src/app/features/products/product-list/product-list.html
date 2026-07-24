@@ -1,0 +1,69 @@
+<section class="hero">
+  <div class="hero-content">
+    <p class="eyebrow">Independent goods, clearly listed</p>
+    <h1>Find something worth keeping.</h1>
+    <p>
+      A simple marketplace where clients browse openly and sellers stay in
+      complete control of their own catalog.
+    </p>
+    @if (authService.isSeller()) {
+      <a class="btn btn-brand px-4 py-2" routerLink="/seller">Manage your catalog</a>
+    } @else if (!authService.isAuthenticated()) {
+      <a class="btn btn-brand px-4 py-2" routerLink="/register">Start exploring</a>
+    }
+  </div>
+  <div class="hero-stamp" aria-hidden="true">
+    <span>CURATED</span>
+    <strong>01</strong>
+    <small>MARKET</small>
+  </div>
+</section>
+
+<section class="page-shell catalog-section">
+  <div class="section-heading">
+    <div>
+      <p class="eyebrow">The catalog</p>
+      <h2>Recently added</h2>
+    </div>
+    <span>{{ products().length }} {{ products().length === 1 ? 'item' : 'items' }}</span>
+  </div>
+
+  @if (loading()) {
+    <div class="product-grid" aria-label="Loading products">
+      @for (item of [1, 2, 3]; track item) {
+        <div class="product-card skeleton"></div>
+      }
+    </div>
+  } @else if (products().length === 0) {
+    <div class="empty-state">
+      <h3>The shelves are ready.</h3>
+      <p>No products have been published yet. Check back soon.</p>
+    </div>
+  } @else {
+    <div class="product-grid">
+      @for (product of products(); track product.id) {
+        <article class="product-card">
+          <a class="product-image" [routerLink]="['/products', product.id]">
+            @if (product.imageUrls[0]) {
+              <img [src]="product.imageUrls[0]" [alt]="product.name" loading="lazy" />
+            } @else {
+              <span>{{ product.name.charAt(0) }}</span>
+            }
+            <small [class.sold-out]="product.quantity === 0">
+              {{ product.quantity > 0 ? product.quantity + ' in stock' : 'Sold out' }}
+            </small>
+          </a>
+          <div class="product-copy">
+            <div>
+              <h3>
+                <a [routerLink]="['/products', product.id]">{{ product.name }}</a>
+              </h3>
+              <p>{{ product.description }}</p>
+            </div>
+            <strong>{{ product.price | currency: 'USD' }}</strong>
+          </div>
+        </article>
+      }
+    </div>
+  }
+</section>

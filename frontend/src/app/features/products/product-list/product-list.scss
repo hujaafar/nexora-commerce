@@ -1,0 +1,232 @@
+.hero {
+  display: grid;
+  overflow: hidden;
+  min-height: 33rem;
+  padding: clamp(3rem, 8vw, 7rem) max(1rem, calc((100vw - 1180px) / 2));
+  grid-template-columns: minmax(0, 1.1fr) minmax(17rem, 0.7fr);
+  align-items: center;
+  color: #fff;
+  gap: clamp(2rem, 8vw, 8rem);
+  background:
+    linear-gradient(120deg, rgba(13, 73, 57, 0.98), rgba(23, 107, 85, 0.9)),
+    #176b55;
+}
+
+.hero .eyebrow {
+  color: #f5ba71;
+}
+
+.hero h1 {
+  max-width: 48rem;
+  margin-bottom: 1.2rem;
+  font-size: clamp(3.2rem, 7vw, 6.8rem);
+  line-height: 0.9;
+}
+
+.hero-content > p:not(.eyebrow) {
+  max-width: 38rem;
+  margin-bottom: 2rem;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.hero .btn-brand {
+  --bs-btn-bg: var(--accent);
+  --bs-btn-border-color: var(--accent);
+  --bs-btn-hover-bg: #f3ad59;
+  --bs-btn-hover-border-color: #f3ad59;
+  color: var(--ink);
+}
+
+.hero-stamp {
+  position: relative;
+  display: grid;
+  width: min(22rem, 100%);
+  aspect-ratio: 1;
+  place-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 50%;
+  justify-self: center;
+  text-align: center;
+  transform: rotate(7deg);
+}
+
+.hero-stamp::before,
+.hero-stamp::after {
+  position: absolute;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 50%;
+  content: "";
+  inset: 1.2rem;
+}
+
+.hero-stamp::after {
+  border-style: dashed;
+  inset: 2.2rem;
+}
+
+.hero-stamp span,
+.hero-stamp small {
+  letter-spacing: 0.35em;
+}
+
+.hero-stamp strong {
+  font-family: Georgia, serif;
+  font-size: 7rem;
+  line-height: 0.9;
+}
+
+.catalog-section {
+  padding-top: 4.5rem;
+}
+
+.section-heading {
+  display: flex;
+  margin-bottom: 1.8rem;
+  align-items: end;
+  justify-content: space-between;
+}
+
+.section-heading h2 {
+  margin: 0;
+  font-size: 2.4rem;
+}
+
+.section-heading > span {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+
+.product-card {
+  overflow: hidden;
+  min-height: 25rem;
+  border: 1px solid var(--line);
+  border-radius: 1.2rem;
+  background: var(--surface);
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.product-card:hover {
+  box-shadow: var(--shadow);
+  transform: translateY(-4px);
+}
+
+.product-image {
+  position: relative;
+  display: grid;
+  height: 17rem;
+  overflow: hidden;
+  place-items: center;
+  color: rgba(23, 107, 85, 0.5);
+  background:
+    linear-gradient(145deg, rgba(23, 107, 85, 0.13), rgba(239, 157, 61, 0.18)),
+    #ece9df;
+  text-decoration: none;
+}
+
+.product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 300ms ease;
+}
+
+.product-card:hover img {
+  transform: scale(1.025);
+}
+
+.product-image > span {
+  font-family: Georgia, serif;
+  font-size: 6rem;
+}
+
+.product-image small {
+  position: absolute;
+  right: 0.75rem;
+  bottom: 0.75rem;
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  color: var(--brand);
+  background: rgba(255, 253, 247, 0.9);
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+.product-image small.sold-out {
+  color: var(--danger);
+}
+
+.product-copy {
+  display: grid;
+  padding: 1.2rem;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1rem;
+}
+
+.product-copy h3 {
+  margin-bottom: 0.4rem;
+  font-size: 1.35rem;
+}
+
+.product-copy h3 a {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.product-copy p {
+  display: -webkit-box;
+  overflow: hidden;
+  margin: 0;
+  color: var(--muted);
+  -webkit-box-orient: vertical;
+  font-size: 0.83rem;
+  -webkit-line-clamp: 2;
+  line-height: 1.5;
+}
+
+.product-copy > strong {
+  color: var(--brand);
+}
+
+.skeleton {
+  border: 0;
+  background: linear-gradient(90deg, #ece9df, #f8f5ed, #ece9df);
+  background-size: 200% 100%;
+  animation: shimmer 1.2s infinite;
+}
+
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@media (max-width: 900px) {
+  .product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 680px) {
+  .hero {
+    min-height: 29rem;
+    grid-template-columns: 1fr;
+  }
+
+  .hero-stamp {
+    display: none;
+  }
+
+  .product-grid {
+    grid-template-columns: 1fr;
+  }
+}
