@@ -1,0 +1,62 @@
+package com.buy01.user.service;
+
+import com.buy01.user.domain.UserAccount;
+import com.buy01.user.dto.AuthResponse;
+import com.buy01.user.dto.LoginRequest;
+import com.buy01.user.dto.RegisterRequest;
+import com.buy01.user.exception.DuplicateEmailException;
+import com.buy01.user.repository.UserAccountRepository;
+import com.buy01.user.security.JwtService;
+import java.time.Instant;
+import java.util.Locale;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+@Service
+public class AuthService {
+
+    private final UserAccountRepository repository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
+
+    public AuthService(
+            UserAccountRepository repository,
+            PasswordEncoder passwordEncoder,
+            JwtService jwtService) {
+        this.repository = repository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
+    }
+
+    public AuthResponse register(RegisterRequest request) {
+        String normalizedEmail = normalizeEmail(request.email());
+        if (repository.existsByEmailIgnoreCase(normalizedEmail)) {
+            throw new DuplicateEmailException();
+        }
+
+        Instant now = Instant.now();
+        UserAccount user = new UserAccount(
+                request.name().trim(),
+                normalizedEmail,
+                passwordEncoder.encode(request.password()),
+                request.role(),
+                now);
+        UserAccount savedUser = repository.save(user);
+        return AuthResponse.from(savedUser, jwtService.issue(savedUser));
+    }
+
+    public AuthResponse login(LoginRequest request) {
+        UserAccount user = repository
+                .findByEmailIgnoreCase(normalizeEmail(request.email()))
+                .orElseThrow(() -> new BadCredentialsException("Invalid email or password"));
+        if (!passwordEncoder.matches(request.password(), user.getPasswordHash())) {
+            throw new BadCredentialsException("Invalid email or password");
+        }
+        return AuthResponse.from(user, jwtService.issue(user));
+    }
+
+    private String normalizeEmail(String email) {
+        return email.trim().toLowerCase(Locale.ROOT);
+    }
+}
