@@ -94,5 +94,30 @@ Return with `git switch main`.
 - `test(frontend): protect lazy routes and mirror upload validation` — UI
   boundary tests.
 
-Later infrastructure and documentation commits show containers, HTTPS ingress,
-end-to-end verification, and operational handoff.
+## 7. Production packaging and operations
+
+- `fix(backend): align gateway and discovery with Spring Security runtime` —
+  resolving framework-version API changes at compile time.
+- `build(frontend): lock audited dependencies without vulnerable transitive
+  tools` — lockfile overrides and supply-chain verification.
+- `build(platform): orchestrate the full stack with Docker and HTTPS ingress` —
+  multi-stage images, health-gated Compose startup, and Caddy TLS termination.
+- `feat(deploy): make host ports configurable` — keeping container networking
+  stable while adapting host bindings.
+- `build(frontend): exclude local artifacts from Docker context` — improving
+  cache reuse and reducing the build context from hundreds of megabytes to a
+  few kilobytes.
+
+## 8. Regression and end-to-end testing
+
+- `test(gateway): launch reactive context on a random port` — matching a test's
+  web environment to the framework it boots.
+- `fix(security): preserve forbidden status from method rules` — preventing a
+  generic error handler from turning authorization failures into HTTP 500.
+- `test(security): cover downstream access denials` — capturing the live bug as
+  focused regression tests.
+- `test(e2e): automate the production-path smoke workflow` — testing the
+  browser-facing Nginx path through the gateway, services, Kafka, MongoDB, and
+  MinIO with automatic cleanup.
+- `docs: hand off architecture security APIs and the complete learning path` —
+  requirements traceability and operational documentation.
