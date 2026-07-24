@@ -1,22 +1,216 @@
 # BUY-01 Marketplace
 
-An end-to-end learning project built as independently deployable Spring Boot
-microservices with an Angular single-page application.
+A complete learning project for a secure e-commerce marketplace: five Spring
+Boot applications, an Angular SPA, MongoDB, Kafka, S3-compatible object storage,
+Docker Compose, automated tests, and an intentionally readable Git history.
 
-The repository is intentionally developed in small, concept-focused Git commits.
-Follow `docs/LEARNING_PATH.md` and run `git log --oneline --reverse` to learn why
-each part exists.
+Clients can browse without signing in. Sellers can register, manage only their
+own products, upload verified images, maintain a media library, and set an
+avatar. Ownership always comes from the signed JWT subject—never from a request
+body.
 
-## Applications
+## Start the entire platform
 
-| Application | Port | Responsibility |
+Prerequisites: Docker Desktop with Compose. Java 17 and Node 22 are useful for
+local development but are not required for the Docker workflow.
+
+From PowerShell:
+
+```powershell
+.\scripts\start.ps1
+```
+
+From macOS or Linux:
+
+```bash
+./scripts/start.sh
+```
+
+The first build downloads dependencies and takes longer. When the health checks
+settle, open:
+
+| Tool | URL |
+|---|---|
+| Marketplace UI | <http://localhost:4200> |
+| API Gateway | <http://localhost:8080> |
+| Eureka dashboard | <http://localhost:8761> |
+| MinIO console | <http://localhost:9001> |
+
+Demo identities are created only in the Docker development environment:
+
+| Role | Email | Password |
+|---|---|---|
+| Client | `client@buy01.local` | `Client123!` |
+| Seller | `seller@buy01.local` | `Seller123!` |
+
+To stop the platform:
+
+```powershell
+.\scripts\stop.ps1
+```
+
+Volumes intentionally preserve MongoDB, Kafka, and MinIO data. To also remove
+development data, explicitly run `docker compose down --volumes`.
+
+## Architecture
+
+| Application | Host port | Responsibility |
 |---|---:|---|
-| API Gateway | 8080 | External API, JWT checks, CORS, routing |
-| Discovery Service | 8761 | Eureka service registry |
-| User Service | 8081 | Registration, login, profiles, roles |
-| Product Service | 8082 | Public catalog and seller-owned CRUD |
-| Media Service | 8083 | Validated image upload and object storage |
-| Angular UI | 4200 | Public catalog and seller workspace |
+| Gateway Service | 8080 | External routes, JWT validation, CORS, request IDs |
+| Discovery Service | 8761 | Eureka service registry and dashboard |
+| User Service | 8081 | Registration, login, BCrypt passwords, profiles, roles |
+| Product Service | 8082 | Public catalog and seller-owned product CRUD |
+| Media Service | 8083 | Image validation, metadata, S3 object operations |
+| Angular UI | 4200 | Public catalog and protected seller workspace |
 
-Full setup, API examples, architecture, security decisions, and troubleshooting
-will be documented as each learning slice is added.
+Supporting services:
+
+- MongoDB uses separate `buy01_users`, `buy01_products`, and `buy01_media`
+  databases. A microservice never reads another service's collections.
+- Kafka carries `PRODUCT_CREATED`, `PRODUCT_UPDATED`, `PRODUCT_DELETED`,
+  `IMAGE_UPLOADED`, and `IMAGE_DELETED` events.
+- MinIO provides an S3-compatible development object store. MongoDB contains
+  media metadata and ownership only, never image bytes.
+- Nginx serves the production Angular build and proxies `/api` to the gateway.
+
+See [architecture.md](docs/architecture.md) for the component and request-flow
+diagrams.
+
+## API summary
+
+All external API calls go through `http://localhost:8080`.
+
+| Method | Path | Access |
+|---|---|---|
+| POST | `/auth/register` | Public |
+| POST | `/auth/login` | Public |
+| GET, PUT | `/me` | Authenticated |
+| GET | `/products`, `/products/{id}` | Public |
+| GET | `/products/mine` | Seller |
+| POST | `/products` | Seller |
+| PUT, DELETE | `/products/{id}` | Owning seller |
+| POST | `/media/images` | Seller; multipart image |
+| GET | `/media/images/{id}` | Public, cacheable |
+| GET | `/media/images/mine` | Seller |
+| DELETE | `/media/images/{id}` | Owning seller |
+
+Open [api-examples.http](docs/api-examples.http) in IntelliJ IDEA or a REST
+Client extension for ready-to-run requests.
+
+## Security decisions
+
+- Passwords are BCrypt-hashed with cost 12 and are never serialized.
+- JWTs use HS256, have an 8-hour default lifetime, and carry the user ID as
+  `sub` plus a `roles` claim.
+- The gateway validates tokens, and each downstream write service validates
+  them again. A bypassed gateway does not bypass authorization.
+- Seller IDs are read only from `jwt.getSubject()`.
+- A non-owner receives 404 for product/media mutations, avoiding resource
+  enumeration.
+- The server limits files to 2 MB, sanitizes filenames, and checks JPEG, PNG,
+  GIF, or WebP magic bytes against the declared MIME type.
+- The Angular client repeats file checks for fast feedback, but the backend
+  remains authoritative.
+- CORS is centralized at the gateway. Nginx adds browser hardening headers.
+- Errors have stable status codes and safe JSON bodies; unexpected exceptions
+  are logged without exposing internals.
+
+The threat model and production notes are in [security.md](docs/security.md).
+
+## Validate the project
+
+Run both backend and frontend verification:
+
+```powershell
+.\scripts\test.ps1
+```
+
+Or run the parts separately:
+
+```powershell
+# Backend on a machine with Maven-compatible CA trust
+.\mvnw.cmd test
+
+# Backend using the reproducible Docker toolchain
+docker run --rm -v "${PWD}:/workspace" -v "buy01-maven-cache:/root/.m2" `
+  -w /workspace maven:3.9.11-eclipse-temurin-17 mvn test
+
+# Frontend
+cd frontend
+npm ci
+npm test
+npm run build
+```
+
+Health probes exist at `/actuator/health` on every Spring application. Only the
+gateway is intended as the public API entry point; direct service ports are
+exposed locally for learning and debugging.
+
+## Local development
+
+Start infrastructure with Compose, then run individual services from an IDE or
+with Maven:
+
+```powershell
+docker compose up -d mongo kafka minio discovery-service
+.\mvnw.cmd -pl user-service spring-boot:run
+.\mvnw.cmd -pl product-service spring-boot:run
+.\mvnw.cmd -pl media-service spring-boot:run
+.\mvnw.cmd -pl gateway-service spring-boot:run
+```
+
+Run Angular with its checked-in development proxy:
+
+```powershell
+cd frontend
+npm install
+npm start
+```
+
+Copy `.env.example` to `.env` to customize credentials. Never reuse the
+development defaults for a public deployment.
+
+## HTTPS deployment
+
+Set `DOMAIN` to a DNS name that points to the host and start the Caddy override:
+
+```bash
+docker compose -f compose.yml -f compose.https.yml up --build -d
+```
+
+Caddy obtains and renews a public certificate automatically for a real domain.
+With the default `localhost`, Caddy uses its local CA, which is suitable only
+for local testing. Production should keep only ports 80/443 public, rotate
+`JWT_SECRET` and all database/object-store credentials, disable demo seeding,
+restrict direct service ports, and consider mTLS for service-to-service traffic.
+
+## Learn from the commits
+
+The repository was built in small concept commits rather than one large dump:
+
+```bash
+git log --oneline --reverse
+git show <commit>
+```
+
+[LEARNING_PATH.md](docs/LEARNING_PATH.md) groups those commits into a suggested
+study order. [REQUIREMENTS_CHECKLIST.md](docs/REQUIREMENTS_CHECKLIST.md) maps
+the original assignment to the implementation.
+
+## Repository layout
+
+```text
+buy-01-marketplace/
+├── discovery-service/     Eureka server
+├── gateway-service/       reactive API gateway
+├── user-service/          identity and profiles
+├── product-service/       seller-owned catalog
+├── media-service/         image security and S3 storage
+├── frontend/              standalone Angular SPA
+├── docker/                reusable backend image build
+├── deploy/                HTTPS reverse-proxy configuration
+├── docs/                  diagrams, API calls, security, learning guide
+├── scripts/               start, stop, and test commands
+├── compose.yml
+└── pom.xml                Maven multi-module parent
+```

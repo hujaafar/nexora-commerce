@@ -1,0 +1,114 @@
+@gateway = http://localhost:8080
+@sellerEmail = seller@example.com
+@sellerPassword = Seller123!
+@token = paste-access-token-here
+@productId = paste-product-id-here
+@mediaId = paste-media-id-here
+
+### Register a seller
+POST {{gateway}}/auth/register
+Content-Type: application/json
+
+{
+  "name": "Example Seller",
+  "email": "{{sellerEmail}}",
+  "password": "{{sellerPassword}}",
+  "role": "SELLER"
+}
+
+### Login
+POST {{gateway}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{sellerEmail}}",
+  "password": "{{sellerPassword}}"
+}
+
+### Read current profile
+GET {{gateway}}/me
+Authorization: Bearer {{token}}
+
+### Update current profile
+PUT {{gateway}}/me
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Updated Seller",
+  "avatarUrl": null
+}
+
+### Public product list
+GET {{gateway}}/products
+
+### Public product detail
+GET {{gateway}}/products/{{productId}}
+
+### Seller inventory
+GET {{gateway}}/products/mine
+Authorization: Bearer {{token}}
+
+### Create a product
+POST {{gateway}}/products
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Mechanical Keyboard",
+  "description": "Hot-swappable compact keyboard",
+  "price": 49.90,
+  "quantity": 5,
+  "imageUrls": []
+}
+
+### Update a product
+PUT {{gateway}}/products/{{productId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Mechanical Keyboard",
+  "description": "Updated product description",
+  "price": 54.90,
+  "quantity": 4,
+  "imageUrls": [
+    "{{gateway}}/media/images/{{mediaId}}"
+  ]
+}
+
+### Delete a product
+DELETE {{gateway}}/products/{{productId}}
+Authorization: Bearer {{token}}
+
+### Upload an image
+# Replace ./sample.png with a real JPEG, PNG, GIF, or WebP file no larger than 2 MB.
+POST {{gateway}}/media/images
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=BUY01Boundary
+
+--BUY01Boundary
+Content-Disposition: form-data; name="purpose"
+
+PRODUCT_IMAGE
+--BUY01Boundary
+Content-Disposition: form-data; name="productId"
+
+{{productId}}
+--BUY01Boundary
+Content-Disposition: form-data; name="file"; filename="sample.png"
+Content-Type: image/png
+
+< ./sample.png
+--BUY01Boundary--
+
+### Seller media library
+GET {{gateway}}/media/images/mine
+Authorization: Bearer {{token}}
+
+### Public image download
+GET {{gateway}}/media/images/{{mediaId}}
+
+### Delete owned media
+DELETE {{gateway}}/media/images/{{mediaId}}
+Authorization: Bearer {{token}}
