@@ -151,6 +151,17 @@ Health probes exist at `/actuator/health` on every Spring application. Only the
 gateway is intended as the public API entry point; direct service ports are
 exposed locally for learning and debugging.
 
+With the Compose stack running, exercise the complete production HTTP path with
+any real PNG file:
+
+```powershell
+.\scripts\smoke-test.ps1 -ImagePath C:\path\to\sample.png
+```
+
+The smoke test verifies authentication, role denial, product CRUD, file
+signature validation, MinIO storage, public browsing, and image cache headers.
+It removes the temporary product and media object when finished.
+
 ## Local development
 
 Start infrastructure with Compose, then run individual services from an IDE or
