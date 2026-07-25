@@ -1,59 +1,10 @@
-.signal-bar {
-  position: relative;
-  z-index: 60;
-  border-bottom: 1px solid rgba(200, 255, 107, 0.12);
-  color: #dce2f2;
-  background: #090b14;
-}
-
-.signal-shell {
-  display: grid;
-  width: min(1280px, calc(100% - 2.5rem));
-  min-height: 2.15rem;
-  margin: 0 auto;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  gap: 1rem;
-  font-family: "Cascadia Code", Consolas, monospace;
-  font-size: 0.62rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.signal-shell > span {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-}
-
-.signal-shell i,
-.footer-status i {
-  width: 0.42rem;
-  height: 0.42rem;
-  border-radius: 50%;
-  background: var(--success);
-  box-shadow: 0 0 12px rgba(115, 245, 173, 0.8);
-  animation: status-pulse 2s ease-in-out infinite;
-}
-
-.signal-shell p {
-  margin: 0;
-  color: var(--muted);
-}
-
-.signal-shell strong {
-  justify-self: end;
-  color: var(--accent);
-  font-size: 0.6rem;
-}
-
 .site-header {
   position: sticky;
   z-index: 50;
   top: 0;
   border-bottom: 1px solid var(--line);
-  background: rgba(8, 10, 20, 0.72);
-  backdrop-filter: blur(24px) saturate(135%);
+  background: rgba(12, 12, 12, 0.88);
+  backdrop-filter: blur(24px);
 }
 
 .nav-shell,
@@ -65,7 +16,7 @@
 }
 
 .nav-shell {
-  min-height: 5.2rem;
+  min-height: 5.35rem;
   justify-content: space-between;
   gap: 2rem;
 }
@@ -85,13 +36,13 @@
   height: 2.65rem;
   overflow: hidden;
   place-items: center;
-  border: 1px solid rgba(200, 255, 107, 0.34);
+  border: 1px solid rgba(215, 226, 234, 0.34);
   border-radius: 0.85rem;
-  color: var(--accent);
+  color: var(--muted-strong);
   background:
-    linear-gradient(135deg, rgba(200, 255, 107, 0.16), transparent 55%),
-    #111522;
-  box-shadow: 0 0 24px rgba(200, 255, 107, 0.09);
+    linear-gradient(135deg, rgba(215, 226, 234, 0.12), transparent 55%),
+    #151515;
+  box-shadow: 0 0 24px rgba(215, 226, 234, 0.06);
   font-size: 0.78rem;
 }
 
@@ -99,7 +50,7 @@
   position: absolute;
   width: 3.5rem;
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  background: linear-gradient(90deg, transparent, var(--muted-strong), transparent);
   content: "";
   transform: rotate(-45deg);
 }
@@ -115,7 +66,7 @@
 
 .brand-copy strong {
   font-size: 0.94rem;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.15em;
 }
 
 .brand-copy strong span {
@@ -131,44 +82,48 @@
 
 .nav-links {
   display: flex;
-  padding: 0.3rem;
-  border: 1px solid var(--line);
-  border-radius: 999px;
+  padding: 0;
+  border: 0;
   align-items: center;
-  gap: 0.15rem;
-  background: rgba(255, 255, 255, 0.025);
+  gap: clamp(1.2rem, 3vw, 3.5rem);
+  background: transparent;
 }
 
 .nav-links a {
   position: relative;
-  padding: 0.58rem 1.05rem;
-  border-radius: 999px;
-  color: var(--muted);
-  font-size: 0.78rem;
-  font-weight: 720;
+  padding: 0.6rem 0;
+  border-radius: 0;
+  color: var(--muted-strong);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.11em;
   text-decoration: none;
+  text-transform: uppercase;
   transition:
     color 180ms ease,
-    background-color 180ms ease;
+    opacity 180ms ease;
 }
 
 .nav-links a.active,
 .nav-links a:hover {
   color: var(--ink);
-  background: rgba(139, 108, 255, 0.13);
+  background: transparent;
+  opacity: 0.72;
 }
 
 .nav-links a.active::before {
   position: absolute;
-  top: 50%;
-  left: 0.48rem;
-  width: 0.3rem;
-  height: 0.3rem;
-  border-radius: 50%;
-  background: var(--accent);
-  box-shadow: 0 0 8px rgba(200, 255, 107, 0.7);
+  top: auto;
+  right: 0;
+  bottom: 0.25rem;
+  left: 0;
+  width: auto;
+  height: 1px;
+  border-radius: 0;
+  background: var(--muted-strong);
+  box-shadow: none;
   content: "";
-  transform: translateY(-50%);
+  transform: none;
 }
 
 .nav-actions {
@@ -652,11 +607,6 @@
 }
 
 @media (max-width: 850px) {
-  .signal-shell {
-    grid-template-columns: 1fr auto;
-  }
-
-  .signal-shell p,
   .brand-copy small,
   .nav-links,
   .profile-name {
@@ -705,7 +655,6 @@
 }
 
 @media (max-width: 520px) {
-  .signal-shell,
   .nav-shell,
   .footer-cta,
   .footer-bottom,
