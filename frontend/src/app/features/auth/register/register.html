@@ -1,32 +1,59 @@
 <section class="auth-page">
   <div class="auth-story">
-    <p class="eyebrow">Choose your path</p>
-    <h1>Browse freely. Sell with confidence.</h1>
+    <p class="eyebrow">Your new marketplace identity</p>
+    <h1>Browse bold. Sell smarter.</h1>
     <p>
-      Pick a client account to explore the public catalog, or become a seller
-      with a private workspace for products, stock, and media.
+      Choose how you enter BUY-01. Discover the catalog as a client, or unlock a
+      private command center for products, stock, and media.
     </p>
+
+    <div class="story-visual" aria-hidden="true">
+      <div class="story-topline">
+        <span>Account provisioning</span>
+        <span class="story-status">Ready</span>
+      </div>
+      <div class="story-metrics">
+        <div class="story-metric">
+          <strong>01</strong>
+          <span>secure identity</span>
+        </div>
+        <div class="story-metric">
+          <strong>02</strong>
+          <span>role boundaries</span>
+        </div>
+        <div class="story-metric">
+          <strong>∞</strong>
+          <span>possibilities</span>
+        </div>
+      </div>
+    </div>
+
     <div class="security-note">
       <span>✓</span>
-      Ownership is read from your signed identity
+      Your signed identity decides exactly what you can see and change.
     </div>
   </div>
 
   <form class="auth-card surface-card" [formGroup]="form" (ngSubmit)="submit()">
+    <div class="auth-brandline">
+      <span class="auth-mark"><i>01</i> BUY NETWORK</span>
+      <span class="auth-encryption">Secure join</span>
+    </div>
+
     <p class="eyebrow">Create account</p>
-    <h2>Join BUY-01</h2>
-    <p>Start with the role that matches what you want to do.</p>
+    <h2>Choose your mode.</h2>
+    <p>You can start exploring in less than a minute.</p>
 
     <div class="role-picker" role="radiogroup" aria-label="Account role">
       <label>
         <input type="radio" formControlName="role" value="CLIENT" />
         <strong>Client</strong>
-        <small>Browse products</small>
+        <small>Discover products</small>
       </label>
       <label>
         <input type="radio" formControlName="role" value="SELLER" />
         <strong>Seller</strong>
-        <small>Manage a catalog</small>
+        <small>Launch a catalog</small>
       </label>
     </div>
 
@@ -77,7 +104,7 @@
     </div>
 
     <button class="btn btn-brand w-100 py-2" type="submit" [disabled]="submitting()">
-      {{ submitting() ? 'Creating account…' : 'Create account' }}
+      {{ submitting() ? 'Creating account…' : 'Create my identity →' }}
     </button>
     <p class="auth-switch">
       Already a member? <a routerLink="/login">Sign in</a>
