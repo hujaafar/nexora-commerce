@@ -2,7 +2,7 @@ import { CurrencyPipe } from '@angular/common';
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { finalize, map, switchMap } from 'rxjs';
+import { catchError, finalize, map, of, switchMap, tap } from 'rxjs';
 import { ProductService } from '../../../core/services/product.service';
 import { Product } from '../../../models/product.model';
 
@@ -20,16 +20,33 @@ export class ProductDetail {
   protected readonly product = signal<Product | null>(null);
   protected readonly activeImage = signal<string | null>(null);
   protected readonly loading = signal(true);
+  protected readonly loadError = signal(false);
 
   constructor() {
     this.route.paramMap
       .pipe(
         map((params) => params.get('id') ?? ''),
-        switchMap((id) => this.productService.get(id)),
-        finalize(() => this.loading.set(false)),
+        tap(() => {
+          this.loading.set(true);
+          this.loadError.set(false);
+          this.product.set(null);
+          this.activeImage.set(null);
+        }),
+        switchMap((id) =>
+          this.productService.get(id).pipe(
+            catchError(() => {
+              this.loadError.set(true);
+              return of(null);
+            }),
+            finalize(() => this.loading.set(false))
+          )
+        ),
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe((product) => {
+        if (!product) {
+          return;
+        }
         this.product.set(product);
         this.activeImage.set(product.imageUrls[0] ?? null);
       });
