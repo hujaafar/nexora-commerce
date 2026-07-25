@@ -1,4 +1,11 @@
-import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal
+} from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { finalize } from 'rxjs';
 import { MediaService } from '../../../core/services/media.service';
@@ -21,6 +28,12 @@ export class MediaManager implements OnInit, OnDestroy {
   protected readonly uploading = signal(false);
   protected readonly selectedFile = signal<File | null>(null);
   protected readonly previewUrl = signal<string | null>(null);
+  protected readonly totalBytes = computed(() =>
+    this.assets().reduce((total, asset) => total + asset.size, 0)
+  );
+  protected readonly productAssetCount = computed(
+    () => this.assets().filter((asset) => asset.purpose === 'PRODUCT_IMAGE').length
+  );
   protected readonly form = this.formBuilder.nonNullable.group({
     productId: [''],
     purpose: ['PRODUCT_IMAGE' as MediaPurpose]

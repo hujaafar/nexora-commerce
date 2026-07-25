@@ -1,27 +1,67 @@
-<section class="page-shell">
+<section class="page-shell media-page">
   <header class="media-header">
     <div>
-      <p class="eyebrow">Media service</p>
-      <h1>Your image library.</h1>
+      <p class="eyebrow">Digital asset vault</p>
+      <h1>Make every pixel count.</h1>
       <p>
-        Every file is checked in the browser and verified again by its real byte
-        signature before object storage accepts it.
+        Upload, verify, and organize marketplace imagery through a protected media
+        pipeline that inspects the file behind every extension.
       </p>
+    </div>
+    <div class="vault-status">
+      <span><i></i> Vault online</span>
+      <strong>{{ assets().length.toString().padStart(2, '0') }}</strong>
+      <small>secured assets</small>
     </div>
   </header>
 
+  <section class="media-metrics" aria-label="Media statistics">
+    <article>
+      <span>Storage used</span>
+      <strong>{{ sizeLabel(totalBytes()) }}</strong>
+      <i style="--progress: 18%"></i>
+    </article>
+    <article>
+      <span>Product imagery</span>
+      <strong>{{ productAssetCount() }}</strong>
+      <small>linked or ready</small>
+    </article>
+    <article>
+      <span>Maximum file</span>
+      <strong>2 MB</strong>
+      <small>signature verified</small>
+    </article>
+  </section>
+
   <div class="media-layout">
     <form class="uploader surface-card" [formGroup]="form" (ngSubmit)="upload()">
-      <p class="eyebrow">Secure upload</p>
-      <h2>Add an image</h2>
+      <div class="upload-topline">
+        <span><i></i> Secure channel</span>
+        <span>MEDIA / 01</span>
+      </div>
+      <p class="eyebrow">New asset</p>
+      <h2>Upload an image</h2>
+      <p class="uploader-intro">
+        Select a purpose and the service will take care of validation.
+      </p>
 
       <button class="drop-area" type="button" (click)="fileInput.click()">
         @if (previewUrl()) {
-          <img [src]="previewUrl()" alt="Selected image preview" />
-          <span>{{ selectedFile()?.name }}</span>
+          <span class="preview-frame">
+            <img [src]="previewUrl()" alt="Selected image preview" />
+            <i>READY</i>
+          </span>
+          <span class="selected-name">{{ selectedFile()?.name }}</span>
+          <small>Click to replace</small>
         } @else {
-          <strong>Choose an image</strong>
-          <span>JPEG, PNG, GIF, or WebP · maximum 2 MB</span>
+          <span class="drop-symbol">
+            <i></i>
+            <strong>＋</strong>
+          </span>
+          <span class="drop-copy">
+            <strong>Choose your visual</strong>
+            <small>JPEG, PNG, GIF, or WebP · maximum 2 MB</small>
+          </span>
         }
       </button>
       <input
@@ -33,7 +73,7 @@
       />
 
       <div class="mb-3">
-        <label class="form-label" for="purpose">Purpose</label>
+        <label class="form-label" for="purpose">Asset purpose</label>
         <select class="form-select" id="purpose" formControlName="purpose">
           <option value="PRODUCT_IMAGE">Product image</option>
           <option value="AVATAR">Seller avatar</option>
@@ -41,7 +81,9 @@
       </div>
 
       <div class="mb-4">
-        <label class="form-label" for="product-id">Product ID (optional)</label>
+        <label class="form-label" for="product-id">
+          Product ID <span>Optional</span>
+        </label>
         <input
           class="form-control"
           id="product-id"
@@ -55,41 +97,56 @@
         type="submit"
         [disabled]="uploading() || !selectedFile()"
       >
-        {{ uploading() ? 'Verifying and uploading…' : 'Upload securely' }}
+        {{ uploading() ? 'Scanning and uploading…' : 'Secure this asset →' }}
       </button>
     </form>
 
-    <section>
+    <section class="library">
       <div class="library-heading">
         <div>
           <p class="eyebrow">Stored assets</p>
-          <h2>Available images</h2>
+          <h2>Your visual library</h2>
+          <p>Every asset available to your seller identity.</p>
         </div>
-        <span>{{ assets().length }}</span>
+        <span>{{ assets().length.toString().padStart(2, '0') }}</span>
       </div>
 
       @if (loading()) {
-        <div class="empty-state">Loading your media…</div>
+        <div class="library-loading">
+          <i></i>
+          <span>Decrypting your library…</span>
+        </div>
       } @else if (assets().length === 0) {
         <div class="empty-state">
-          <h3>No images uploaded</h3>
-          <p>Your private media list will appear here.</p>
+          <h3>The vault is empty</h3>
+          <p>Upload your first image to start building a visual library.</p>
         </div>
       } @else {
         <div class="media-grid">
-          @for (asset of assets(); track asset.id) {
-            <article>
+          @for (asset of assets(); track asset.id; let index = $index) {
+            <article [style.animation-delay.ms]="index * 75">
               <a [href]="asset.url" target="_blank" rel="noopener">
                 <img [src]="asset.url" [alt]="asset.originalFilename" loading="lazy" />
+                <span>OPEN ↗</span>
               </a>
-              <div>
+              <div class="asset-copy">
+                <span class="asset-type">
+                  {{ asset.purpose === 'AVATAR' ? 'Identity' : 'Product' }}
+                </span>
                 <h3>{{ asset.originalFilename }}</h3>
-                <p>{{ asset.purpose === 'AVATAR' ? 'Avatar' : 'Product' }} · {{ sizeLabel(asset.size) }}</p>
+                <p>{{ sizeLabel(asset.size) }} · verified image</p>
                 @if (asset.productId) {
-                  <small>Product {{ asset.productId }}</small>
+                  <small>Linked / {{ asset.productId }}</small>
+                } @else {
+                  <small>Unlinked asset</small>
                 }
               </div>
-              <button type="button" (click)="delete(asset)" aria-label="Delete image">×</button>
+              <button type="button" (click)="delete(asset)" aria-label="Delete image">
+                ×
+              </button>
+              <span class="asset-index">
+                {{ (index + 1).toString().padStart(2, '0') }}
+              </span>
             </article>
           }
         </div>
