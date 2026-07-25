@@ -152,6 +152,32 @@ try {
         } | ConvertTo-Json)
     $clientHeaders = @{ Authorization = "Bearer $($clientLogin.accessToken)" }
 
+    $adminLogin = Invoke-RestMethod `
+        -Uri "$ApiBase/auth/login" `
+        -Method Post `
+        -ContentType 'application/json' `
+        -Body (@{
+            email = 'admin@buy01.local'
+            password = 'Admin123!'
+        } | ConvertTo-Json)
+    $adminHeaders = @{ Authorization = "Bearer $($adminLogin.accessToken)" }
+    $accounts = @(Invoke-RestMethod -Uri "$ApiBase/admin/users" -Headers $adminHeaders)
+    Assert-True (@($accounts.role) -contains 'ADMIN') `
+        'admin account list did not include an ADMIN identity'
+    @(Invoke-RestMethod `
+        -Uri "$ApiBase/products/moderation" `
+        -Headers $adminHeaders) | Out-Null
+    @(Invoke-RestMethod `
+        -Uri "$ApiBase/media/images/moderation" `
+        -Headers $adminHeaders) | Out-Null
+
+    Invoke-ExpectedFailure `
+        -ExpectedStatus 403 `
+        -Description 'seller access to admin accounts' `
+        -Request {
+            Invoke-RestMethod -Uri "$ApiBase/admin/users" -Headers $headers
+        }
+
     $productRequest = @{
         name = 'BUY-01 Smoke-Test Camera'
         description = 'Temporary product created by the automated end-to-end smoke test.'
@@ -246,7 +272,8 @@ try {
     Assert-True ($download.Headers['Cache-Control'] -like '*immutable*') `
         'public image download is missing immutable caching'
 
-    Write-Host 'PASS: UI, authentication, roles, seller avatar create/replace,'
+    Write-Host 'PASS: UI, authentication, roles, admin moderation boundaries,'
+    Write-Host '      seller avatar create/replace,'
     Write-Host '      product CRUD, media validation, object storage, public catalog,'
     Write-Host '      and image caching all work.'
 } finally {
