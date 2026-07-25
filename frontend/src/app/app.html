@@ -82,16 +82,91 @@
   </aside>
 }
 
-<footer>
-  <div class="footer-shell">
-    <div class="footer-brand">
-      <span>BUY/01</span>
-      <p>A secure market for independent ideas.</p>
+<footer class="site-footer">
+  <div class="footer-aura" aria-hidden="true"></div>
+
+  <section class="footer-cta">
+    <div>
+      <p class="eyebrow">The next object is waiting</p>
+      <h2>Find something<br /><span>worth keeping.</span></h2>
     </div>
-    <div class="footer-status">
-      <span><i></i> All systems operational</span>
-      <small>Built on isolated microservices</small>
+    <div class="footer-cta-actions">
+      <p>
+        Explore independent products backed by verified media and secure seller
+        ownership.
+      </p>
+      <a class="footer-primary-action" routerLink="/products">
+        <span>
+          <small>Enter the collection</small>
+          Discover the latest drop
+        </span>
+        <i aria-hidden="true">↗</i>
+      </a>
+    </div>
+  </section>
+
+  <div class="footer-marquee" aria-hidden="true">
+    <div>
+      <span>INDEPENDENT OBJECTS</span><i>✦</i>
+      <span>VERIFIED MEDIA</span><i>✦</i>
+      <span>DIRECT OWNERSHIP</span><i>✦</i>
+      <span>INDEPENDENT OBJECTS</span><i>✦</i>
+      <span>VERIFIED MEDIA</span><i>✦</i>
+      <span>DIRECT OWNERSHIP</span><i>✦</i>
     </div>
   </div>
-  <div class="footer-word" aria-hidden="true">BUY DIFFERENT</div>
+
+  <div class="footer-shell">
+    <div class="footer-brand">
+      <a routerLink="/products" aria-label="BUY-01 catalog">
+        <span class="footer-brand-mark">01</span>
+        <span>BUY/01</span>
+      </a>
+      <p>
+        A future-facing market where independent sellers publish with confidence
+        and buyers discover without friction.
+      </p>
+    </div>
+
+    <nav class="footer-nav" aria-label="Footer navigation">
+      <div>
+        <span>Explore</span>
+        <a routerLink="/products">All products</a>
+        @if (authService.isSeller()) {
+          <a routerLink="/seller">Seller studio</a>
+          <a routerLink="/media">Asset vault</a>
+        }
+      </div>
+      <div>
+        <span>Account</span>
+        @if (authService.isAuthenticated()) {
+          <a routerLink="/profile">My identity</a>
+          <button type="button" (click)="logout()">Sign out</button>
+        } @else {
+          <a routerLink="/login">Sign in</a>
+          <a routerLink="/register">Join BUY-01</a>
+        }
+      </div>
+    </nav>
+
+    <div class="footer-system">
+      <div class="footer-system-top">
+        <span><i></i> All systems operational</span>
+        <b>LIVE</b>
+      </div>
+      <strong>Microservice network</strong>
+      <p>User, product, media, discovery, and gateway services connected.</p>
+      <div class="service-bars" aria-hidden="true">
+        <span></span><span></span><span></span><span></span><span></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <span>© {{ currentYear }} BUY-01 MARKET NETWORK</span>
+    <span>SECURE BY DESIGN · BUILT TO DISCOVER</span>
+    <a routerLink="/products">BACK TO MARKET ↑</a>
+  </div>
+
+  <div class="footer-word" aria-hidden="true">BUY/01</div>
 </footer>

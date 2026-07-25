@@ -17,6 +17,7 @@ import { NotificationService } from './core/services/notification.service';
 export class App {
   protected readonly authService = inject(AuthService);
   protected readonly notifications = inject(NotificationService);
+  protected readonly currentYear = new Date().getFullYear();
   private readonly router = inject(Router);
 
   protected initials(): string {
