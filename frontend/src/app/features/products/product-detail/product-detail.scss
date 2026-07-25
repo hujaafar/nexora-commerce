@@ -1,42 +1,155 @@
 .detail-page {
   position: relative;
+  padding-top: clamp(2.5rem, 5vw, 4.5rem);
+}
+
+.detail-page::before {
+  position: absolute;
+  z-index: -1;
+  top: 3rem;
+  right: -16rem;
+  width: 34rem;
+  height: 34rem;
+  border-radius: 50%;
+  background: rgba(95, 231, 255, 0.08);
+  content: "";
+  filter: blur(110px);
+  pointer-events: none;
+}
+
+.detail-nav {
+  display: flex;
+  margin-bottom: clamp(2.3rem, 5vw, 4rem);
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
 }
 
 .back-link {
   display: inline-flex;
-  margin-bottom: 1.8rem;
   align-items: center;
-  color: var(--muted);
-  gap: 0.55rem;
-  font-size: 0.76rem;
+  color: var(--muted-strong);
+  gap: 0.7rem;
+  font-size: 0.72rem;
   font-weight: 720;
   text-decoration: none;
 }
 
-.back-link span {
+.back-link > span:first-child {
   display: grid;
-  width: 1.8rem;
-  height: 1.8rem;
-  place-items: center;
+  width: 2.35rem;
+  height: 2.35rem;
   border: 1px solid var(--line);
+  place-items: center;
   border-radius: 50%;
   color: var(--brand-bright);
-  transition: transform 200ms ease;
+  background: rgba(255, 255, 255, 0.025);
+  transition:
+    transform 200ms var(--ease-out),
+    border-color 200ms ease;
+}
+
+.back-link > span:last-child {
+  display: grid;
+}
+
+.back-link small {
+  margin-bottom: 0.1rem;
+  color: var(--muted);
+  font-size: 0.52rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .back-link:hover {
   color: white;
 }
 
-.back-link:hover span {
-  transform: translateX(-0.2rem);
+.back-link:hover > span:first-child {
+  border-color: rgba(168, 144, 255, 0.55);
+  transform: translateX(-0.25rem);
+}
+
+.detail-nav-status {
+  display: inline-flex;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  align-items: center;
+  color: var(--muted);
+  gap: 0.48rem;
+  background: rgba(255, 255, 255, 0.02);
+  font-family: "Cascadia Code", Consolas, monospace;
+  font-size: 0.53rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.detail-nav-status i,
+.loading-topline i {
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: var(--success);
+  box-shadow: 0 0 0.7rem var(--success);
+}
+
+.product-intro {
+  display: grid;
+  margin-bottom: clamp(2rem, 5vw, 4rem);
+  grid-template-columns: minmax(0, 1fr) minmax(15rem, 27rem);
+  align-items: end;
+  column-gap: 3rem;
+}
+
+.product-intro > div {
+  display: flex;
+  margin-bottom: 0.75rem;
+  grid-column: 1 / -1;
+  align-items: center;
+  color: var(--brand-bright);
+  gap: 0.8rem;
+  font-family: "Cascadia Code", Consolas, monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.09em;
+}
+
+.product-intro > div span + span {
+  display: inline-flex;
+  align-items: center;
+  color: var(--muted);
+  gap: 0.8rem;
+}
+
+.product-intro > div span + span::before {
+  width: 1.6rem;
+  height: 1px;
+  background: var(--line-strong);
+  content: "";
+}
+
+.product-intro h1 {
+  overflow-wrap: anywhere;
+  margin: 0;
+  font-size: clamp(4rem, 9vw, 8.8rem);
+  line-height: 0.82;
+  letter-spacing: -0.085em;
+  text-wrap: balance;
+}
+
+.product-intro > p {
+  margin: 0 0 0.25rem;
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.75;
 }
 
 .detail-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(23rem, 0.72fr);
+  grid-template-columns: minmax(0, 1.22fr) minmax(22rem, 0.78fr);
   align-items: start;
-  gap: clamp(2rem, 5vw, 5rem);
+  gap: clamp(1.5rem, 4vw, 3.5rem);
 }
 
 .gallery {
@@ -57,41 +170,70 @@
   position: relative;
   display: grid;
   overflow: hidden;
-  min-height: 39rem;
-  place-items: center;
+  min-height: clamp(34rem, 58vw, 49rem);
   border: 1px solid var(--line);
-  border-radius: 2rem;
+  place-items: center;
+  border-radius: clamp(1.5rem, 3vw, 2.6rem);
   color: var(--brand-bright);
   background:
-    radial-gradient(circle at 50% 45%, rgba(139, 108, 255, 0.2), transparent 28%),
-    linear-gradient(145deg, #13172d, #090c19);
+    radial-gradient(circle at 50% 45%, rgba(139, 108, 255, 0.22), transparent 28%),
+    linear-gradient(145deg, #14182e, #090c19);
   box-shadow: var(--shadow);
+  isolation: isolate;
+}
+
+.main-image::before {
+  position: absolute;
+  z-index: 2;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 3rem 3rem;
+  content: "";
+  inset: 0;
+  mask-image: linear-gradient(to bottom, black, transparent 65%);
+  opacity: 0.45;
+  pointer-events: none;
 }
 
 .main-image::after {
   position: absolute;
-  background: linear-gradient(to top, rgba(6, 8, 17, 0.45), transparent 30%);
+  z-index: 2;
+  background: linear-gradient(to top, rgba(5, 7, 15, 0.65), transparent 38%);
   content: "";
   inset: 0;
   pointer-events: none;
 }
 
 .main-image > img {
-  position: relative;
-  z-index: 1;
+  position: absolute;
   width: 100%;
-  height: 39rem;
+  height: 100%;
   object-fit: cover;
-  animation: image-reveal 700ms var(--ease-out) both;
+  animation: image-reveal 800ms var(--ease-out) both;
+  inset: 0;
 }
 
 .image-orbit {
   position: absolute;
-  width: 26rem;
-  height: 26rem;
-  border: 1px dashed rgba(168, 144, 255, 0.18);
+  width: min(28rem, 70%);
+  aspect-ratio: 1;
+  border: 1px dashed rgba(168, 144, 255, 0.22);
   border-radius: 50%;
   animation: orbit-spin 24s linear infinite;
+}
+
+.image-orbit::before,
+.image-orbit::after {
+  position: absolute;
+  border: 1px solid rgba(95, 231, 255, 0.08);
+  border-radius: 50%;
+  content: "";
+  inset: 10%;
+}
+
+.image-orbit::after {
+  inset: 23%;
 }
 
 .detail-placeholder {
@@ -99,10 +241,10 @@
   place-items: center;
 }
 
-.detail-placeholder i {
+.detail-placeholder > i {
   position: absolute;
-  width: 15rem;
-  height: 15rem;
+  width: clamp(11rem, 30vw, 18rem);
+  aspect-ratio: 1;
   border-radius: 40% 60% 63% 37% / 48% 38% 62% 52%;
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.35), transparent 28%),
@@ -111,48 +253,99 @@
   animation: blob-turn 14s linear infinite;
 }
 
-.detail-placeholder span {
+.detail-placeholder > span {
   z-index: 1;
   color: white;
-  font-size: 6rem;
+  font-size: clamp(5rem, 12vw, 8rem);
   font-weight: 450;
+}
+
+.detail-placeholder > small {
+  position: absolute;
+  z-index: 3;
+  bottom: 2rem;
+  color: var(--muted);
+  font-family: "Cascadia Code", Consolas, monospace;
+  font-size: 0.52rem;
+  letter-spacing: 0.12em;
+}
+
+.media-badge,
+.image-index {
+  position: absolute;
+  z-index: 4;
+  bottom: 1.25rem;
+}
+
+.media-badge {
+  left: 1.25rem;
+  display: inline-flex;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.9);
+  gap: 0.45rem;
+  background: rgba(5, 7, 15, 0.62);
+  font-size: 0.6rem;
+  font-weight: 700;
+  backdrop-filter: blur(12px);
+}
+
+.media-badge i {
+  width: 0.38rem;
+  height: 0.38rem;
+  border-radius: 50%;
+  background: var(--success);
+  box-shadow: 0 0 0.7rem var(--success);
+}
+
+.image-index {
+  right: 1.25rem;
+  color: rgba(255, 255, 255, 0.74);
+  font-family: "Cascadia Code", Consolas, monospace;
+  font-size: 0.52rem;
+  letter-spacing: 0.08em;
 }
 
 .image-corner {
   position: absolute;
-  z-index: 2;
-  width: 2rem;
-  height: 2rem;
-  border-color: rgba(200, 255, 107, 0.55);
+  z-index: 4;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-color: rgba(200, 255, 107, 0.6);
   border-style: solid;
 }
 
 .corner-one {
-  top: 1.2rem;
-  left: 1.2rem;
+  top: 1.25rem;
+  left: 1.25rem;
   border-width: 1px 0 0 1px;
 }
 
 .corner-two {
-  right: 1.2rem;
-  bottom: 1.2rem;
+  right: 1.25rem;
+  bottom: 1.25rem;
   border-width: 0 1px 1px 0;
 }
 
 .thumbnail-row {
   display: flex;
+  overflow-x: auto;
   margin-top: 0.9rem;
+  padding-bottom: 0.25rem;
   gap: 0.65rem;
 }
 
 .thumbnail-row button {
   position: relative;
   overflow: hidden;
-  width: 5rem;
-  height: 5rem;
+  width: 5.4rem;
+  height: 5.4rem;
   padding: 0;
   border: 1px solid var(--line);
-  border-radius: 0.9rem;
+  flex: 0 0 auto;
+  border-radius: 1rem;
   background: #101425;
   opacity: 0.62;
   transition:
@@ -176,11 +369,12 @@
 
 .thumbnail-row span {
   position: absolute;
-  right: 0.25rem;
-  bottom: 0.2rem;
-  padding: 0.12rem 0.25rem;
+  right: 0.3rem;
+  bottom: 0.25rem;
+  padding: 0.14rem 0.3rem;
+  border-radius: 999px;
   color: white;
-  background: rgba(6, 8, 16, 0.7);
+  background: rgba(6, 8, 16, 0.72);
   font-family: "Cascadia Code", Consolas, monospace;
   font-size: 0.44rem;
 }
@@ -188,17 +382,32 @@
 .detail-copy {
   position: sticky;
   top: 7rem;
-  padding: clamp(1.5rem, 3.5vw, 2.7rem);
+  overflow: hidden;
+  padding: clamp(1.35rem, 3vw, 2.3rem);
   animation: copy-in 650ms 120ms var(--ease-out) both;
+}
+
+.detail-copy::before {
+  position: absolute;
+  z-index: -1;
+  top: -6rem;
+  right: -5rem;
+  width: 14rem;
+  height: 14rem;
+  border-radius: 50%;
+  background: rgba(139, 108, 255, 0.13);
+  content: "";
+  filter: blur(42px);
 }
 
 .listing-status {
   display: flex;
-  margin-bottom: 2rem;
+  margin-bottom: 1.8rem;
   padding-bottom: 1rem;
   border-bottom: 1px solid var(--line);
   align-items: center;
   justify-content: space-between;
+  gap: 1rem;
 }
 
 .listing-status > span {
@@ -216,70 +425,120 @@
   border-radius: 50%;
   background: currentColor;
   box-shadow: 0 0 10px rgba(115, 245, 173, 0.7);
+  animation: detail-signal 1.8s ease-in-out infinite;
 }
 
 .listing-status small {
   color: var(--muted);
+  font-family: "Cascadia Code", Consolas, monospace;
+  font-size: 0.48rem;
+  letter-spacing: 0.08em;
+}
+
+.mobile-product-heading {
+  display: none;
+}
+
+.price-row {
+  display: flex;
+  margin-bottom: 1.5rem;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.price-row > div {
+  display: grid;
+}
+
+.price-row > div > small {
+  margin-bottom: 0.2rem;
+  color: var(--muted);
+  font-size: 0.62rem;
+}
+
+.price {
+  color: var(--accent);
+  font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+  letter-spacing: -0.06em;
+}
+
+.price-row > span {
+  max-width: 8rem;
+  padding-bottom: 0.35rem;
+  color: var(--muted);
+  font-family: "Cascadia Code", Consolas, monospace;
+  font-size: 0.43rem;
+  letter-spacing: 0.07em;
+  line-height: 1.45;
+  text-align: right;
+}
+
+.description-block {
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.description-block > span {
+  display: block;
+  margin-bottom: 0.55rem;
+  color: var(--brand-bright);
   font-family: "Cascadia Code", Consolas, monospace;
   font-size: 0.5rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
-.detail-copy h1 {
-  margin-bottom: 1.1rem;
-  font-size: clamp(2.8rem, 5vw, 5rem);
-  line-height: 0.92;
-}
-
-.price-row {
-  display: flex;
-  margin-bottom: 2rem;
-  align-items: end;
-  justify-content: space-between;
-  gap: 1rem;
-}
-
-.price {
-  color: var(--accent);
-  font-size: 1.6rem;
-  letter-spacing: -0.05em;
-}
-
-.price-row span {
-  color: var(--muted);
-  font-family: "Cascadia Code", Consolas, monospace;
-  font-size: 0.46rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
 .description {
+  margin: 0;
   color: var(--muted-strong);
-  font-size: 0.9rem;
-  line-height: 1.8;
+  font-size: 0.83rem;
+  line-height: 1.75;
   white-space: pre-line;
 }
 
 .stock {
-  display: flex;
-  margin: 1.8rem 0;
+  display: grid;
+  margin: 0.75rem 0;
   padding: 0.85rem 1rem;
   border: 1px solid rgba(115, 245, 173, 0.16);
-  border-radius: 0.85rem;
+  border-radius: 1rem;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
   color: var(--success);
-  gap: 0.55rem;
+  gap: 0.7rem;
   background: rgba(115, 245, 173, 0.045);
-  font-size: 0.73rem;
-  font-weight: 750;
 }
 
 .stock > span {
-  width: 0.48rem;
-  height: 0.48rem;
+  width: 0.5rem;
+  height: 0.5rem;
   border-radius: 50%;
   background: currentColor;
+  box-shadow: 0 0 0.7rem currentColor;
+}
+
+.stock > div {
+  display: grid;
+}
+
+.stock strong {
+  color: var(--ink);
+  font-size: 0.7rem;
+}
+
+.stock small {
+  margin-top: 0.1rem;
+  color: var(--muted);
+  font-size: 0.57rem;
+}
+
+.stock b {
+  color: currentColor;
+  font-family: "Cascadia Code", Consolas, monospace;
+  font-size: 0.75rem;
 }
 
 .stock.out {
@@ -290,58 +549,331 @@
 
 .assurance-grid {
   display: grid;
-  margin-bottom: 1.6rem;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.6rem;
+  margin-bottom: 1rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
 }
 
 .assurance-grid > div {
   display: grid;
-  padding: 0.85rem;
+  min-height: 6.4rem;
+  padding: 0.75rem;
   border: 1px solid var(--line);
   border-radius: 0.9rem;
+  align-content: end;
   background: rgba(255, 255, 255, 0.022);
 }
 
 .assurance-grid span {
-  margin-bottom: 0.6rem;
+  margin-bottom: auto;
   color: var(--brand-bright);
   font-family: "Cascadia Code", Consolas, monospace;
-  font-size: 0.5rem;
+  font-size: 0.48rem;
 }
 
 .assurance-grid strong {
-  font-size: 0.68rem;
+  font-size: 0.62rem;
 }
 
 .assurance-grid small {
   margin-top: 0.15rem;
   color: var(--muted);
-  font-size: 0.54rem;
+  font-size: 0.49rem;
+  line-height: 1.35;
 }
 
 .detail-cta {
   display: flex;
   width: 100%;
-  min-height: 3.3rem;
+  min-height: 3.7rem;
+  padding-inline: 1.1rem;
   align-items: center;
   justify-content: space-between;
+  text-align: left;
+  text-decoration: none;
+}
+
+.detail-cta > span {
+  display: grid;
+}
+
+.detail-cta small {
+  color: rgba(11, 13, 20, 0.63);
+  font-size: 0.53rem;
+  font-weight: 650;
+}
+
+.detail-cta i {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid rgba(11, 13, 20, 0.18);
+  place-items: center;
+  border-radius: 50%;
+  font-style: normal;
 }
 
 .assurance {
-  margin: 1.1rem 0 0;
+  margin: 0.9rem 0 0;
   color: var(--muted);
-  font-size: 0.62rem;
+  font-size: 0.58rem;
   line-height: 1.55;
   text-align: center;
 }
 
-.loading-detail > div {
+.loading-experience {
+  min-height: 43rem;
+}
+
+.loading-topline {
+  display: flex;
+  margin-bottom: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--muted);
+  font-family: "Cascadia Code", Consolas, monospace;
+  font-size: 0.52rem;
+  letter-spacing: 0.08em;
+}
+
+.loading-topline > span {
+  display: inline-flex;
+  align-items: center;
+  color: var(--muted-strong);
+  gap: 0.5rem;
+}
+
+.loading-topline i {
+  animation: detail-signal 1.4s ease-in-out infinite;
+}
+
+.loading-gallery,
+.loading-card {
+  min-width: 0;
+}
+
+.skeleton-label {
+  display: flex;
+  height: 1.2rem;
+  justify-content: space-between;
+}
+
+.skeleton-label span,
+.skeleton-line,
+.skeleton-copy span,
+.skeleton-pills span,
+.skeleton-button {
+  display: block;
+  overflow: hidden;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #101426 0%, #202741 48%, #101426 100%);
+  background-size: 220% 100%;
+  animation: skeleton-scan 1.6s linear infinite;
+}
+
+.skeleton-label span:first-child {
+  width: 8rem;
+  height: 0.45rem;
+}
+
+.skeleton-label span:last-child {
+  width: 3.2rem;
+  height: 0.45rem;
+}
+
+.skeleton-image {
+  position: relative;
+  display: grid;
+  overflow: hidden;
   min-height: 38rem;
+  border: 1px solid var(--line);
+  place-content: center;
   border-radius: 2rem;
-  background: linear-gradient(90deg, #101426, #1a2037, #101426);
-  background-size: 200% 100%;
-  animation: shimmer 1.2s infinite;
+  color: var(--muted);
+  gap: 1rem;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(139, 108, 255, 0.12), transparent 28%),
+    linear-gradient(145deg, #111528, #0b0e1b);
+  text-align: center;
+}
+
+.skeleton-image::before {
+  position: absolute;
+  width: 32rem;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(95, 231, 255, 0.5), transparent);
+  content: "";
+  animation: loading-scan 2.4s ease-in-out infinite;
+  inset: 12% auto auto -60%;
+}
+
+.loader-mark {
+  position: relative;
+  display: grid;
+  width: 6rem;
+  height: 6rem;
+  margin: 0 auto;
+  place-items: center;
+}
+
+.loader-mark i {
+  position: absolute;
+  border: 1px solid rgba(168, 144, 255, 0.35);
+  border-radius: 50%;
+  animation: loader-ring 2s ease-out infinite;
+  inset: 0;
+}
+
+.loader-mark strong {
+  display: grid;
+  width: 3.5rem;
+  height: 3.5rem;
+  place-items: center;
+  border-radius: 1rem;
+  color: #0b0d14;
+  background: var(--accent);
+  box-shadow: 0 0 2.5rem rgba(200, 255, 107, 0.2);
+  font-size: 0.85rem;
+}
+
+.skeleton-image p {
+  margin: 0;
+  font-family: "Cascadia Code", Consolas, monospace;
+  font-size: 0.54rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.loading-card {
+  display: flex;
+  min-height: 38rem;
+  padding: 2rem;
+  flex-direction: column;
+}
+
+.skeleton-line.short {
+  width: 5.5rem;
+  height: 0.55rem;
+}
+
+.skeleton-line.title {
+  width: 88%;
+  height: 2.2rem;
+  margin-top: 2.2rem;
+  border-radius: 0.6rem;
+}
+
+.skeleton-line.title.second {
+  width: 60%;
+  margin-top: 0.55rem;
+}
+
+.skeleton-line.price-line {
+  width: 38%;
+  height: 1.4rem;
+  margin-top: 1.8rem;
+  border-radius: 0.4rem;
+}
+
+.skeleton-copy {
+  display: grid;
+  margin-top: 2rem;
+  gap: 0.55rem;
+}
+
+.skeleton-copy span {
+  width: 100%;
+  height: 0.65rem;
+}
+
+.skeleton-copy span:nth-child(2) {
+  width: 92%;
+}
+
+.skeleton-copy span:nth-child(3) {
+  width: 70%;
+}
+
+.skeleton-pills {
+  display: grid;
+  margin-top: 2rem;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.65rem;
+}
+
+.skeleton-pills span {
+  height: 5rem;
+  border-radius: 1rem;
+}
+
+.skeleton-button {
+  height: 3.7rem;
+  margin-top: auto;
+  border-radius: 999px;
+}
+
+.detail-error {
+  display: grid;
+  overflow: hidden;
+  min-height: 34rem;
+  padding: clamp(2rem, 6vw, 5rem);
+  grid-template-columns: minmax(15rem, 0.7fr) minmax(20rem, 1fr);
+  place-items: center;
+  gap: clamp(2rem, 7vw, 6rem);
+}
+
+.error-visual {
+  position: relative;
+  display: grid;
+  width: min(100%, 22rem);
+  aspect-ratio: 1;
+  place-items: center;
+}
+
+.error-visual::before,
+.error-visual::after {
+  position: absolute;
+  border: 1px solid rgba(139, 108, 255, 0.28);
+  border-radius: 50%;
+  content: "";
+  inset: 5%;
+}
+
+.error-visual::after {
+  border-style: dashed;
+  inset: 18%;
+  animation: orbit-spin 18s linear infinite reverse;
+}
+
+.error-visual span {
+  color: rgba(168, 144, 255, 0.8);
+  font-size: clamp(4rem, 9vw, 7rem);
+  font-weight: 850;
+  letter-spacing: -0.08em;
+}
+
+.error-visual i {
+  position: absolute;
+  top: 12%;
+  right: 12%;
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 50%;
+  background: var(--danger);
+  box-shadow: 0 0 1.2rem var(--danger);
+}
+
+.detail-error h1 {
+  margin-bottom: 1rem;
+  font-size: clamp(3rem, 7vw, 6rem);
+  line-height: 0.9;
+}
+
+.detail-error > div:last-child > p:not(.eyebrow) {
+  max-width: 31rem;
+  margin-bottom: 1.7rem;
+  color: var(--muted);
+  line-height: 1.7;
 }
 
 @keyframes image-reveal {
@@ -370,30 +902,120 @@
   }
 }
 
-@media (max-width: 900px) {
+@keyframes detail-signal {
+  50% {
+    opacity: 0.35;
+    transform: scale(0.7);
+  }
+}
+
+@keyframes skeleton-scan {
+  to {
+    background-position: -220% 0;
+  }
+}
+
+@keyframes loading-scan {
+  50%,
+  100% {
+    transform: translateX(210%);
+  }
+}
+
+@keyframes loader-ring {
+  70%,
+  100% {
+    opacity: 0;
+    transform: scale(1.3);
+  }
+}
+
+@media (max-width: 950px) {
+  .product-intro {
+    grid-template-columns: 1fr;
+  }
+
+  .product-intro > p {
+    display: none;
+  }
+
   .detail-grid {
     grid-template-columns: 1fr;
   }
 
-  .main-image,
-  .main-image > img {
-    min-height: 28rem;
-    height: 28rem;
+  .main-image {
+    min-height: min(41rem, 105vw);
   }
 
   .detail-copy {
     position: static;
   }
+
+  .mobile-product-heading {
+    display: block;
+    margin-bottom: 1.4rem;
+  }
+
+  .mobile-product-heading h2 {
+    margin: 0;
+    font-size: clamp(2.4rem, 8vw, 4rem);
+    line-height: 0.92;
+  }
+
+  .loading-experience {
+    min-height: 60rem;
+  }
+
+  .skeleton-image {
+    min-height: 28rem;
+  }
+
+  .loading-card {
+    min-height: 30rem;
+  }
 }
 
-@media (max-width: 520px) {
-  .main-image,
-  .main-image > img {
-    min-height: 23rem;
-    height: 23rem;
+@media (max-width: 620px) {
+  .detail-nav-status {
+    display: none;
+  }
+
+  .product-intro h1 {
+    font-size: clamp(3.4rem, 18vw, 5.5rem);
+  }
+
+  .product-intro > div {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .product-intro > div span + span::before {
+    display: none;
+  }
+
+  .main-image {
+    min-height: 28rem;
   }
 
   .assurance-grid {
     grid-template-columns: 1fr;
+  }
+
+  .assurance-grid > div {
+    min-height: 5rem;
+  }
+
+  .detail-error {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .detail-error > div:last-child > p:not(.eyebrow) {
+    margin-inline: auto;
+  }
+
+  .detail-error .eyebrow {
+    justify-content: center;
   }
 }

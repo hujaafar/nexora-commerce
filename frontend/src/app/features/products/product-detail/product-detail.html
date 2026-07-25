@@ -1,19 +1,74 @@
 <section class="page-shell detail-page">
-  <a class="back-link" routerLink="/products">
-    <span>←</span> Return to the latest drop
-  </a>
+  <div class="detail-nav">
+    <a class="back-link" routerLink="/products">
+      <span>←</span>
+      <span>
+        <small>Back to catalog</small>
+        Return to the latest drop
+      </span>
+    </a>
+    <div class="detail-nav-status">
+      <i></i>
+      Secure public listing
+    </div>
+  </div>
 
   @if (loading()) {
-    <div class="detail-grid loading-detail">
-      <div></div>
-      <div></div>
-    </div>
+    <section class="loading-experience" aria-live="polite" aria-label="Loading product">
+      <div class="loading-topline">
+        <span><i></i> Retrieving product</span>
+        <small>BUY-01 / SECURE CATALOG</small>
+      </div>
+      <div class="detail-grid loading-detail">
+        <div class="loading-gallery">
+          <div class="skeleton-label">
+            <span></span>
+            <span></span>
+          </div>
+          <div class="skeleton-image">
+            <div class="loader-mark">
+              <i></i>
+              <strong>01</strong>
+            </div>
+            <p>Verifying listing media</p>
+          </div>
+        </div>
+        <div class="loading-card surface-card">
+          <span class="skeleton-line short"></span>
+          <span class="skeleton-line title"></span>
+          <span class="skeleton-line title second"></span>
+          <span class="skeleton-line price-line"></span>
+          <div class="skeleton-copy">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <div class="skeleton-pills">
+            <span></span>
+            <span></span>
+          </div>
+          <span class="skeleton-button"></span>
+        </div>
+      </div>
+    </section>
   } @else if (product(); as item) {
+    <div class="product-intro">
+      <div>
+        <span>CURATED / {{ item.id.slice(-6).toUpperCase() }}</span>
+        <span>INDEPENDENT SELLER</span>
+      </div>
+      <h1>{{ item.name }}</h1>
+      <p>
+        A direct listing from the BUY-01 network, protected by authenticated
+        ownership and verified media.
+      </p>
+    </div>
+
     <div class="detail-grid">
       <div class="gallery">
         <div class="gallery-label">
           <span>PRODUCT / {{ item.id.slice(-6).toUpperCase() }}</span>
-          <span>{{ item.imageUrls.length || 1 }} VIEW</span>
+          <span>{{ item.imageUrls.length || 1 }} {{ item.imageUrls.length === 1 ? 'VIEW' : 'VIEWS' }}</span>
         </div>
         <div class="main-image">
           <div class="image-orbit" aria-hidden="true"></div>
@@ -23,8 +78,16 @@
             <div class="detail-placeholder">
               <i></i>
               <span>{{ item.name.charAt(0) }}</span>
+              <small>NO MEDIA / ORIGINAL LISTING</small>
             </div>
           }
+          <div class="media-badge">
+            <i></i>
+            {{ activeImage() ? 'Verified media' : 'Listing identity' }}
+          </div>
+          <span class="image-index">
+            01 / {{ (item.imageUrls.length || 1).toString().padStart(2, '0') }}
+          </span>
           <span class="image-corner corner-one"></span>
           <span class="image-corner corner-two"></span>
         </div>
@@ -48,45 +111,88 @@
       <article class="detail-copy surface-card">
         <div class="listing-status">
           <span><i></i> Live listing</span>
-          <small>Seller secured</small>
+          <small>SELLER / {{ item.sellerId.slice(-6).toUpperCase() }}</small>
         </div>
-        <p class="eyebrow">Independent product</p>
-        <h1>{{ item.name }}</h1>
+
+        <div class="mobile-product-heading">
+          <p class="eyebrow">Independent product</p>
+          <h2>{{ item.name }}</h2>
+        </div>
+
         <div class="price-row">
-          <strong class="price">{{ item.price | currency: 'USD' }}</strong>
-          <span>USD / direct listing</span>
+          <div>
+            <small>Direct price</small>
+            <strong class="price">{{ item.price | currency: 'USD' }}</strong>
+          </div>
+          <span>USD / NO MARKETPLACE MARKUP</span>
         </div>
-        <p class="description">{{ item.description }}</p>
+
+        <div class="description-block">
+          <span>Product story</span>
+          <p class="description">{{ item.description }}</p>
+        </div>
+
         <div class="stock" [class.out]="item.quantity === 0">
           <span></span>
-          {{
-            item.quantity > 0
-              ? item.quantity + ' pieces available now'
-              : 'Currently sold out'
-          }}
+          <div>
+            <strong>{{ item.quantity > 0 ? 'Available now' : 'Currently sold out' }}</strong>
+            <small>
+              {{
+                item.quantity > 0
+                  ? item.quantity + ' pieces in seller inventory'
+                  : 'Check back for a future restock'
+              }}
+            </small>
+          </div>
+          <b>{{ item.quantity.toString().padStart(2, '0') }}</b>
         </div>
 
         <div class="assurance-grid">
           <div>
             <span>01</span>
             <strong>Verified media</strong>
-            <small>Content signature checked</small>
+            <small>Real file signatures checked</small>
           </div>
           <div>
             <span>02</span>
-            <strong>Real ownership</strong>
+            <strong>Secure ownership</strong>
             <small>Seller identity protected</small>
+          </div>
+          <div>
+            <span>03</span>
+            <strong>Live inventory</strong>
+            <small>Direct service data</small>
           </div>
         </div>
 
         <a class="btn btn-brand detail-cta" routerLink="/products">
-          Continue discovering <span aria-hidden="true">→</span>
+          <span>
+            <small>Keep exploring</small>
+            View the full catalog
+          </span>
+          <i aria-hidden="true">↗</i>
         </a>
         <p class="assurance">
-          Inventory and product information are managed directly by the seller.
-          Public browsing never requires an account.
+          Public browsing is open to everyone. Product information and inventory
+          are managed directly by the authenticated seller.
         </p>
       </article>
     </div>
+  } @else if (loadError()) {
+    <section class="detail-error surface-card">
+      <div class="error-visual" aria-hidden="true">
+        <span>404</span>
+        <i></i>
+      </div>
+      <div>
+        <p class="eyebrow">Listing unavailable</p>
+        <h1>This product left the signal.</h1>
+        <p>
+          It may have been removed by its seller, or the address may no longer be
+          valid. The current catalog is ready when you are.
+        </p>
+        <a class="btn btn-brand" routerLink="/products">Return to the catalog →</a>
+      </div>
+    </section>
   }
 </section>
