@@ -21,6 +21,8 @@
 - [x] Non-owner mutation returns 404
 - [x] `GET /me` and `PUT /me`
 - [x] Seller avatar delegated to Media Service
+- [x] ADMIN cannot be selected during public registration
+- [x] ADMIN-only account, product, and media moderation
 
 ## Product and media APIs
 
@@ -32,6 +34,7 @@
 - [x] 2 MB server and UI file limit
 - [x] MIME allowlist, content-signature sniffing, and safe filenames
 - [x] Cache-Control, ETag, content type, and inline disposition on downloads
+- [x] ADMIN product/media inventory and delete endpoints
 
 ## Angular
 
@@ -43,6 +46,7 @@
 - [x] Dedicated media management view
 - [x] Seller profile/avatar flow
 - [x] AuthGuard and seller role guard
+- [x] AdminGuard and responsive moderation dashboard
 - [x] Token and error HTTP interceptors
 - [x] Reactive Forms with inline validation
 - [x] Global user feedback for API/upload failures
@@ -52,6 +56,7 @@
 - [x] Global exception handling and meaningful 400/401/403/404/409/503 bodies
 - [x] Central gateway CORS
 - [x] Request correlation IDs
+- [x] Per-client rate limiting for authentication and media writes
 - [x] Docker Compose for all applications and infrastructure
 - [x] PowerShell and shell start/stop scripts
 - [x] Backend and frontend automated tests
@@ -59,6 +64,11 @@
 - [x] HTTPS/Let's Encrypt-capable Caddy deployment override
 - [x] Comprehensive README, API examples, diagrams, and security notes
 
-ADMIN moderation and rate limiting were optional in the brief and are
-intentionally left as follow-up exercises so the core CLIENT/SELLER ownership
-model stays focused.
+## Optional scope
+
+- [x] Kafka lifecycle events for product and image changes
+- [x] Owner-only media deletion
+- [x] ADMIN moderation for users, products, and media
+- [x] Gateway rate limiting for authentication and media writes
+
+Every required and optional item in the assignment brief is implemented.

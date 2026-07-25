@@ -6,6 +6,9 @@
 |---|---|
 | Password database disclosure | BCrypt cost 12; no plaintext or password DTO field |
 | User enumeration during login | One generic bad-credentials response |
+| Brute-force authentication | Per-client token-bucket limit on `/auth/**` |
+| Abusive media writes | A separate per-client write limit on `/media/**` |
+| ADMIN self-registration | Registration DTO accepts only CLIENT or SELLER |
 | Forged seller ownership | `sellerId` is always the JWT `sub` |
 | Gateway bypass | Product and Media services validate JWTs independently |
 | Cross-seller modification | Constant-time ID lookup followed by owner check; return 404 |
@@ -55,6 +58,7 @@ thumbnail consumers are sensible Kafka-driven production extensions.
 - Use managed MongoDB/Kafka/S3 services or protected persistent volumes.
 - Configure backups and bucket lifecycle rules.
 - Centralize logs keyed by `X-Request-Id`.
-- Add gateway rate limits for `/auth/**` and `/media/**`.
+- Tune gateway rate-limit windows for observed production traffic and use a
+  shared store when running more than one gateway replica.
 - Use a secrets manager rather than a committed or host-readable `.env`.
 - Add CSP headers after listing any required image/CDN origins.

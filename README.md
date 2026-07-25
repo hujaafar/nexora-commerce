@@ -6,8 +6,8 @@ Docker Compose, automated tests, and an intentionally readable Git history.
 
 Clients can browse without signing in. Sellers can register, manage only their
 own products, upload verified images, maintain a media library, and set an
-avatar. Ownership always comes from the signed JWT subject—never from a request
-body.
+avatar. Admins can moderate accounts, products, and media. Ownership always
+comes from the signed JWT subject—never from a request body.
 
 ## Start the entire platform
 
@@ -47,6 +47,7 @@ Demo identities are created only in the Docker development environment:
 |---|---|---|
 | Client | `client@buy01.local` | `Client123!` |
 | Seller | `seller@buy01.local` | `Seller123!` |
+| Admin | `admin@buy01.local` | `Admin123!` |
 
 To stop the platform:
 
@@ -61,12 +62,12 @@ development data, explicitly run `docker compose down --volumes`.
 
 | Application | Host port | Responsibility |
 |---|---:|---|
-| Gateway Service | 8080 | External routes, JWT validation, CORS, request IDs |
+| Gateway Service | 8080 | External routes, JWT validation, CORS, request IDs, rate limits |
 | Discovery Service | 8761 | Eureka service registry and dashboard |
-| User Service | 8081 | Registration, login, BCrypt passwords, profiles, roles |
-| Product Service | 8082 | Public catalog and seller-owned product CRUD |
-| Media Service | 8083 | Image validation, metadata, S3 object operations |
-| Angular UI | 4200 | Public catalog and protected seller workspace |
+| User Service | 8081 | Registration, login, BCrypt passwords, profiles, roles, admin account list |
+| Product Service | 8082 | Public catalog, seller-owned CRUD, admin moderation |
+| Media Service | 8083 | Image validation, metadata, S3 operations, admin moderation |
+| Angular UI | 4200 | Public catalog, seller workspace, admin moderation |
 
 Supporting services:
 
@@ -98,6 +99,9 @@ All external API calls go through `http://localhost:8080`.
 | GET | `/media/images/{id}` | Public, cacheable |
 | GET | `/media/images/mine` | Seller |
 | DELETE | `/media/images/{id}` | Owning seller |
+| GET | `/admin/users` | Admin |
+| GET, DELETE | `/products/moderation`, `/products/moderation/{id}` | Admin |
+| GET, DELETE | `/media/images/moderation`, `/media/images/moderation/{id}` | Admin |
 
 Open [api-examples.http](docs/api-examples.http) in IntelliJ IDEA or a REST
 Client extension for ready-to-run requests.
@@ -117,6 +121,8 @@ Client extension for ready-to-run requests.
 - The Angular client repeats file checks for fast feedback, but the backend
   remains authoritative.
 - CORS is centralized at the gateway. Nginx adds browser hardening headers.
+- Per-client gateway rate limits protect authentication and media write routes.
+- Public registration accepts only CLIENT or SELLER; ADMIN is never self-assigned.
 - Errors have stable status codes and safe JSON bodies; unexpected exceptions
   are logged without exposing internals.
 
@@ -158,9 +164,10 @@ any real PNG file:
 .\scripts\smoke-test.ps1 -ImagePath C:\path\to\sample.png
 ```
 
-The smoke test verifies authentication, role denial, product CRUD, file
-signature validation, MinIO storage, public browsing, and image cache headers.
-It removes the temporary product and media object when finished.
+The smoke test verifies authentication, role denial, admin boundaries, seller
+avatar creation/replacement, product CRUD, file signature validation, MinIO
+storage, public browsing, and image cache headers. It restores the original
+profile and removes every temporary product/media object when finished.
 
 ## Local development
 

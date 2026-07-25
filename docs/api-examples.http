@@ -2,6 +2,7 @@
 @sellerEmail = seller@example.com
 @sellerPassword = Seller123!
 @token = paste-access-token-here
+@adminToken = paste-admin-access-token-here
 @productId = paste-product-id-here
 @mediaId = paste-media-id-here
 
@@ -112,3 +113,32 @@ GET {{gateway}}/media/images/{{mediaId}}
 ### Delete owned media
 DELETE {{gateway}}/media/images/{{mediaId}}
 Authorization: Bearer {{token}}
+
+### Login as the development admin
+POST {{gateway}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@buy01.local",
+  "password": "Admin123!"
+}
+
+### List accounts for moderation
+GET {{gateway}}/admin/users
+Authorization: Bearer {{adminToken}}
+
+### List all products for moderation
+GET {{gateway}}/products/moderation
+Authorization: Bearer {{adminToken}}
+
+### Remove any product as admin
+DELETE {{gateway}}/products/moderation/{{productId}}
+Authorization: Bearer {{adminToken}}
+
+### List all media for moderation
+GET {{gateway}}/media/images/moderation
+Authorization: Bearer {{adminToken}}
+
+### Remove any media as admin
+DELETE {{gateway}}/media/images/moderation/{{mediaId}}
+Authorization: Bearer {{adminToken}}

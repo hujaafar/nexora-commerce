@@ -121,3 +121,18 @@ Return with `git switch main`.
   MinIO with automatic cleanup.
 - `docs: hand off architecture security APIs and the complete learning path` —
   requirements traceability and operational documentation.
+
+## 9. Marketplace-specific design and optional scope
+
+- `93cbfc6 feat(storefront): build a marketplace-native animated landing page`
+  — code-native visuals, real catalog data, smooth section navigation, reduced
+  motion, and zero decorative image/GIF dependencies.
+- `6ee1ce9 feat(gateway): rate limit authentication and media writes` —
+  configurable token buckets, client identification, `429` responses, and rate
+  headers at the edge.
+- `701366d feat(moderation): complete the optional admin workflow` — a
+  non-self-registerable role, defense-in-depth authorization, moderation APIs,
+  and a lazy responsive Angular workspace.
+- `6b7af58 feat(profile): clarify and verify seller avatar replacement` —
+  explicit avatar creation/change UX plus an end-to-end replacement and cleanup
+  check.

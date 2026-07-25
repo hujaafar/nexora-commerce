@@ -4,8 +4,8 @@
 
 ```mermaid
 flowchart LR
-    Browser["Angular SPA<br/>public + seller UI"] -->|"/api"| Nginx["Nginx<br/>SPA + API proxy"]
-    Nginx --> Gateway["API Gateway<br/>JWT · CORS · request ID"]
+    Browser["Angular SPA<br/>public + seller + admin UI"] -->|"/api"| Nginx["Nginx<br/>SPA + API proxy"]
+    Nginx --> Gateway["API Gateway<br/>JWT · CORS · request ID · rate limits"]
     Gateway -->|service discovery| Eureka["Eureka"]
     Gateway --> User["User Service<br/>auth + profiles"]
     Gateway --> Product["Product Service<br/>catalog + ownership"]
@@ -77,4 +77,8 @@ remove the just-created object so storage does not accumulate orphan files.
 - Direct ports 8081–8083 exist for local debugging; production deployments
   should not publish them.
 - JWT validation happens both at the gateway and at the destination service.
+- Authentication and media-write token buckets are keyed by client IP at the
+  gateway. A multi-gateway deployment should move counters to a shared store.
+- ADMIN moderation is separately guarded in the UI, gateway, and domain
+  services; public registration can create only CLIENT or SELLER identities.
 - MongoDB, Kafka, and MinIO are private infrastructure in production.

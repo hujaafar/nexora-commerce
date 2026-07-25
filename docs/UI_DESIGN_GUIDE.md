@@ -70,12 +70,15 @@ use CSS only, and the global reduced-motion rule automatically neutralizes them.
 
 ## 5. Identity console
 
-Commit: `4675f6e feat(profile-ui): create the animated identity console`
+Commits:
+
+- `4675f6e feat(profile-ui): create the animated identity console`
+- `6b7af58 feat(profile): clarify and verify seller avatar replacement`
 
 The profile page turns account state into a visual identity map while preserving
-the working upload flow. The seller avatar remains an actual button and gets an
-accessible label that changes with the user's capability. Client accounts see the
-same polished surface without receiving an upload action they cannot use.
+the working upload flow. Sellers see explicit Add avatar, Change avatar, and
+Remove actions with a local preview before saving. Client and admin accounts see
+the same polished profile surface without receiving seller-only upload actions.
 
 ## 6. Reactive seller metrics
 
@@ -114,8 +117,8 @@ Commit: `ebdcd90 build(ui): set intentional production style budgets`
 Angular budgets are guardrails, not arbitrary defaults. The final limits are set
 just above the measured production output:
 
-- Initial JavaScript and global CSS warn at 520 kB and fail at 600 kB.
-- A component stylesheet warns at 14 kB and fails at 18 kB.
+- Initial JavaScript warns at 540 kB and fails at 600 kB.
+- A component stylesheet warns at 18 kB and fails at 22 kB.
 
 This gives the design room to exist while ensuring future changes cannot silently
 grow without review.
@@ -141,20 +144,30 @@ Try these exercises on a separate branch:
 5. Lower the component budget by 1 kB and use the production build output to find
    the largest stylesheet.
 
-## Reference-driven storefront rebuild
+## Current marketplace-native storefront
 
-The later storefront commits translate a supplied 3D portfolio reference into the
-marketplace domain without changing Angular or replacing real catalog data:
+Commit: `93cbfc6 feat(storefront): build a marketplace-native animated landing page`
 
-- `db09aa8` introduces the self-hosted Kanit font, near-black and silver palette,
-  gradient display type, and purple-orange magnetic-style actions.
-- `e9fe4c6` simplifies the global navigation into a lighter uppercase editorial
-  shell.
-- `6de9f63` recomposes the public catalog as an oversized hero, dual moving product
-  marquee, centered marketplace story, rounded light capability section, and
-  sticky stacked product showcases.
+The final storefront deliberately removes the portfolio gallery, stock imagery,
+and external GIFs. Its visual language now belongs to BUY-01:
 
-The central hero image, both marquees, inventory values, prices, and sticky cards
-all come from the live product API. The reference determines composition and
-motion, while BUY-01 remains responsible for its own content, accessibility,
-authorization, and responsive behavior.
+- The hero uses CSS-built product parcels and orbiting category tags.
+- Real seller product images appear only when returned by the product API.
+- Products, About us, and How it works are real page sections.
+- Every section button uses smooth scrolling and updates the URL fragment.
+- Login, registration, seller tools, profile, and admin moderation remain normal
+  application routes.
+- Reduced-motion preferences disable smooth scrolling and looping animation.
+
+This keeps the experience expressive without implying that a marketplace is a
+technology demo or a creator portfolio.
+
+## Moderation workspace
+
+Commit: `701366d feat(moderation): complete the optional admin workflow`
+
+The admin dashboard presents three human-readable collections: accounts,
+products, and uploaded media. It avoids infrastructure language, uses clear
+confirmation before deletion, and keeps account data read-only. Route guards
+remove the workspace from non-admin navigation, while the services still enforce
+the real authorization boundary.
