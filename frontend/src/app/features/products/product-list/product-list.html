@@ -1,231 +1,262 @@
-<div class="reference-page">
-  <section class="hero-section" id="top">
-    <nav class="home-nav" aria-label="Landing page navigation">
-      <a href="#about">About</a>
-      <a href="#values">Why BUY/01</a>
-      <a href="#collection">Products</a>
-      @if (authService.isAuthenticated()) {
-        <a routerLink="/profile">Account</a>
-      } @else {
-        <a routerLink="/login">Sign in</a>
-      }
+<div class="storefront">
+  <header class="landing-header">
+    <a class="landing-brand" href="#top" (click)="scrollToSection($event, 'top')">
+      <span>01</span>
+      <strong>BUY/01</strong>
+    </a>
+
+    <nav aria-label="Storefront navigation">
+      <a href="#products" (click)="scrollToSection($event, 'products')">Products</a>
+      <a href="#about" (click)="scrollToSection($event, 'about')">About us</a>
+      <a href="#how-it-works" (click)="scrollToSection($event, 'how-it-works')">How it works</a>
     </nav>
 
-    <div class="hero-heading-wrap">
-      <h1 class="hero-heading">BUY ORIGINAL</h1>
-    </div>
-
-    <div
-      class="hero-portrait-wrap"
-      (pointermove)="moveMagnet($event)"
-      (pointerleave)="resetMagnet()"
-    >
-      <div class="hero-portrait" [style.transform]="magnetTransform()">
-        <span class="portrait-halo" aria-hidden="true"></span>
-        <img
-          src="https://shrug-person-78902957.figma.site/_components/v2/d24c01ad3a56fc65e942a1f501eb73db42d7cf9a/Rectangle_40443.81459862.png"
-          alt="Independent creator"
-        />
-      </div>
-    </div>
-
-    <div class="hero-bottom">
-      <p>
-        A marketplace driven by original products, independent sellers, and
-        unforgettable finds.
-      </p>
-      <a class="gradient-button" href="#collection">
-        <span>Shop the drop</span>
-      </a>
-    </div>
-  </section>
-
-  <section #marqueeSection class="marquee-section" aria-label="Creative preview">
-    <div class="marquee-row">
-      <div
-        class="marquee-track"
-        [style.transform]="'translate3d(' + marqueeOffset() + 'px, 0, 0)'"
-      >
-        @for (copy of [0, 1, 2]; track copy) {
-          @for (image of firstMarqueeRow; track $index) {
-            <figure class="marquee-tile">
-              <img [src]="image" alt="" loading="lazy" />
-            </figure>
+    <div class="landing-actions">
+      @if (authService.isAuthenticated()) {
+        @if (authService.isSeller()) {
+          <a class="seller-link" routerLink="/seller">My shop</a>
+        }
+        <a class="account-link" routerLink="/profile" aria-label="Open profile">
+          @if (authService.currentUser()?.avatarUrl) {
+            <img [src]="authService.currentUser()?.avatarUrl" alt="" />
+          } @else {
+            <span>{{ authService.currentUser()?.name?.charAt(0)?.toUpperCase() }}</span>
           }
-        }
-      </div>
-    </div>
-    <div class="marquee-row">
-      <div
-        class="marquee-track"
-        [style.transform]="'translate3d(' + -marqueeOffset() + 'px, 0, 0)'"
-      >
-        @for (copy of [0, 1, 2]; track copy) {
-          @for (image of secondMarqueeRow; track $index) {
-            <figure class="marquee-tile">
-              <img [src]="image" alt="" loading="lazy" />
-            </figure>
-          }
-        }
-      </div>
-    </div>
-  </section>
-
-  <section class="about-section" id="about">
-    <img
-      class="decor decor-moon reveal-left"
-      src="https://shrug-person-78902957.figma.site/_components/v2/ebb2b8f25d8e24d5f0a5ca8af4c950de81aa2fd7/moon_icon.11395d36.png"
-      alt=""
-      loading="lazy"
-    />
-    <img
-      class="decor decor-left reveal-left"
-      src="https://shrug-person-78902957.figma.site/_components/v2/ebb2b8f25d8e24d5f0a5ca8af4c950de81aa2fd7/p59_1.4659672e.png"
-      alt=""
-      loading="lazy"
-    />
-    <img
-      class="decor decor-lego reveal-right"
-      src="https://shrug-person-78902957.figma.site/_components/v2/ebb2b8f25d8e24d5f0a5ca8af4c950de81aa2fd7/lego_icon-1.703bb594.png"
-      alt=""
-      loading="lazy"
-    />
-    <img
-      class="decor decor-right reveal-right"
-      src="https://shrug-person-78902957.figma.site/_components/v2/ebb2b8f25d8e24d5f0a5ca8af4c950de81aa2fd7/Group_134-1.2e04f3ce.png"
-      alt=""
-      loading="lazy"
-    />
-
-    <div class="about-content">
-      <h2 class="hero-heading reveal-up">About us</h2>
-      <p #aboutCopy class="animated-copy" aria-label="{{ aboutText }}">
-        @for (character of aboutCharacters; track $index) {
-          <span [style.opacity]="characterOpacity($index)">
-            {{ character === ' ' ? '\u00A0' : character }}
-          </span>
-        }
-      </p>
-      @if (authService.isSeller()) {
-        <a class="gradient-button" routerLink="/seller">Open my shop</a>
+          <b>Profile</b>
+        </a>
       } @else {
-        <a class="gradient-button" routerLink="/register">Join the market</a>
+        <a class="seller-link" routerLink="/login">Sign in</a>
+        <a class="account-link join-link" routerLink="/register">Join BUY/01</a>
       }
     </div>
-  </section>
+  </header>
 
-  <section class="values-section" id="values">
-    <h2 class="reveal-up">Shop easy</h2>
-    <div class="value-list">
-      <article class="reveal-up">
-        <span>01</span>
-        <div>
-          <h3>Discover freely</h3>
-          <p>Browse every public product, explore new ideas, and take your time finding the right one.</p>
+  <main>
+    <section class="market-hero" id="top">
+      <div class="hero-copy">
+        <p class="section-kicker"><i></i> Independent marketplace</p>
+        <h1>Find what<br /><span>feels original.</span></h1>
+        <p class="hero-description">
+          Discover products from independent sellers, or open your own shop and
+          share something worth finding.
+        </p>
+        <div class="hero-actions">
+          <a class="primary-action" href="#products" (click)="scrollToSection($event, 'products')">
+            Explore products <span aria-hidden="true">↓</span>
+          </a>
+          @if (authService.isSeller()) {
+            <a class="secondary-action" routerLink="/seller">Manage my shop ↗</a>
+          } @else {
+            <a class="secondary-action" routerLink="/register">Start selling ↗</a>
+          }
         </div>
-      </article>
-      <article class="reveal-up">
-        <span>02</span>
-        <div>
-          <h3>Meet independent sellers</h3>
-          <p>Shop directly from people building their own products and sharing work they care about.</p>
-        </div>
-      </article>
-      <article class="reveal-up">
-        <span>03</span>
-        <div>
-          <h3>See every detail</h3>
-          <p>Clear product photography and focused descriptions make each listing easy to understand.</p>
-        </div>
-      </article>
-      <article class="reveal-up">
-        <span>04</span>
-        <div>
-          <h3>Know what is available</h3>
-          <p>Current pricing and stock counts help you decide without surprises or unnecessary steps.</p>
-        </div>
-      </article>
-      <article class="reveal-up">
-        <span>05</span>
-        <div>
-          <h3>Make it yours</h3>
-          <p>Create a personal account to shape your profile, or open a shop and publish your own work.</p>
-        </div>
-      </article>
-    </div>
-  </section>
-
-  <section class="projects-section" id="collection">
-    <div class="projects-heading">
-      <p>THE CURRENT DROP / {{ products().length.toString().padStart(2, '0') }}</p>
-      <h2 class="hero-heading">Product</h2>
-    </div>
-
-    @if (loading()) {
-      <div class="loading-card" aria-label="Loading products">
-        <span></span><span></span><span></span>
       </div>
-    } @else if (products().length === 0) {
-      <div class="project-stage">
-        <article class="project-card empty-project">
-          <header>
-            <strong class="project-number">01</strong>
-            <div>
-              <small>OPENING DROP</small>
-              <h3>Your product here</h3>
-            </div>
-            <a class="live-button" routerLink="/register">Start selling</a>
-          </header>
-          <div class="project-gallery">
-            <div class="gallery-side">
-              <img [src]="previewImages[0]" alt="" loading="lazy" />
-              <img [src]="previewImages[1]" alt="" loading="lazy" />
-            </div>
-            <div class="gallery-main">
-              <img [src]="previewImages[2]" alt="" loading="lazy" />
-              <div class="empty-message">
-                <span>THE COLLECTION IS OPEN</span>
-                <p>Be the first seller to publish something original.</p>
-              </div>
-            </div>
+
+      <div class="market-object" aria-hidden="true">
+        <div class="object-orbit orbit-one"><i></i><i></i><i></i></div>
+        <div class="object-orbit orbit-two"></div>
+        <div class="object-card card-back">
+          <small>NEW / 01</small>
+          <strong>MAKE</strong>
+          <span>Something people remember</span>
+        </div>
+        <div class="object-card card-front">
+          <div class="card-mark">01</div>
+          <p>BUY DIFFERENT</p>
+          <div class="card-lines"><i></i><i></i><i></i></div>
+        </div>
+        <span class="object-dot dot-one"></span>
+        <span class="object-dot dot-two"></span>
+      </div>
+
+      <div class="hero-stats" aria-label="Marketplace totals">
+        <div>
+          <strong>{{ products().length.toString().padStart(2, '0') }}</strong>
+          <span>Products</span>
+        </div>
+        <div>
+          <strong>{{ sellers().toString().padStart(2, '0') }}</strong>
+          <span>Sellers</span>
+        </div>
+        <div>
+          <strong>{{ totalUnits().toString().padStart(2, '0') }}</strong>
+          <span>Items available</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="product-section" id="products">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker"><i></i> Public marketplace</p>
+          <h2>Latest products</h2>
+        </div>
+        <p>
+          Every listing comes directly from an independent seller. Open a
+          product to see its photos, price, description, and current stock.
+        </p>
+      </div>
+
+      @if (loading()) {
+        <div class="product-grid" aria-label="Loading products">
+          @for (item of [1, 2, 3, 4]; track item) {
+            <article class="product-card product-skeleton">
+              <div></div><span></span><span></span>
+            </article>
+          }
+        </div>
+      } @else if (products().length === 0) {
+        <div class="empty-market">
+          <div class="empty-visual" aria-hidden="true">
+            <span>01</span><i></i><i></i>
           </div>
-        </article>
-      </div>
-    } @else {
-      <div class="project-list">
-        @for (product of products(); track product.id; let index = $index) {
-          <div class="project-stage">
-            <article class="project-card" [style.top.px]="96 + index * 28">
-              <header>
-                <strong class="project-number">
-                  {{ (index + 1).toString().padStart(2, '0') }}
-                </strong>
+          <div>
+            <p class="section-kicker"><i></i> Opening collection</p>
+            <h3>The shelves are ready.</h3>
+            <p>
+              There are no published products yet. Create a seller account and
+              be the first person to open a shop.
+            </p>
+            @if (authService.isSeller()) {
+              <a class="primary-action" routerLink="/seller">Publish a product ↗</a>
+            } @else {
+              <a class="primary-action" routerLink="/register">Become a seller ↗</a>
+            }
+          </div>
+        </div>
+      } @else {
+        <div class="product-grid">
+          @for (product of products(); track product.id; let index = $index) {
+            <article class="product-card">
+              <a class="product-image" [routerLink]="['/products', product.id]">
+                @if (product.imageUrls[0]) {
+                  <img [src]="product.imageUrls[0]" [alt]="product.name" loading="lazy" />
+                } @else {
+                  <span class="product-placeholder">
+                    <i></i>
+                    <strong>{{ product.name.charAt(0) }}</strong>
+                  </span>
+                }
+                <small>{{ (index + 1).toString().padStart(2, '0') }}</small>
+              </a>
+              <div class="product-copy">
                 <div>
-                  <small>INDEPENDENT SELLER</small>
+                  <small>{{ product.quantity }} available</small>
                   <h3>{{ product.name }}</h3>
                 </div>
-                <div class="project-price">
-                  <small>{{ product.quantity }} AVAILABLE</small>
-                  <strong>{{ product.price | currency: 'USD' }}</strong>
-                </div>
-                <a class="live-button" [routerLink]="['/products', product.id]">
-                  View product
-                </a>
-              </header>
-              <div class="project-gallery">
-                <div class="gallery-side">
-                  <img [src]="productImage(product, 1)" [alt]="product.name" loading="lazy" />
-                  <img [src]="productImage(product, 2)" [alt]="product.name" loading="lazy" />
-                </div>
-                <a class="gallery-main" [routerLink]="['/products', product.id]">
-                  <img [src]="productImage(product, 0)" [alt]="product.name" loading="lazy" />
-                  <span>{{ product.description }}</span>
-                </a>
+                <strong>{{ product.price | currency: 'USD' }}</strong>
               </div>
+              <p>{{ product.description }}</p>
+              <a class="product-link" [routerLink]="['/products', product.id]">
+                View product <span>↗</span>
+              </a>
             </article>
-          </div>
-        }
+          }
+        </div>
+      }
+    </section>
+
+    <section class="about-section" id="about">
+      <div class="about-number" aria-hidden="true">01</div>
+      <div class="about-copy">
+        <p class="section-kicker"><i></i> About BUY/01</p>
+        <h2>A smaller market for better discoveries.</h2>
+        <p>
+          BUY/01 brings clients and independent sellers together in one focused
+          place. Buyers can browse openly. Sellers control their products,
+          photos, prices, stock, shop profile, and avatar from a personal
+          workspace.
+        </p>
+        <a class="text-action" href="#how-it-works" (click)="scrollToSection($event, 'how-it-works')">
+          See how it works <span>↓</span>
+        </a>
       </div>
-    }
-  </section>
+      <div class="about-principles">
+        <article>
+          <span>01</span>
+          <div><h3>Original products</h3><p>Listings created and managed by their sellers.</p></div>
+        </article>
+        <article>
+          <span>02</span>
+          <div><h3>Clear choices</h3><p>Useful photos, honest stock, and simple product details.</p></div>
+        </article>
+        <article>
+          <span>03</span>
+          <div><h3>Personal shops</h3><p>A profile, avatar, media library, and catalog in one place.</p></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="steps-section" id="how-it-works">
+      <div class="section-heading light-heading">
+        <div>
+          <p class="section-kicker"><i></i> How it works</p>
+          <h2>Simple from the start.</h2>
+        </div>
+        <p>Choose how you want to use BUY/01. You can browse as a client or build your own catalog as a seller.</p>
+      </div>
+
+      <div class="step-grid">
+        <article>
+          <span>01</span>
+          <div class="step-icon browse-icon" aria-hidden="true"><i></i></div>
+          <h3>Browse</h3>
+          <p>Explore the public collection and open any product without creating an account.</p>
+          <a href="#products" (click)="scrollToSection($event, 'products')">See products ↗</a>
+        </article>
+        <article>
+          <span>02</span>
+          <div class="step-icon profile-icon" aria-hidden="true"><i></i></div>
+          <h3>Create your profile</h3>
+          <p>Join as a client or seller, update your name, and give your shop its own avatar.</p>
+          @if (authService.isAuthenticated()) {
+            <a routerLink="/profile">Edit profile ↗</a>
+          } @else {
+            <a routerLink="/register">Create account ↗</a>
+          }
+        </article>
+        <article>
+          <span>03</span>
+          <div class="step-icon shop-icon" aria-hidden="true"><i></i></div>
+          <h3>Open your shop</h3>
+          <p>Add products, upload or remove images, and keep prices and stock up to date.</p>
+          @if (authService.isSeller()) {
+            <a routerLink="/seller">Manage shop ↗</a>
+          } @else {
+            <a routerLink="/register">Start selling ↗</a>
+          }
+        </article>
+      </div>
+    </section>
+
+    <section class="join-section" id="join">
+      <div>
+        <p class="section-kicker"><i></i> Your place is ready</p>
+        <h2>Find something.<br /><span>Or make something.</span></h2>
+      </div>
+      <div class="join-actions">
+        <p>One marketplace, two ways to begin. Browse as a client or build your catalog as a seller.</p>
+        @if (authService.isAuthenticated()) {
+          <a class="primary-action" routerLink="/profile">Open my profile ↗</a>
+        } @else {
+          <a class="primary-action" routerLink="/register">Join BUY/01 ↗</a>
+        }
+        <a class="text-action" href="#top" (click)="scrollToSection($event, 'top')">
+          Back to top <span>↑</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="landing-footer">
+    <a class="landing-brand" href="#top" (click)="scrollToSection($event, 'top')">
+      <span>01</span><strong>BUY/01</strong>
+    </a>
+    <p>Independent products. Personal shops.</p>
+    <nav aria-label="Footer navigation">
+      <a href="#products" (click)="scrollToSection($event, 'products')">Products</a>
+      <a href="#about" (click)="scrollToSection($event, 'about')">About</a>
+      <a href="#how-it-works" (click)="scrollToSection($event, 'how-it-works')">How it works</a>
+    </nav>
+  </footer>
 </div>
