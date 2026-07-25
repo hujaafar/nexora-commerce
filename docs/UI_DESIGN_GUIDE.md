@@ -141,3 +141,20 @@ Try these exercises on a separate branch:
 5. Lower the component budget by 1 kB and use the production build output to find
    the largest stylesheet.
 
+## Reference-driven storefront rebuild
+
+The later storefront commits translate a supplied 3D portfolio reference into the
+marketplace domain without changing Angular or replacing real catalog data:
+
+- `db09aa8` introduces the self-hosted Kanit font, near-black and silver palette,
+  gradient display type, and purple-orange magnetic-style actions.
+- `e9fe4c6` simplifies the global navigation into a lighter uppercase editorial
+  shell.
+- `6de9f63` recomposes the public catalog as an oversized hero, dual moving product
+  marquee, centered marketplace story, rounded light capability section, and
+  sticky stacked product showcases.
+
+The central hero image, both marquees, inventory values, prices, and sticky cards
+all come from the live product API. The reference determines composition and
+motion, while BUY-01 remains responsible for its own content, accessibility,
+authorization, and responsive behavior.
