@@ -1,66 +1,185 @@
 <section class="hero">
-  <div class="hero-content">
-    <p class="eyebrow">Independent goods, clearly listed</p>
-    <h1>Find something worth keeping.</h1>
-    <p>
-      A simple marketplace where clients browse openly and sellers stay in
-      complete control of their own catalog.
-    </p>
-    @if (authService.isSeller()) {
-      <a class="btn btn-brand px-4 py-2" routerLink="/seller">Manage your catalog</a>
-    } @else if (!authService.isAuthenticated()) {
-      <a class="btn btn-brand px-4 py-2" routerLink="/register">Start exploring</a>
-    }
+  <div class="hero-aurora aurora-one" aria-hidden="true"></div>
+  <div class="hero-aurora aurora-two" aria-hidden="true"></div>
+  <div class="hero-grid" aria-hidden="true"></div>
+
+  <div class="hero-shell">
+    <div class="hero-content">
+      <div class="hero-chip">
+        <span>New digital market</span>
+        <i></i>
+        <span>Edition 01</span>
+      </div>
+      <p class="eyebrow">Independent products. Zero noise.</p>
+      <h1>
+        Discover the
+        <span>unexpected.</span>
+      </h1>
+      <p class="hero-lead">
+        A curated marketplace where original sellers own their work, every
+        image is verified, and every listing has a real identity behind it.
+      </p>
+      <div class="hero-actions">
+        @if (authService.isSeller()) {
+          <a class="btn btn-brand hero-primary" routerLink="/seller">
+            Open your studio <span aria-hidden="true">↗</span>
+          </a>
+        } @else if (!authService.isAuthenticated()) {
+          <a class="btn btn-brand hero-primary" routerLink="/register">
+            Enter the marketplace <span aria-hidden="true">↗</span>
+          </a>
+        } @else {
+          <a class="btn btn-brand hero-primary" href="#catalog">
+            Explore the drop <span aria-hidden="true">↓</span>
+          </a>
+        }
+        <a class="hero-secondary" href="#catalog">
+          Browse the collection
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+      <div class="trust-row">
+        <div>
+          <strong>JWT</strong>
+          <span>Secure identity</span>
+        </div>
+        <div>
+          <strong>100%</strong>
+          <span>Seller-owned</span>
+        </div>
+        <div>
+          <strong>2 MB</strong>
+          <span>Verified media</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-visual" aria-hidden="true">
+      <div class="orbit orbit-outer"></div>
+      <div class="orbit orbit-inner"></div>
+      <span class="orbit-node node-one"></span>
+      <span class="orbit-node node-two"></span>
+
+      <div class="showcase-card">
+        <div class="showcase-top">
+          <span>FEATURED / 001</span>
+          <i></i>
+        </div>
+        <div class="showcase-art">
+          <div class="art-orb"></div>
+          <span class="art-number">01</span>
+          <span class="art-tag">ORIGINAL</span>
+        </div>
+        <div class="showcase-copy">
+          <div>
+            <small>Independent object</small>
+            <strong>Built different.</strong>
+          </div>
+          <span>→</span>
+        </div>
+      </div>
+
+      <div class="float-card verified-card">
+        <span>✓</span>
+        <div>
+          <strong>Media verified</strong>
+          <small>Real bytes. Real image.</small>
+        </div>
+      </div>
+
+      <div class="float-card owner-card">
+        <small>OWNERSHIP</small>
+        <strong>Seller / secured</strong>
+        <div><i></i><i></i><i></i><span>LIVE</span></div>
+      </div>
+    </div>
   </div>
-  <div class="hero-stamp" aria-hidden="true">
-    <span>CURATED</span>
-    <strong>01</strong>
-    <small>MARKET</small>
+
+  <div class="hero-ticker" aria-hidden="true">
+    <div>
+      <span>ORIGINAL FINDS</span><i>✦</i>
+      <span>SECURE BY DESIGN</span><i>✦</i>
+      <span>SELLER OWNED</span><i>✦</i>
+      <span>CURATED DIFFERENTLY</span><i>✦</i>
+      <span>ORIGINAL FINDS</span><i>✦</i>
+      <span>SECURE BY DESIGN</span><i>✦</i>
+      <span>SELLER OWNED</span><i>✦</i>
+      <span>CURATED DIFFERENTLY</span><i>✦</i>
+    </div>
   </div>
 </section>
 
-<section class="page-shell catalog-section">
+<section class="page-shell catalog-section" id="catalog">
   <div class="section-heading">
     <div>
-      <p class="eyebrow">The catalog</p>
-      <h2>Recently added</h2>
+      <p class="eyebrow">Live collection</p>
+      <h2>The latest <span>drop.</span></h2>
+      <p class="section-copy">Freshly published by independent sellers.</p>
     </div>
-    <span>{{ products().length }} {{ products().length === 1 ? 'item' : 'items' }}</span>
+    <div class="catalog-count">
+      <span>{{ products().length.toString().padStart(2, '0') }}</span>
+      <small>{{ products().length === 1 ? 'live listing' : 'live listings' }}</small>
+    </div>
   </div>
 
   @if (loading()) {
     <div class="product-grid" aria-label="Loading products">
       @for (item of [1, 2, 3]; track item) {
-        <div class="product-card skeleton"></div>
+        <div class="product-card skeleton">
+          <div class="skeleton-image"></div>
+          <div class="skeleton-copy"></div>
+        </div>
       }
     </div>
   } @else if (products().length === 0) {
-    <div class="empty-state">
-      <h3>The shelves are ready.</h3>
-      <p>No products have been published yet. Check back soon.</p>
+    <div class="empty-state catalog-empty">
+      <span class="empty-code">DROP_001 / LOADING</span>
+      <h3>The next great find starts here.</h3>
+      <p>
+        The collection is quiet right now. Be the first seller to shape the
+        market, or come back for the first drop.
+      </p>
+      @if (authService.isSeller()) {
+        <a class="btn btn-brand mt-4" routerLink="/seller">Publish the first listing</a>
+      } @else if (!authService.isAuthenticated()) {
+        <a class="btn btn-soft mt-4" routerLink="/register">Join before the drop</a>
+      }
     </div>
   } @else {
     <div class="product-grid">
-      @for (product of products(); track product.id) {
-        <article class="product-card">
+      @for (product of products(); track product.id; let index = $index) {
+        <article
+          class="product-card"
+          [style.animation-delay.ms]="index * 90"
+        >
           <a class="product-image" [routerLink]="['/products', product.id]">
+            <span class="card-index">{{ (index + 1).toString().padStart(2, '0') }}</span>
             @if (product.imageUrls[0]) {
               <img [src]="product.imageUrls[0]" [alt]="product.name" loading="lazy" />
             } @else {
-              <span>{{ product.name.charAt(0) }}</span>
+              <div class="product-placeholder">
+                <i></i>
+                <strong>{{ product.name.charAt(0) }}</strong>
+              </div>
             }
             <small [class.sold-out]="product.quantity === 0">
-              {{ product.quantity > 0 ? product.quantity + ' in stock' : 'Sold out' }}
+              <i></i>
+              {{ product.quantity > 0 ? product.quantity + ' available' : 'Sold out' }}
             </small>
+            <span class="card-arrow">↗</span>
           </a>
           <div class="product-copy">
-            <div>
+            <div class="product-info">
+              <span>Independent listing</span>
               <h3>
                 <a [routerLink]="['/products', product.id]">{{ product.name }}</a>
               </h3>
               <p>{{ product.description }}</p>
             </div>
-            <strong>{{ product.price | currency: 'USD' }}</strong>
+            <div class="product-price">
+              <small>USD</small>
+              <strong>{{ product.price | currency: 'USD' : 'symbol' : '1.0-2' }}</strong>
+            </div>
           </div>
         </article>
       }
