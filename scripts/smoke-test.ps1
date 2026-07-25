@@ -64,6 +64,8 @@ $invalidImage = Join-Path $projectRoot 'pom.xml'
 $headers = @{}
 $productId = $null
 $mediaId = $null
+$avatarMediaIds = @()
+$originalProfile = $null
 
 try {
     $ui = Invoke-WebRequest -Uri ($ApiBase -replace '/api$', '/') -UseBasicParsing
@@ -85,7 +87,60 @@ try {
     $headers = @{ Authorization = "Bearer $sellerToken" }
 
     $profile = Invoke-RestMethod -Uri "$ApiBase/me" -Headers $headers
+    $originalProfile = $profile
     Assert-True ($profile.role -eq 'SELLER') 'seller profile has the wrong role'
+
+    $firstAvatarJson = & curl.exe `
+        --silent `
+        --show-error `
+        --fail-with-body `
+        --request POST `
+        "$ApiBase/media/images" `
+        --header "Authorization: Bearer $sellerToken" `
+        --form "file=@$resolvedImage;type=image/png" `
+        --form 'purpose=AVATAR'
+    Assert-True ($LASTEXITCODE -eq 0) 'seller avatar creation failed'
+    $firstAvatar = $firstAvatarJson | ConvertFrom-Json
+    $avatarMediaIds += $firstAvatar.id
+
+    $profileWithAvatar = Invoke-RestMethod `
+        -Uri "$ApiBase/me" `
+        -Method Put `
+        -Headers $headers `
+        -ContentType 'application/json' `
+        -Body (@{
+            name = $profile.name
+            avatarUrl = $firstAvatar.url
+        } | ConvertTo-Json)
+    Assert-True ($profileWithAvatar.avatarUrl -eq $firstAvatar.url) `
+        'seller profile did not retain the created avatar'
+
+    $replacementAvatarJson = & curl.exe `
+        --silent `
+        --show-error `
+        --fail-with-body `
+        --request POST `
+        "$ApiBase/media/images" `
+        --header "Authorization: Bearer $sellerToken" `
+        --form "file=@$resolvedImage;type=image/png" `
+        --form 'purpose=AVATAR'
+    Assert-True ($LASTEXITCODE -eq 0) 'seller avatar replacement upload failed'
+    $replacementAvatar = $replacementAvatarJson | ConvertFrom-Json
+    $avatarMediaIds += $replacementAvatar.id
+
+    $profileWithReplacement = Invoke-RestMethod `
+        -Uri "$ApiBase/me" `
+        -Method Put `
+        -Headers $headers `
+        -ContentType 'application/json' `
+        -Body (@{
+            name = $profile.name
+            avatarUrl = $replacementAvatar.url
+        } | ConvertTo-Json)
+    Assert-True ($profileWithReplacement.avatarUrl -eq $replacementAvatar.url) `
+        'seller profile did not retain the replacement avatar'
+    Assert-True ($profileWithReplacement.avatarUrl -ne $firstAvatar.url) `
+        'seller avatar URL did not change after replacement'
 
     $clientLogin = Invoke-RestMethod `
         -Uri "$ApiBase/auth/login" `
@@ -191,9 +246,37 @@ try {
     Assert-True ($download.Headers['Cache-Control'] -like '*immutable*') `
         'public image download is missing immutable caching'
 
-    Write-Host 'PASS: UI, authentication, roles, product CRUD, media validation,'
-    Write-Host '      object storage, public catalog, and image caching all work.'
+    Write-Host 'PASS: UI, authentication, roles, seller avatar create/replace,'
+    Write-Host '      product CRUD, media validation, object storage, public catalog,'
+    Write-Host '      and image caching all work.'
 } finally {
+    if ($null -ne $originalProfile -and $headers.Count -gt 0) {
+        try {
+            Invoke-RestMethod `
+                -Uri "$ApiBase/me" `
+                -Method Put `
+                -Headers $headers `
+                -ContentType 'application/json' `
+                -Body (@{
+                    name = $originalProfile.name
+                    avatarUrl = $originalProfile.avatarUrl
+                } | ConvertTo-Json) | Out-Null
+        } catch {
+            Write-Warning 'Could not restore the original seller profile'
+        }
+    }
+
+    foreach ($avatarMediaId in $avatarMediaIds) {
+        try {
+            Invoke-RestMethod `
+                -Uri "$ApiBase/media/images/$avatarMediaId" `
+                -Method Delete `
+                -Headers $headers | Out-Null
+        } catch {
+            Write-Warning "Could not remove smoke-test avatar $avatarMediaId"
+        }
+    }
+
     if ($null -ne $mediaId) {
         try {
             Invoke-RestMethod `

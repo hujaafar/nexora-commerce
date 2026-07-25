@@ -3,8 +3,8 @@
     <p class="eyebrow">Your account</p>
     <h1>Make your profile feel like you.</h1>
     <p>
-      Update the name people see and choose a profile photo that feels right for
-      your shop.
+      Update the name people see and, if you are a seller, create or change the
+      avatar shown with your shop.
     </p>
 
     <div class="identity-map" aria-hidden="true">
@@ -24,18 +24,9 @@
     </div>
 
     <div class="profile-facts">
-      <div>
-        <span>01</span>
-        <p>Display name</p>
-      </div>
-      <div>
-        <span>02</span>
-        <p>Account role</p>
-      </div>
-      <div>
-        <span>03</span>
-        <p>Profile photo</p>
-      </div>
+      <div><span>01</span><p>Display name</p></div>
+      <div><span>02</span><p>Account role</p></div>
+      <div><span>03</span><p>Seller avatar</p></div>
     </div>
   </div>
 
@@ -51,15 +42,24 @@
         type="button"
         [disabled]="!authService.isSeller()"
         (click)="avatarInput.click()"
-        [attr.aria-label]="authService.isSeller() ? 'Change profile avatar' : 'Profile avatar'"
+        [attr.aria-label]="
+          authService.isSeller()
+            ? avatarPreview() || avatarUrl()
+              ? 'Change seller avatar'
+              : 'Create seller avatar'
+            : 'Profile avatar'
+        "
       >
         @if (avatarPreview() || avatarUrl()) {
-          <img [src]="avatarPreview() || avatarUrl()" alt="Profile avatar" />
+          <img [src]="avatarPreview() || avatarUrl()" alt="Seller avatar preview" />
         } @else {
           <span>{{ authService.currentUser()?.name?.charAt(0)?.toUpperCase() }}</span>
         }
         @if (authService.isSeller()) {
-          <small><i>＋</i> Change</small>
+          <small>
+            <i>+</i>
+            {{ avatarPreview() || avatarUrl() ? 'Change avatar' : 'Add avatar' }}
+          </small>
         }
       </button>
       <input
@@ -71,13 +71,19 @@
       />
       <div class="identity-copy">
         <span class="role-label">
-          {{ authService.currentUser()?.role === 'SELLER' ? 'Seller account' : 'Client account' }}
+          {{
+            authService.currentUser()?.role === 'SELLER'
+              ? 'Seller account'
+              : authService.currentUser()?.role === 'ADMIN'
+                ? 'Admin account'
+                : 'Client account'
+          }}
         </span>
         <h2>{{ authService.currentUser()?.name }}</h2>
         <p>{{ authService.currentUser()?.email }}</p>
         @if (authService.isSeller() && (avatarPreview() || avatarUrl())) {
           <button class="remove-avatar" type="button" (click)="removeAvatar()">
-            Remove image
+            Remove avatar
           </button>
         }
       </div>
@@ -100,21 +106,21 @@
 
     @if (authService.isSeller()) {
       <div class="avatar-help">
-        <span>◈</span>
+        <span>◆</span>
         <p>
-          Choose a clear JPEG, PNG, GIF, or WebP image up to 2 MB for your seller
-          profile.
+          Click the avatar above to add or replace it. Choose a JPEG, PNG, GIF,
+          or WebP image up to 2 MB, preview it, then save your changes.
         </p>
       </div>
     } @else {
       <div class="avatar-help">
-        <span>◈</span>
-        <p>Your name is used to personalize your BUY-01 experience.</p>
+        <span>◆</span>
+        <p>Your display name personalizes your BUY/01 account.</p>
       </div>
     }
 
     <button class="btn btn-brand w-100 py-2" type="submit" [disabled]="saving()">
-      {{ saving() ? 'Synchronizing…' : 'Save profile changes →' }}
+      {{ saving() ? 'Saving…' : 'Save profile changes →' }}
     </button>
   </form>
 </section>
