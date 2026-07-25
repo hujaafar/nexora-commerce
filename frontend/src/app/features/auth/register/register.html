@@ -1,25 +1,25 @@
 <section class="auth-page">
   <div class="auth-story">
-    <p class="eyebrow">Your new marketplace identity</p>
+    <p class="eyebrow">Your new marketplace profile</p>
     <h1>Browse bold. Sell smarter.</h1>
     <p>
-      Choose how you enter BUY-01. Discover the catalog as a client, or unlock a
-      private command center for products, stock, and media.
+      Choose how you enter BUY-01. Browse the catalog as a client, or open your
+      own shop with a dashboard for products, stock, and photos.
     </p>
 
     <div class="story-visual" aria-hidden="true">
       <div class="story-topline">
-        <span>Account provisioning</span>
+        <span>Account setup</span>
         <span class="story-status">Ready</span>
       </div>
       <div class="story-metrics">
         <div class="story-metric">
           <strong>01</strong>
-          <span>secure identity</span>
+          <span>create a profile</span>
         </div>
         <div class="story-metric">
           <strong>02</strong>
-          <span>role boundaries</span>
+          <span>choose your path</span>
         </div>
         <div class="story-metric">
           <strong>∞</strong>
@@ -30,18 +30,18 @@
 
     <div class="security-note">
       <span>✓</span>
-      Your signed identity decides exactly what you can see and change.
+      Choose a client profile to browse or a seller profile to start your shop.
     </div>
   </div>
 
   <form class="auth-card surface-card" [formGroup]="form" (ngSubmit)="submit()">
     <div class="auth-brandline">
-      <span class="auth-mark"><i>01</i> BUY NETWORK</span>
-      <span class="auth-encryption">Secure join</span>
+      <span class="auth-mark"><i>01</i> BUY-01 MARKET</span>
+      <span class="auth-encryption">Join BUY-01</span>
     </div>
 
     <p class="eyebrow">Create account</p>
-    <h2>Choose your mode.</h2>
+    <h2>Choose your path.</h2>
     <p>You can start exploring in less than a minute.</p>
 
     <div class="role-picker" role="radiogroup" aria-label="Account role">
@@ -104,7 +104,7 @@
     </div>
 
     <button class="btn btn-brand w-100 py-2" type="submit" [disabled]="submitting()">
-      {{ submitting() ? 'Creating account…' : 'Create my identity →' }}
+      {{ submitting() ? 'Creating account…' : 'Create my account →' }}
     </button>
     <p class="auth-switch">
       Already a member? <a routerLink="/login">Sign in</a>

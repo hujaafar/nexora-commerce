@@ -79,7 +79,7 @@ describe('ProductDetail', () => {
     const page = fixture.nativeElement as HTMLElement;
     expect(page.querySelector('.loading-experience')).toBeNull();
     expect(page.querySelector('.detail-error h1')?.textContent).toContain(
-      'left the signal'
+      "isn't here"
     );
   });
 });

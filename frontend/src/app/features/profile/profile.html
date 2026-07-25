@@ -1,10 +1,10 @@
 <section class="page-shell profile-page">
   <div class="profile-intro">
-    <p class="eyebrow">Identity control</p>
-    <h1>Your digital profile, refined.</h1>
+    <p class="eyebrow">Your account</p>
+    <h1>Make your profile feel like you.</h1>
     <p>
-      Keep the human side of your marketplace identity current. Security-critical
-      details stay locked while your public presentation remains yours to shape.
+      Update the name people see and choose a profile photo that feels right for
+      your shop.
     </p>
 
     <div class="identity-map" aria-hidden="true">
@@ -16,9 +16,9 @@
         </span>
       </div>
       <div class="map-copy">
-        <span>Identity node</span>
+        <span>Account type</span>
         <strong>{{ authService.currentUser()?.role }}</strong>
-        <small>Verified and online</small>
+        <small>Profile active</small>
       </div>
       <span class="map-signal"></span>
     </div>
@@ -26,15 +26,15 @@
     <div class="profile-facts">
       <div>
         <span>01</span>
-        <p>Signed identity</p>
+        <p>Display name</p>
       </div>
       <div>
         <span>02</span>
-        <p>Scoped permissions</p>
+        <p>Account role</p>
       </div>
       <div>
         <span>03</span>
-        <p>Secure media</p>
+        <p>Profile photo</p>
       </div>
     </div>
   </div>
@@ -42,7 +42,7 @@
   <form class="profile-card surface-card" [formGroup]="form" (ngSubmit)="submit()">
     <div class="card-topline">
       <span>ACCOUNT / 01</span>
-      <span class="verified-pill"><i></i> Verified</span>
+      <span class="verified-pill"><i></i> Profile ready</span>
     </div>
 
     <div class="identity">
@@ -102,14 +102,14 @@
       <div class="avatar-help">
         <span>◈</span>
         <p>
-          Seller avatars pass through the Media Service with a 2 MB limit and
-          real-image signature verification.
+          Choose a clear JPEG, PNG, GIF, or WebP image up to 2 MB for your seller
+          profile.
         </p>
       </div>
     } @else {
       <div class="avatar-help">
         <span>◈</span>
-        <p>Your client identity is private and protected by role-based access.</p>
+        <p>Your name is used to personalize your BUY-01 experience.</p>
       </div>
     }
 

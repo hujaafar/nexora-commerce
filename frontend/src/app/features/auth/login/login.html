@@ -1,48 +1,48 @@
 <section class="auth-page">
   <div class="auth-story">
-    <p class="eyebrow">Private access layer</p>
+    <p class="eyebrow">Good to see you again</p>
     <h1>Back to your next big move.</h1>
     <p>
-      Enter a marketplace built around trusted identities, protected inventory,
-      and ownership rules that follow every request.
+      Sign in to continue browsing new finds, updating your profile, or managing
+      your shop.
     </p>
 
     <div class="story-visual" aria-hidden="true">
       <div class="story-topline">
-        <span>BUY-01 / identity node</span>
-        <span class="story-status">Operational</span>
+        <span>BUY-01 / MEMBER AREA</span>
+        <span class="story-status">Ready</span>
       </div>
       <div class="story-metrics">
         <div class="story-metric">
-          <strong>JWT</strong>
-          <span>signed sessions</span>
+          <strong>Shop</strong>
+          <span>browse new finds</span>
         </div>
         <div class="story-metric">
-          <strong>BCrypt</strong>
-          <span>password hashing</span>
+          <strong>Sell</strong>
+          <span>manage products</span>
         </div>
         <div class="story-metric">
-          <strong>RBAC</strong>
-          <span>scoped access</span>
+          <strong>Profile</strong>
+          <span>make it yours</span>
         </div>
       </div>
     </div>
 
     <div class="security-note">
       <span>✓</span>
-      Short-lived sessions. Ownership enforced at every service boundary.
+      One account for browsing, selling, and keeping your profile current.
     </div>
   </div>
 
   <form class="auth-card surface-card" [formGroup]="form" (ngSubmit)="submit()">
     <div class="auth-brandline">
-      <span class="auth-mark"><i>01</i> BUY NETWORK</span>
-      <span class="auth-encryption">Encrypted</span>
+      <span class="auth-mark"><i>01</i> BUY-01 MARKET</span>
+      <span class="auth-encryption">Welcome back</span>
     </div>
 
-    <p class="eyebrow">Member access</p>
+    <p class="eyebrow">Sign in</p>
     <h2>Welcome back.</h2>
-    <p>Sign in to continue to your personalized workspace.</p>
+    <p>Continue where you left off.</p>
 
     <div class="mb-3">
       <label class="form-label" for="email">Email address</label>

@@ -1,15 +1,15 @@
 <section class="page-shell dashboard-page">
   <header class="dashboard-header">
     <div>
-      <p class="eyebrow">Seller command center</p>
-      <h1>Control the signal.</h1>
+      <p class="eyebrow">Seller dashboard</p>
+      <h1>Manage your shop.</h1>
       <p>
         Create sharp product stories, keep inventory precise, and manage every
-        image from one secure workspace.
+        image from one simple workspace.
       </p>
     </div>
     <a class="btn btn-soft" routerLink="/media">
-      <span>Open asset vault</span>
+      <span>Open image library</span>
       <i>↗</i>
     </a>
   </header>
@@ -34,15 +34,15 @@
     <article>
       <div class="metric-icon">◇</div>
       <div>
-        <span>Secure assets</span>
+        <span>Product photos</span>
         <strong>{{ totalImages() }}</strong>
       </div>
-      <small>Media</small>
+      <small>Images</small>
     </article>
     <article class="value-metric">
       <div class="metric-icon">↗</div>
       <div>
-        <span>Catalog value</span>
+        <span>Stock value</span>
         <strong>{{ catalogValue() | currency: 'USD' : 'symbol' : '1.0-0' }}</strong>
       </div>
       <small>Potential</small>
@@ -52,7 +52,7 @@
   <div class="dashboard-grid">
     <form class="editor surface-card" [formGroup]="form" (ngSubmit)="submit()">
       <div class="editor-statusbar">
-        <span><i></i> Editor online</span>
+        <span><i></i> Product form ready</span>
         <span>{{ editingProduct() ? 'UPDATE MODE' : 'CREATE MODE' }}</span>
       </div>
 
@@ -226,7 +226,7 @@
                 <p>
                   <strong>{{ product.price | currency: 'USD' }}</strong>
                   <span>{{ product.quantity }} units</span>
-                  <span>{{ product.imageUrls.length }} assets</span>
+                  <span>{{ product.imageUrls.length }} photos</span>
                 </p>
               </div>
               <div class="inventory-actions">

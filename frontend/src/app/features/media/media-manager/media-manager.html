@@ -1,17 +1,17 @@
 <section class="page-shell media-page">
   <header class="media-header">
     <div>
-      <p class="eyebrow">Digital asset vault</p>
+      <p class="eyebrow">Image library</p>
       <h1>Make every pixel count.</h1>
       <p>
-        Upload, verify, and organize marketplace imagery through a protected media
-        pipeline that inspects the file behind every extension.
+        Upload and organize the product photos and profile images used across
+        your shop.
       </p>
     </div>
     <div class="vault-status">
-      <span><i></i> Vault online</span>
+      <span><i></i> Library ready</span>
       <strong>{{ assets().length.toString().padStart(2, '0') }}</strong>
-      <small>secured assets</small>
+      <small>saved images</small>
     </div>
   </header>
 
@@ -29,20 +29,20 @@
     <article>
       <span>Maximum file</span>
       <strong>2 MB</strong>
-      <small>signature verified</small>
+      <small>per image</small>
     </article>
   </section>
 
   <div class="media-layout">
     <form class="uploader surface-card" [formGroup]="form" (ngSubmit)="upload()">
       <div class="upload-topline">
-        <span><i></i> Secure channel</span>
-        <span>MEDIA / 01</span>
+        <span><i></i> Upload ready</span>
+        <span>IMAGES / 01</span>
       </div>
-      <p class="eyebrow">New asset</p>
+      <p class="eyebrow">New image</p>
       <h2>Upload an image</h2>
       <p class="uploader-intro">
-        Select a purpose and the service will take care of validation.
+        Choose where you want to use the image, then add it to your library.
       </p>
 
       <button class="drop-area" type="button" (click)="fileInput.click()">
@@ -73,7 +73,7 @@
       />
 
       <div class="mb-3">
-        <label class="form-label" for="purpose">Asset purpose</label>
+        <label class="form-label" for="purpose">Image use</label>
         <select class="form-select" id="purpose" formControlName="purpose">
           <option value="PRODUCT_IMAGE">Product image</option>
           <option value="AVATAR">Seller avatar</option>
@@ -97,16 +97,16 @@
         type="submit"
         [disabled]="uploading() || !selectedFile()"
       >
-        {{ uploading() ? 'Scanning and uploading…' : 'Secure this asset →' }}
+        {{ uploading() ? 'Uploading image…' : 'Add to library →' }}
       </button>
     </form>
 
     <section class="library">
       <div class="library-heading">
         <div>
-          <p class="eyebrow">Stored assets</p>
+          <p class="eyebrow">Saved images</p>
           <h2>Your visual library</h2>
-          <p>Every asset available to your seller identity.</p>
+          <p>Every image available for your profile and product listings.</p>
         </div>
         <span>{{ assets().length.toString().padStart(2, '0') }}</span>
       </div>
@@ -118,7 +118,7 @@
         </div>
       } @else if (assets().length === 0) {
         <div class="empty-state">
-          <h3>The vault is empty</h3>
+          <h3>Your library is empty</h3>
           <p>Upload your first image to start building a visual library.</p>
         </div>
       } @else {
@@ -131,14 +131,14 @@
               </a>
               <div class="asset-copy">
                 <span class="asset-type">
-                  {{ asset.purpose === 'AVATAR' ? 'Identity' : 'Product' }}
+                  {{ asset.purpose === 'AVATAR' ? 'Profile' : 'Product' }}
                 </span>
                 <h3>{{ asset.originalFilename }}</h3>
-                <p>{{ sizeLabel(asset.size) }} · verified image</p>
+                <p>{{ sizeLabel(asset.size) }} · ready to use</p>
                 @if (asset.productId) {
                   <small>Linked / {{ asset.productId }}</small>
                 } @else {
-                  <small>Unlinked asset</small>
+                  <small>Not linked to a product</small>
                 }
               </div>
               <button type="button" (click)="delete(asset)" aria-label="Delete image">

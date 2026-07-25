@@ -14,10 +14,10 @@
       </a>
       @if (authService.isSeller()) {
         <a routerLink="/seller" routerLinkActive="active">
-          <span>Studio</span>
+          <span>My shop</span>
         </a>
         <a routerLink="/media" routerLinkActive="active">
-          <span>Assets</span>
+          <span>Images</span>
         </a>
       }
     </div>
@@ -84,8 +84,8 @@
     </div>
     <div class="footer-cta-actions">
       <p>
-        Explore independent products backed by verified media and secure seller
-        ownership.
+        Explore original products, meet independent sellers, and keep an eye on
+        every fresh arrival.
       </p>
       <a class="footer-primary-action" routerLink="/products">
         <span>
@@ -99,12 +99,12 @@
 
   <div class="footer-marquee" aria-hidden="true">
     <div>
-      <span>INDEPENDENT OBJECTS</span><i>✦</i>
-      <span>VERIFIED MEDIA</span><i>✦</i>
-      <span>DIRECT OWNERSHIP</span><i>✦</i>
-      <span>INDEPENDENT OBJECTS</span><i>✦</i>
-      <span>VERIFIED MEDIA</span><i>✦</i>
-      <span>DIRECT OWNERSHIP</span><i>✦</i>
+      <span>ORIGINAL PRODUCTS</span><i>✦</i>
+      <span>FRESH ARRIVALS</span><i>✦</i>
+      <span>INDEPENDENT SELLERS</span><i>✦</i>
+      <span>ORIGINAL PRODUCTS</span><i>✦</i>
+      <span>FRESH ARRIVALS</span><i>✦</i>
+      <span>INDEPENDENT SELLERS</span><i>✦</i>
     </div>
   </div>
 
@@ -125,14 +125,14 @@
         <span>Explore</span>
         <a routerLink="/products">All products</a>
         @if (authService.isSeller()) {
-          <a routerLink="/seller">Seller studio</a>
-          <a routerLink="/media">Asset vault</a>
+          <a routerLink="/seller">My shop</a>
+          <a routerLink="/media">Image library</a>
         }
       </div>
       <div>
         <span>Account</span>
         @if (authService.isAuthenticated()) {
-          <a routerLink="/profile">My identity</a>
+          <a routerLink="/profile">My profile</a>
           <button type="button" (click)="logout()">Sign out</button>
         } @else {
           <a routerLink="/login">Sign in</a>
@@ -143,11 +143,11 @@
 
     <div class="footer-system">
       <div class="footer-system-top">
-        <span><i></i> All systems operational</span>
-        <b>LIVE</b>
+        <span><i></i> Marketplace open</span>
+        <b>NOW</b>
       </div>
-      <strong>Microservice network</strong>
-      <p>User, product, media, discovery, and gateway services connected.</p>
+      <strong>Fresh finds are waiting</strong>
+      <p>Browse the newest products or add something original to your own shop.</p>
       <div class="service-bars" aria-hidden="true">
         <span></span><span></span><span></span><span></span><span></span>
       </div>
@@ -155,8 +155,8 @@
   </div>
 
   <div class="footer-bottom">
-    <span>© {{ currentYear }} BUY-01 MARKET NETWORK</span>
-    <span>SECURE BY DESIGN · BUILT TO DISCOVER</span>
+    <span>© {{ currentYear }} BUY-01 MARKETPLACE</span>
+    <span>MADE FOR PEOPLE WHO LIKE GOOD THINGS</span>
     <a routerLink="/products">BACK TO MARKET ↑</a>
   </div>
 

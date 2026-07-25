@@ -42,7 +42,7 @@
 
   <div class="hero-bottom">
     <p>
-      An independent marketplace driven by original objects, verified media,
+      An independent marketplace driven by original products, creative sellers,
       and unforgettable finds.
     </p>
     <a class="reference-button" href="#collection">
@@ -165,13 +165,12 @@
     <h2 class="hero-heading">ABOUT / 01</h2>
     <p>
       BUY-01 is a focused market for people who would rather discover something
-      original than scroll through more of the same. Sellers control their own
-      work. Media is verified. Ownership is enforced. Every listing has a real
-      identity behind it.
+      original than scroll through more of the same. Sellers shape their own
+      shops, share their best work, and keep every listing personal.
     </p>
     @if (authService.isSeller()) {
       <a class="reference-button" routerLink="/seller">
-        <span>Open your studio</span><i>↗</i>
+        <span>Open my shop</span><i>↗</i>
       </a>
     } @else if (!authService.isAuthenticated()) {
       <a class="reference-button" routerLink="/register">
@@ -199,29 +198,29 @@
       <article>
         <span>02</span>
         <div>
-          <h3>Seller ownership</h3>
-          <p>Every catalog mutation is authorized against the signed identity of the seller who owns it.</p>
+          <h3>Personal shops</h3>
+          <p>Sellers manage their own products, prices, stock, and presentation from one simple workspace.</p>
         </div>
       </article>
       <article>
         <span>03</span>
         <div>
-          <h3>Verified media</h3>
-          <p>Images are checked by declared type, real byte signature, size, and purpose before storage.</p>
+          <h3>Clear product photos</h3>
+          <p>Every listing can include a visual gallery that helps buyers see the product before opening it.</p>
         </div>
       </article>
       <article>
         <span>04</span>
         <div>
           <h3>Live inventory</h3>
-          <p>Product price and availability come directly from isolated marketplace services.</p>
+          <p>Prices and available quantities stay current as sellers update their listings.</p>
         </div>
       </article>
       <article>
         <span>05</span>
         <div>
-          <h3>Secure identity</h3>
-          <p>Short-lived signed sessions and role boundaries protect every private workspace.</p>
+          <h3>Easy accounts</h3>
+          <p>Clients can browse with a personal profile, while sellers get the tools they need to publish.</p>
         </div>
       </article>
     </div>
