@@ -211,7 +211,9 @@ git show <commit>
 
 [LEARNING_PATH.md](docs/LEARNING_PATH.md) groups those commits into a suggested
 study order. [REQUIREMENTS_CHECKLIST.md](docs/REQUIREMENTS_CHECKLIST.md) maps
-the original assignment to the implementation.
+the original assignment to the implementation. [UI_DESIGN_GUIDE.md](docs/UI_DESIGN_GUIDE.md)
+explains the visual system, animations, accessibility choices, reactive dashboard
+metrics, and production budgets commit by commit.
 
 ## Repository layout
 
