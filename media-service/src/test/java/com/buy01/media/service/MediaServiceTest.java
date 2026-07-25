@@ -90,4 +90,24 @@ class MediaServiceTest {
 
         verify(objectStorage, never()).delete(asset.getObjectKey());
     }
+
+    @Test
+    void administratorCanDeleteAnyAssetForModeration() {
+        MediaAsset asset = new MediaAsset(
+                "seller/object.png",
+                "image.png",
+                "image/png",
+                100,
+                "seller",
+                null,
+                MediaPurpose.PRODUCT_IMAGE,
+                Instant.now());
+        when(repository.findById("media-id")).thenReturn(Optional.of(asset));
+
+        mediaService.deleteAsAdmin("media-id");
+
+        verify(objectStorage).delete(asset.getObjectKey());
+        verify(repository).delete(asset);
+        verify(eventPublisher).publish(org.mockito.ArgumentMatchers.any());
+    }
 }

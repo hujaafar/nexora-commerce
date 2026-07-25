@@ -105,6 +105,12 @@ public class MediaService {
                 .toList();
     }
 
+    public List<MediaResponse> listForModeration() {
+        return repository.findAllByOrderByCreatedAtDesc().stream()
+                .map(asset -> MediaResponse.from(asset, publicBaseUrl))
+                .toList();
+    }
+
     public MediaDownload download(String mediaId) {
         MediaAsset asset = find(mediaId);
         byte[] content = objectStorage.get(asset.getObjectKey());
@@ -118,6 +124,14 @@ public class MediaService {
 
     public void delete(String mediaId, String sellerId) {
         MediaAsset asset = findOwned(mediaId, sellerId);
+        deleteAsset(asset);
+    }
+
+    public void deleteAsAdmin(String mediaId) {
+        deleteAsset(find(mediaId));
+    }
+
+    private void deleteAsset(MediaAsset asset) {
         objectStorage.delete(asset.getObjectKey());
         repository.delete(asset);
         eventPublisher.publish(MediaEvent.deleted(

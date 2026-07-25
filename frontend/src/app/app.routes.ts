@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { adminGuard } from './core/guards/admin.guard';
 import { authGuard } from './core/guards/auth.guard';
 import { sellerGuard } from './core/guards/seller.guard';
 
@@ -46,6 +47,14 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/media/media-manager/media-manager').then(
         (module) => module.MediaManager
+      )
+  },
+  {
+    path: 'admin',
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () =>
+      import('./features/admin/admin-dashboard').then(
+        (module) => module.AdminDashboard
       )
   },
   {

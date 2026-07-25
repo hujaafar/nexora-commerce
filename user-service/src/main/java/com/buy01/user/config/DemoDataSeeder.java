@@ -28,6 +28,7 @@ public class DemoDataSeeder implements ApplicationRunner {
     public void run(ApplicationArguments args) {
         createIfMissing("client@buy01.local", "Demo Client", "Client123!", Role.CLIENT);
         createIfMissing("seller@buy01.local", "Demo Seller", "Seller123!", Role.SELLER);
+        createIfMissing("admin@buy01.local", "Demo Admin", "Admin123!", Role.ADMIN);
     }
 
     private void createIfMissing(

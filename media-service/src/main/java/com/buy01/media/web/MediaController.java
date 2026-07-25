@@ -57,6 +57,12 @@ public class MediaController {
         return mediaService.listMine(jwt.getSubject());
     }
 
+    @GetMapping("/moderation")
+    @PreAuthorize("hasRole('ADMIN')")
+    List<MediaResponse> listForModeration() {
+        return mediaService.listForModeration();
+    }
+
     @GetMapping("/{id}")
     ResponseEntity<byte[]> download(@PathVariable String id) {
         MediaDownload media = mediaService.download(id);
@@ -81,5 +87,12 @@ public class MediaController {
             @PathVariable String id,
             @AuthenticationPrincipal Jwt jwt) {
         mediaService.delete(id, jwt.getSubject());
+    }
+
+    @DeleteMapping("/moderation/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ADMIN')")
+    void deleteAsAdmin(@PathVariable String id) {
+        mediaService.deleteAsAdmin(id);
     }
 }

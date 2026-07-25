@@ -1,6 +1,5 @@
 package com.buy01.user.dto;
 
-import com.buy01.user.domain.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -25,5 +24,5 @@ public record RegisterRequest(
         String password,
 
         @NotNull(message = "Role is required")
-        Role role) {
+        RegistrationRole role) {
 }

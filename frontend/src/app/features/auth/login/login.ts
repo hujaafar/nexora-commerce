@@ -45,7 +45,12 @@ export class Login {
             ? requestedUrl
             : null;
         const destination =
-          safeReturnUrl || (response.user.role === 'SELLER' ? '/seller' : '/products');
+          safeReturnUrl ||
+          (response.user.role === 'SELLER'
+            ? '/seller'
+            : response.user.role === 'ADMIN'
+              ? '/admin'
+              : '/products');
         void this.router.navigateByUrl(destination);
       });
   }

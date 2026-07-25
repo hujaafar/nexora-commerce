@@ -1,6 +1,7 @@
 package com.buy01.user.service;
 
 import com.buy01.user.domain.UserAccount;
+import com.buy01.user.domain.Role;
 import com.buy01.user.dto.AuthResponse;
 import com.buy01.user.dto.LoginRequest;
 import com.buy01.user.dto.RegisterRequest;
@@ -40,7 +41,7 @@ public class AuthService {
                 request.name().trim(),
                 normalizedEmail,
                 passwordEncoder.encode(request.password()),
-                request.role(),
+                Role.valueOf(request.role().name()),
                 now);
         UserAccount savedUser = repository.save(user);
         return AuthResponse.from(savedUser, jwtService.issue(savedUser));

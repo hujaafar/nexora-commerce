@@ -13,7 +13,9 @@
 
     <div class="landing-actions">
       @if (authService.isAuthenticated()) {
-        @if (authService.isSeller()) {
+        @if (authService.isAdmin()) {
+          <a class="seller-link" routerLink="/admin">Moderate</a>
+        } @else if (authService.isSeller()) {
           <a class="seller-link" routerLink="/seller">My shop</a>
         }
         <a class="account-link" routerLink="/profile" aria-label="Open profile">

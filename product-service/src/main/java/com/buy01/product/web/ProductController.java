@@ -45,6 +45,12 @@ public class ProductController {
         return productService.listMine(jwt.getSubject());
     }
 
+    @GetMapping("/moderation")
+    @PreAuthorize("hasRole('ADMIN')")
+    List<ProductResponse> listForModeration() {
+        return productService.listPublic();
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('SELLER')")
@@ -70,5 +76,12 @@ public class ProductController {
             @PathVariable String id,
             @AuthenticationPrincipal Jwt jwt) {
         productService.delete(id, jwt.getSubject());
+    }
+
+    @DeleteMapping("/moderation/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ADMIN')")
+    void deleteAsAdmin(@PathVariable String id) {
+        productService.deleteAsAdmin(id);
     }
 }

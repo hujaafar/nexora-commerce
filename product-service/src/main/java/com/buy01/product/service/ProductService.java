@@ -80,6 +80,14 @@ public class ProductService {
 
     public void delete(String productId, String sellerId) {
         Product product = findOwned(productId, sellerId);
+        deleteProduct(product);
+    }
+
+    public void deleteAsAdmin(String productId) {
+        deleteProduct(find(productId));
+    }
+
+    private void deleteProduct(Product product) {
         repository.delete(product);
         eventPublisher.publish(ProductEvent.of(
                 ProductEvent.EventType.PRODUCT_DELETED,

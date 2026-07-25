@@ -1,0 +1,102 @@
+<section class="admin-page">
+  <header class="admin-hero">
+    <div>
+      <p class="eyebrow">Marketplace moderation</p>
+      <h1>Keep BUY/01<br /><span>worth browsing.</span></h1>
+    </div>
+    <p>
+      Review public products, uploaded media, and registered accounts from one
+      focused moderation workspace.
+    </p>
+  </header>
+
+  <div class="admin-stats">
+    <article><span>01</span><strong>{{ users().length | number: '2.0' }}</strong><p>Accounts</p></article>
+    <article><span>02</span><strong>{{ products().length | number: '2.0' }}</strong><p>Products</p></article>
+    <article><span>03</span><strong>{{ media().length | number: '2.0' }}</strong><p>Images</p></article>
+  </div>
+
+  @if (loading()) {
+    <div class="admin-loading"><i></i><i></i><i></i><span>Loading marketplace activity</span></div>
+  } @else {
+    <section class="moderation-section">
+      <div class="moderation-heading">
+        <div><span>PRODUCTS / {{ products().length.toString().padStart(2, '0') }}</span><h2>Public catalog</h2></div>
+        <a routerLink="/products">View marketplace ↗</a>
+      </div>
+      @if (products().length === 0) {
+        <div class="admin-empty">No products are currently published.</div>
+      } @else {
+        <div class="moderation-grid product-moderation">
+          @for (product of products(); track product.id) {
+            <article>
+              <div class="moderation-image">
+                @if (product.imageUrls[0]) {
+                  <img [src]="product.imageUrls[0]" [alt]="product.name" />
+                } @else {
+                  <span>{{ product.name.charAt(0) }}</span>
+                }
+              </div>
+              <div class="moderation-copy">
+                <small>{{ product.quantity }} available</small>
+                <h3>{{ product.name }}</h3>
+                <p>{{ product.price | currency: 'USD' }}</p>
+              </div>
+              <button type="button" [disabled]="deletingId() === product.id" (click)="deleteProduct(product)">
+                {{ deletingId() === product.id ? 'Removing…' : 'Remove' }}
+              </button>
+            </article>
+          }
+        </div>
+      }
+    </section>
+
+    <section class="moderation-section">
+      <div class="moderation-heading">
+        <div><span>MEDIA / {{ media().length.toString().padStart(2, '0') }}</span><h2>Uploaded images</h2></div>
+      </div>
+      @if (media().length === 0) {
+        <div class="admin-empty">No images are currently stored.</div>
+      } @else {
+        <div class="moderation-grid media-moderation">
+          @for (asset of media(); track asset.id) {
+            <article>
+              <img [src]="asset.url" [alt]="asset.originalFilename" />
+              <div class="moderation-copy">
+                <small>{{ asset.purpose === 'AVATAR' ? 'Seller avatar' : 'Product image' }}</small>
+                <h3>{{ asset.originalFilename }}</h3>
+                <p>{{ formatBytes(asset.size) }} · {{ asset.createdAt | date: 'mediumDate' }}</p>
+              </div>
+              <button type="button" [disabled]="deletingId() === asset.id" (click)="deleteMedia(asset)">
+                {{ deletingId() === asset.id ? 'Removing…' : 'Remove' }}
+              </button>
+            </article>
+          }
+        </div>
+      }
+    </section>
+
+    <section class="moderation-section">
+      <div class="moderation-heading">
+        <div><span>ACCOUNTS / {{ users().length.toString().padStart(2, '0') }}</span><h2>Registered people</h2></div>
+      </div>
+      <div class="user-list">
+        @for (user of users(); track user.id; let index = $index) {
+          <article>
+            <span>{{ (index + 1).toString().padStart(2, '0') }}</span>
+            <div class="user-avatar">
+              @if (user.avatarUrl) {
+                <img [src]="user.avatarUrl" alt="" />
+              } @else {
+                {{ user.name.charAt(0).toUpperCase() }}
+              }
+            </div>
+            <div><h3>{{ user.name }}</h3><p>{{ user.email }}</p></div>
+            <b>{{ user.role }}</b>
+            <time>{{ user.createdAt | date: 'mediumDate' }}</time>
+          </article>
+        }
+      </div>
+    </section>
+  }
+</section>

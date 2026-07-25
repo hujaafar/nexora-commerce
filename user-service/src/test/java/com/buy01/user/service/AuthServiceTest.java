@@ -10,6 +10,7 @@ import com.buy01.user.domain.Role;
 import com.buy01.user.domain.UserAccount;
 import com.buy01.user.dto.LoginRequest;
 import com.buy01.user.dto.RegisterRequest;
+import com.buy01.user.dto.RegistrationRole;
 import com.buy01.user.exception.DuplicateEmailException;
 import com.buy01.user.repository.UserAccountRepository;
 import com.buy01.user.security.JwtService;
@@ -54,7 +55,7 @@ class AuthServiceTest {
                 "  New Seller  ",
                 " Seller@Example.COM ",
                 "Strong123",
-                Role.SELLER));
+                RegistrationRole.SELLER));
 
         ArgumentCaptor<UserAccount> captor = ArgumentCaptor.forClass(UserAccount.class);
         verify(repository).save(captor.capture());
@@ -73,7 +74,7 @@ class AuthServiceTest {
                 "Used",
                 "used@example.com",
                 "Strong123",
-                Role.CLIENT)))
+                RegistrationRole.CLIENT)))
                 .isInstanceOf(DuplicateEmailException.class);
     }
 

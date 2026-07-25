@@ -17,6 +17,9 @@ public class GatewayRoutesConfig {
                 .route("user-profile", route -> route
                         .path("/me", "/me/**")
                         .uri("lb://user-service"))
+                .route("user-admin", route -> route
+                        .path("/admin/users", "/admin/users/**")
+                        .uri("lb://user-service"))
                 .route("products", route -> route
                         .path("/products", "/products/**")
                         .uri("lb://product-service"))

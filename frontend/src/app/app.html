@@ -20,6 +20,10 @@
         <a routerLink="/media" routerLinkActive="active">
           <span>Images</span>
         </a>
+      } @else if (authService.isAdmin()) {
+        <a routerLink="/admin" routerLinkActive="active">
+          <span>Moderate</span>
+        </a>
       }
     </div>
 
@@ -130,6 +134,8 @@
         @if (authService.isSeller()) {
           <a routerLink="/seller">My shop</a>
           <a routerLink="/media">Image library</a>
+        } @else if (authService.isAdmin()) {
+          <a routerLink="/admin">Moderation</a>
         }
       </div>
       <div>

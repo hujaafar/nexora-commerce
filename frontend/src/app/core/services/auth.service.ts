@@ -26,6 +26,7 @@ export class AuthService {
   readonly currentUser = computed(() => this.sessionSignal()?.user ?? null);
   readonly isAuthenticated = computed(() => this.sessionSignal() !== null);
   readonly isSeller = computed(() => this.currentUser()?.role === 'SELLER');
+  readonly isAdmin = computed(() => this.currentUser()?.role === 'ADMIN');
 
   login(request: LoginRequest): Observable<AuthResponse> {
     return this.http

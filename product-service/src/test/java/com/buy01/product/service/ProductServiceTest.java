@@ -70,6 +70,17 @@ class ProductServiceTest {
         verify(eventPublisher).publish(any());
     }
 
+    @Test
+    void administratorCanDeleteAnyProductForModeration() {
+        Product product = productOwnedBy("another-seller");
+        when(repository.findById("product-id")).thenReturn(Optional.of(product));
+
+        productService.deleteAsAdmin("product-id");
+
+        verify(repository).delete(product);
+        verify(eventPublisher).publish(any());
+    }
+
     private ProductRequest request() {
         return new ProductRequest(
                 "Mechanical Keyboard",

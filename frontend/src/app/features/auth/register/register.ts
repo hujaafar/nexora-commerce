@@ -8,7 +8,7 @@ import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
-import { Role } from '../../../models/user.model';
+import { RegistrationRole } from '../../../models/user.model';
 
 @Component({
   selector: 'app-register',
@@ -35,7 +35,7 @@ export class Register {
         Validators.pattern(/^(?=.*[A-Za-z])(?=.*\d).+$/)
       ]
     ],
-    role: ['CLIENT' as Role, Validators.required]
+    role: ['CLIENT' as RegistrationRole, Validators.required]
   });
 
   protected submit(): void {
