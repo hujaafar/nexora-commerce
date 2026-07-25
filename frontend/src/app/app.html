@@ -1,3 +1,4 @@
+@if (!isLandingPage()) {
 <header class="site-header">
   <nav class="nav-shell" aria-label="Primary navigation">
     <a class="brand" routerLink="/products" aria-label="BUY-01 home">
@@ -48,6 +49,7 @@
     </div>
   </nav>
 </header>
+}
 
 <main class="route-frame">
   <router-outlet />
@@ -74,6 +76,7 @@
   </aside>
 }
 
+@if (!isLandingPage()) {
 <footer class="site-footer">
   <div class="footer-aura" aria-hidden="true"></div>
 
@@ -162,3 +165,4 @@
 
   <div class="footer-word" aria-hidden="true">BUY/01</div>
 </footer>
+}
