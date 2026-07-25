@@ -20,6 +20,14 @@ security:
 app:
   cors:
     allowed-origins: ${ALLOWED_ORIGINS:http://localhost:4200,http://localhost}
+  rate-limit:
+    enabled: ${RATE_LIMIT_ENABLED:true}
+    auth:
+      requests: ${AUTH_RATE_LIMIT_REQUESTS:20}
+      window: ${AUTH_RATE_LIMIT_WINDOW:60s}
+    media:
+      requests: ${MEDIA_RATE_LIMIT_REQUESTS:60}
+      window: ${MEDIA_RATE_LIMIT_WINDOW:60s}
 
 eureka:
   client:

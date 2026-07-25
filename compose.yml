@@ -200,6 +200,11 @@ services:
       PORT: 8080
       EUREKA_URL: http://discovery-service:8761/eureka/
       JWT_SECRET: ${JWT_SECRET:-change-this-development-secret-to-at-least-32-characters}
+      RATE_LIMIT_ENABLED: ${RATE_LIMIT_ENABLED:-true}
+      AUTH_RATE_LIMIT_REQUESTS: ${AUTH_RATE_LIMIT_REQUESTS:-20}
+      AUTH_RATE_LIMIT_WINDOW: ${AUTH_RATE_LIMIT_WINDOW:-60s}
+      MEDIA_RATE_LIMIT_REQUESTS: ${MEDIA_RATE_LIMIT_REQUESTS:-60}
+      MEDIA_RATE_LIMIT_WINDOW: ${MEDIA_RATE_LIMIT_WINDOW:-60s}
       ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:4200,http://localhost}
     ports:
       - "${GATEWAY_HOST_PORT:-8080}:8080"
