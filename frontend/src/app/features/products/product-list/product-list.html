@@ -1,300 +1,231 @@
-<section class="reference-hero">
-  <div class="hero-title-wrap">
-    <h1 class="hero-heading">BUY DIFFERENT</h1>
-  </div>
+<div class="reference-page">
+  <section class="hero-section" id="top">
+    <nav class="home-nav" aria-label="Landing page navigation">
+      <a href="#about">About</a>
+      <a href="#values">Why BUY/01</a>
+      <a href="#collection">Products</a>
+      @if (authService.isAuthenticated()) {
+        <a routerLink="/profile">Account</a>
+      } @else {
+        <a routerLink="/login">Sign in</a>
+      }
+    </nav>
 
-  <div class="hero-object">
-    @if (!loading() && products().length > 0) {
-      <a
-        class="featured-object"
-        [routerLink]="['/products', products()[0].id]"
-        aria-label="View featured product"
+    <div class="hero-heading-wrap">
+      <h1 class="hero-heading">BUY ORIGINAL</h1>
+    </div>
+
+    <div
+      class="hero-portrait-wrap"
+      (pointermove)="moveMagnet($event)"
+      (pointerleave)="resetMagnet()"
+    >
+      <div class="hero-portrait" [style.transform]="magnetTransform()">
+        <span class="portrait-halo" aria-hidden="true"></span>
+        <img
+          src="https://shrug-person-78902957.figma.site/_components/v2/d24c01ad3a56fc65e942a1f501eb73db42d7cf9a/Rectangle_40443.81459862.png"
+          alt="Independent creator"
+        />
+      </div>
+    </div>
+
+    <div class="hero-bottom">
+      <p>
+        A marketplace driven by original products, independent sellers, and
+        unforgettable finds.
+      </p>
+      <a class="gradient-button" href="#collection">
+        <span>Shop the drop</span>
+      </a>
+    </div>
+  </section>
+
+  <section #marqueeSection class="marquee-section" aria-label="Creative preview">
+    <div class="marquee-row">
+      <div
+        class="marquee-track"
+        [style.transform]="'translate3d(' + marqueeOffset() + 'px, 0, 0)'"
       >
-        <span class="object-ring ring-a"></span>
-        <span class="object-ring ring-b"></span>
-        @if (products()[0].imageUrls[0]) {
-          <img
-            [src]="products()[0].imageUrls[0]"
-            [alt]="products()[0].name"
-          />
-        } @else {
-          <span class="object-sculpture">
-            <i></i>
-            <strong>{{ products()[0].name.charAt(0) }}</strong>
+        @for (copy of [0, 1, 2]; track copy) {
+          @for (image of firstMarqueeRow; track $index) {
+            <figure class="marquee-tile">
+              <img [src]="image" alt="" loading="lazy" />
+            </figure>
+          }
+        }
+      </div>
+    </div>
+    <div class="marquee-row">
+      <div
+        class="marquee-track"
+        [style.transform]="'translate3d(' + -marqueeOffset() + 'px, 0, 0)'"
+      >
+        @for (copy of [0, 1, 2]; track copy) {
+          @for (image of secondMarqueeRow; track $index) {
+            <figure class="marquee-tile">
+              <img [src]="image" alt="" loading="lazy" />
+            </figure>
+          }
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="about-section" id="about">
+    <img
+      class="decor decor-moon reveal-left"
+      src="https://shrug-person-78902957.figma.site/_components/v2/ebb2b8f25d8e24d5f0a5ca8af4c950de81aa2fd7/moon_icon.11395d36.png"
+      alt=""
+      loading="lazy"
+    />
+    <img
+      class="decor decor-left reveal-left"
+      src="https://shrug-person-78902957.figma.site/_components/v2/ebb2b8f25d8e24d5f0a5ca8af4c950de81aa2fd7/p59_1.4659672e.png"
+      alt=""
+      loading="lazy"
+    />
+    <img
+      class="decor decor-lego reveal-right"
+      src="https://shrug-person-78902957.figma.site/_components/v2/ebb2b8f25d8e24d5f0a5ca8af4c950de81aa2fd7/lego_icon-1.703bb594.png"
+      alt=""
+      loading="lazy"
+    />
+    <img
+      class="decor decor-right reveal-right"
+      src="https://shrug-person-78902957.figma.site/_components/v2/ebb2b8f25d8e24d5f0a5ca8af4c950de81aa2fd7/Group_134-1.2e04f3ce.png"
+      alt=""
+      loading="lazy"
+    />
+
+    <div class="about-content">
+      <h2 class="hero-heading reveal-up">About us</h2>
+      <p #aboutCopy class="animated-copy" aria-label="{{ aboutText }}">
+        @for (character of aboutCharacters; track $index) {
+          <span [style.opacity]="characterOpacity($index)">
+            {{ character === ' ' ? '\u00A0' : character }}
           </span>
         }
-        <span class="object-label">
-          <small>Featured object</small>
-          <strong>{{ products()[0].name }}</strong>
-        </span>
-      </a>
-    } @else {
-      <div class="featured-object object-placeholder" aria-hidden="true">
-        <span class="object-ring ring-a"></span>
-        <span class="object-ring ring-b"></span>
-        <span class="object-sculpture">
-          <i></i>
-          <strong>01</strong>
-        </span>
-      </div>
-    }
-  </div>
-
-  <div class="hero-bottom">
-    <p>
-      An independent marketplace driven by original products, creative sellers,
-      and unforgettable finds.
-    </p>
-    <a class="reference-button" href="#collection">
-      <span>Explore the drop</span>
-      <i aria-hidden="true">↗</i>
-    </a>
-  </div>
-
-  <div class="hero-coordinate" aria-hidden="true">
-    <span>MARKET / 01</span>
-    <span>{{ products().length.toString().padStart(2, '0') }} LIVE OBJECTS</span>
-  </div>
-</section>
-
-<section class="visual-marquee" aria-label="Marketplace preview">
-  @if (loading()) {
-    <div class="marquee-row">
-      <div class="marquee-track">
-        @for (item of [1, 2, 3, 4, 5, 6]; track item) {
-          <div class="marquee-tile marquee-skeleton"></div>
-        }
-      </div>
+      </p>
+      @if (authService.isSeller()) {
+        <a class="gradient-button" routerLink="/seller">Open my shop</a>
+      } @else {
+        <a class="gradient-button" routerLink="/register">Join the market</a>
+      }
     </div>
-    <div class="marquee-row reverse">
-      <div class="marquee-track">
-        @for (item of [1, 2, 3, 4, 5, 6]; track item) {
-          <div class="marquee-tile marquee-skeleton"></div>
-        }
-      </div>
-    </div>
-  } @else if (products().length > 0) {
-    <div class="marquee-row">
-      <div class="marquee-track">
-        @for (product of products(); track product.id + '-a1') {
-          <a class="marquee-tile" [routerLink]="['/products', product.id]">
-            @if (product.imageUrls[0]) {
-              <img [src]="product.imageUrls[0]" [alt]="product.name" loading="lazy" />
-            } @else {
-              <span class="tile-art">{{ product.name.charAt(0) }}</span>
-            }
-            <span>{{ product.name }}</span>
-          </a>
-        }
-        @for (product of products(); track product.id + '-a2') {
-          <a class="marquee-tile" [routerLink]="['/products', product.id]" aria-hidden="true" tabindex="-1">
-            @if (product.imageUrls[0]) {
-              <img [src]="product.imageUrls[0]" alt="" loading="lazy" />
-            } @else {
-              <span class="tile-art">{{ product.name.charAt(0) }}</span>
-            }
-            <span>{{ product.name }}</span>
-          </a>
-        }
-        @for (product of products(); track product.id + '-a3') {
-          <a class="marquee-tile" [routerLink]="['/products', product.id]" aria-hidden="true" tabindex="-1">
-            @if (product.imageUrls[0]) {
-              <img [src]="product.imageUrls[0]" alt="" loading="lazy" />
-            } @else {
-              <span class="tile-art">{{ product.name.charAt(0) }}</span>
-            }
-            <span>{{ product.name }}</span>
-          </a>
-        }
-      </div>
-    </div>
-    <div class="marquee-row reverse">
-      <div class="marquee-track">
-        @for (product of products(); track product.id + '-b1') {
-          <a class="marquee-tile" [routerLink]="['/products', product.id]">
-            @if (product.imageUrls[0]) {
-              <img [src]="product.imageUrls[0]" [alt]="product.name" loading="lazy" />
-            } @else {
-              <span class="tile-art alternate">{{ product.name.charAt(0) }}</span>
-            }
-            <span>{{ product.price | currency: 'USD' }}</span>
-          </a>
-        }
-        @for (product of products(); track product.id + '-b2') {
-          <a class="marquee-tile" [routerLink]="['/products', product.id]" aria-hidden="true" tabindex="-1">
-            @if (product.imageUrls[0]) {
-              <img [src]="product.imageUrls[0]" alt="" loading="lazy" />
-            } @else {
-              <span class="tile-art alternate">{{ product.name.charAt(0) }}</span>
-            }
-            <span>{{ product.price | currency: 'USD' }}</span>
-          </a>
-        }
-        @for (product of products(); track product.id + '-b3') {
-          <a class="marquee-tile" [routerLink]="['/products', product.id]" aria-hidden="true" tabindex="-1">
-            @if (product.imageUrls[0]) {
-              <img [src]="product.imageUrls[0]" alt="" loading="lazy" />
-            } @else {
-              <span class="tile-art alternate">{{ product.name.charAt(0) }}</span>
-            }
-            <span>{{ product.price | currency: 'USD' }}</span>
-          </a>
-        }
-      </div>
-    </div>
-  } @else {
-    <div class="empty-marquee">
-      <span>THE FIRST DROP IS FORMING</span>
-      <span>THE FIRST DROP IS FORMING</span>
-      <span>THE FIRST DROP IS FORMING</span>
-    </div>
-  }
-</section>
+  </section>
 
-<section class="market-story" id="about">
-  <div class="story-object story-object-one" aria-hidden="true">
-    <i></i>
-  </div>
-  <div class="story-object story-object-two" aria-hidden="true">
-    <i></i><i></i><i></i>
-  </div>
-  <div class="story-orbit orbit-left" aria-hidden="true"></div>
-  <div class="story-orbit orbit-right" aria-hidden="true"></div>
-
-  <div class="story-content">
-    <h2 class="hero-heading">ABOUT / 01</h2>
-    <p>
-      BUY-01 is a focused market for people who would rather discover something
-      original than scroll through more of the same. Sellers shape their own
-      shops, share their best work, and keep every listing personal.
-    </p>
-    @if (authService.isSeller()) {
-      <a class="reference-button" routerLink="/seller">
-        <span>Open my shop</span><i>↗</i>
-      </a>
-    } @else if (!authService.isAuthenticated()) {
-      <a class="reference-button" routerLink="/register">
-        <span>Join the market</span><i>↗</i>
-      </a>
-    } @else {
-      <a class="reference-button" href="#collection">
-        <span>See the products</span><i>↓</i>
-      </a>
-    }
-  </div>
-</section>
-
-<section class="capabilities">
-  <div class="capabilities-shell">
-    <h2>BUILT<br />DIFFERENT</h2>
-    <div class="capability-list">
-      <article>
+  <section class="values-section" id="values">
+    <h2 class="reveal-up">Shop easy</h2>
+    <div class="value-list">
+      <article class="reveal-up">
         <span>01</span>
         <div>
-          <h3>Open discovery</h3>
-          <p>Browse every public product without creating an account or passing through a paywall.</p>
+          <h3>Discover freely</h3>
+          <p>Browse every public product, explore new ideas, and take your time finding the right one.</p>
         </div>
       </article>
-      <article>
+      <article class="reveal-up">
         <span>02</span>
         <div>
-          <h3>Personal shops</h3>
-          <p>Sellers manage their own products, prices, stock, and presentation from one simple workspace.</p>
+          <h3>Meet independent sellers</h3>
+          <p>Shop directly from people building their own products and sharing work they care about.</p>
         </div>
       </article>
-      <article>
+      <article class="reveal-up">
         <span>03</span>
         <div>
-          <h3>Clear product photos</h3>
-          <p>Every listing can include a visual gallery that helps buyers see the product before opening it.</p>
+          <h3>See every detail</h3>
+          <p>Clear product photography and focused descriptions make each listing easy to understand.</p>
         </div>
       </article>
-      <article>
+      <article class="reveal-up">
         <span>04</span>
         <div>
-          <h3>Live inventory</h3>
-          <p>Prices and available quantities stay current as sellers update their listings.</p>
+          <h3>Know what is available</h3>
+          <p>Current pricing and stock counts help you decide without surprises or unnecessary steps.</p>
         </div>
       </article>
-      <article>
+      <article class="reveal-up">
         <span>05</span>
         <div>
-          <h3>Easy accounts</h3>
-          <p>Clients can browse with a personal profile, while sellers get the tools they need to publish.</p>
+          <h3>Make it yours</h3>
+          <p>Create a personal account to shape your profile, or open a shop and publish your own work.</p>
         </div>
       </article>
     </div>
-  </div>
-</section>
+  </section>
 
-<section class="collection" id="collection">
-  <div class="collection-heading">
-    <p>THE CURRENT DROP / {{ products().length.toString().padStart(2, '0') }}</p>
-    <h2 class="hero-heading">PRODUCT</h2>
-  </div>
-
-  @if (loading()) {
-    <div class="stack-loading">
-      <span></span><span></span>
+  <section class="projects-section" id="collection">
+    <div class="projects-heading">
+      <p>THE CURRENT DROP / {{ products().length.toString().padStart(2, '0') }}</p>
+      <h2 class="hero-heading">Product</h2>
     </div>
-  } @else if (products().length === 0) {
-    <div class="collection-empty">
-      <span>00</span>
-      <h3>The first object is still being made.</h3>
-      <p>Come back for the opening drop, or become the seller who starts it.</p>
-      @if (authService.isSeller()) {
-        <a class="reference-button" routerLink="/seller"><span>Publish now</span><i>↗</i></a>
-      }
-    </div>
-  } @else {
-    <div class="stack-list">
-      @for (product of products(); track product.id; let index = $index) {
-        <div class="stack-stage">
-          <article class="stack-card" [style.top.px]="96 + index * 22">
-            <header>
-              <span class="stack-number">{{ (index + 1).toString().padStart(2, '0') }}</span>
-              <div>
-                <small>INDEPENDENT LISTING</small>
-                <h3>{{ product.name }}</h3>
-              </div>
-              <div class="stack-price">
-                <small>DIRECT PRICE</small>
-                <strong>{{ product.price | currency: 'USD' }}</strong>
-              </div>
-              <a [routerLink]="['/products', product.id]">
-                View product <i>↗</i>
-              </a>
-            </header>
 
-            <div class="stack-media">
-              <div class="stack-side">
-                <div class="identity-panel">
-                  <span>BUY / {{ product.id.slice(-4).toUpperCase() }}</span>
-                  <strong>{{ product.name.charAt(0) }}</strong>
-                  <i></i>
-                </div>
-                <div class="product-facts">
-                  <span>LIVE INVENTORY</span>
-                  <strong>{{ product.quantity.toString().padStart(2, '0') }}</strong>
-                  <p>{{ product.quantity > 0 ? 'Objects available now' : 'Currently sold out' }}</p>
-                  <div><i></i><i></i><i></i></div>
-                </div>
-              </div>
-              <a class="stack-main-image" [routerLink]="['/products', product.id]">
-                @if (product.imageUrls[0]) {
-                  <img [src]="product.imageUrls[0]" [alt]="product.name" loading="lazy" />
-                } @else {
-                  <span class="stack-placeholder">
-                    <i></i>
-                    <strong>{{ product.name.charAt(0) }}</strong>
-                  </span>
-                }
-                <span>{{ product.description }}</span>
-              </a>
+    @if (loading()) {
+      <div class="loading-card" aria-label="Loading products">
+        <span></span><span></span><span></span>
+      </div>
+    } @else if (products().length === 0) {
+      <div class="project-stage">
+        <article class="project-card empty-project">
+          <header>
+            <strong class="project-number">01</strong>
+            <div>
+              <small>OPENING DROP</small>
+              <h3>Your product here</h3>
             </div>
-          </article>
-        </div>
-      }
-    </div>
-  }
-</section>
+            <a class="live-button" routerLink="/register">Start selling</a>
+          </header>
+          <div class="project-gallery">
+            <div class="gallery-side">
+              <img [src]="previewImages[0]" alt="" loading="lazy" />
+              <img [src]="previewImages[1]" alt="" loading="lazy" />
+            </div>
+            <div class="gallery-main">
+              <img [src]="previewImages[2]" alt="" loading="lazy" />
+              <div class="empty-message">
+                <span>THE COLLECTION IS OPEN</span>
+                <p>Be the first seller to publish something original.</p>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+    } @else {
+      <div class="project-list">
+        @for (product of products(); track product.id; let index = $index) {
+          <div class="project-stage">
+            <article class="project-card" [style.top.px]="96 + index * 28">
+              <header>
+                <strong class="project-number">
+                  {{ (index + 1).toString().padStart(2, '0') }}
+                </strong>
+                <div>
+                  <small>INDEPENDENT SELLER</small>
+                  <h3>{{ product.name }}</h3>
+                </div>
+                <div class="project-price">
+                  <small>{{ product.quantity }} AVAILABLE</small>
+                  <strong>{{ product.price | currency: 'USD' }}</strong>
+                </div>
+                <a class="live-button" [routerLink]="['/products', product.id]">
+                  View product
+                </a>
+              </header>
+              <div class="project-gallery">
+                <div class="gallery-side">
+                  <img [src]="productImage(product, 1)" [alt]="product.name" loading="lazy" />
+                  <img [src]="productImage(product, 2)" [alt]="product.name" loading="lazy" />
+                </div>
+                <a class="gallery-main" [routerLink]="['/products', product.id]">
+                  <img [src]="productImage(product, 0)" [alt]="product.name" loading="lazy" />
+                  <span>{{ product.description }}</span>
+                </a>
+              </div>
+            </article>
+          </div>
+        }
+      </div>
+    }
+  </section>
+</div>
