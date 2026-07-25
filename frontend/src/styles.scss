@@ -1,27 +1,34 @@
 @use 'bootstrap/scss/bootstrap';
+@use '@fontsource/kanit/300.css' as kanit300;
+@use '@fontsource/kanit/400.css' as kanit400;
+@use '@fontsource/kanit/500.css' as kanit500;
+@use '@fontsource/kanit/600.css' as kanit600;
+@use '@fontsource/kanit/700.css' as kanit700;
+@use '@fontsource/kanit/800.css' as kanit800;
+@use '@fontsource/kanit/900.css' as kanit900;
 
 :root {
   color-scheme: dark;
-  --void: #070812;
-  --void-soft: #0a0d1b;
-  --ink: #f7f8ff;
-  --muted: #9da6be;
-  --muted-strong: #c7cce0;
-  --surface: #111526;
-  --surface-strong: #171c31;
-  --surface-soft: rgba(18, 22, 40, 0.72);
-  --line: rgba(187, 197, 229, 0.14);
-  --line-strong: rgba(187, 197, 229, 0.25);
-  --brand: #8b6cff;
-  --brand-bright: #a890ff;
-  --brand-dark: #6549d8;
-  --accent: #c8ff6b;
-  --cyan: #5fe7ff;
+  --void: #0c0c0c;
+  --void-soft: #111111;
+  --ink: #f2f4f6;
+  --muted: #858b91;
+  --muted-strong: #d7e2ea;
+  --surface: #151515;
+  --surface-strong: #1b1b1b;
+  --surface-soft: rgba(22, 22, 22, 0.78);
+  --line: rgba(215, 226, 234, 0.15);
+  --line-strong: rgba(215, 226, 234, 0.28);
+  --brand: #b600a8;
+  --brand-bright: #cf4bc3;
+  --brand-dark: #7621b0;
+  --accent: #d7e2ea;
+  --cyan: #bbccd7;
   --danger: #ff6f91;
-  --success: #73f5ad;
+  --success: #8bf3c0;
   --shadow: 0 28px 90px rgba(0, 0, 0, 0.42);
   --shadow-soft: 0 16px 48px rgba(0, 0, 0, 0.24);
-  --glow: 0 0 50px rgba(139, 108, 255, 0.22);
+  --glow: 0 0 50px rgba(182, 0, 168, 0.2);
   --radius-sm: 0.85rem;
   --radius-md: 1.25rem;
   --radius-lg: 1.8rem;
@@ -42,13 +49,8 @@ body {
   min-height: 100vh;
   margin: 0;
   color: var(--ink);
-  background:
-    radial-gradient(circle at 8% -10%, rgba(139, 108, 255, 0.22), transparent 28rem),
-    radial-gradient(circle at 95% 12%, rgba(95, 231, 255, 0.12), transparent 25rem),
-    linear-gradient(180deg, #090b17 0%, var(--void) 48%, #080a14 100%);
-  font-family:
-    Inter, "SF Pro Display", "Segoe UI Variable", "Segoe UI", system-ui,
-    sans-serif;
+  background: var(--void);
+  font-family: "Kanit", "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
 }
@@ -57,9 +59,9 @@ body::before {
   position: fixed;
   z-index: -1;
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px);
-  background-size: 4.5rem 4.5rem;
+    linear-gradient(rgba(255, 255, 255, 0.012) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.012) 1px, transparent 1px);
+  background-size: 6rem 6rem;
   content: "";
   inset: 0;
   mask-image: linear-gradient(to bottom, black, transparent 72%);
@@ -72,8 +74,16 @@ h3,
 .display-title {
   color: var(--ink);
   font-family: inherit;
-  font-weight: 760;
-  letter-spacing: -0.055em;
+  font-weight: 800;
+  letter-spacing: -0.06em;
+}
+
+.hero-heading {
+  color: transparent;
+  background: linear-gradient(180deg, #646973 0%, #bbccd7 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 p {
@@ -129,7 +139,7 @@ select:focus-visible {
   display: flex;
   margin-bottom: 0.8rem;
   align-items: center;
-  color: var(--accent);
+  color: var(--muted-strong);
   gap: 0.55rem;
   font-family: "Cascadia Code", "SFMono-Regular", Consolas, monospace;
   font-size: 0.7rem;
@@ -173,20 +183,32 @@ select:focus-visible {
 }
 
 .btn-brand {
-  --bs-btn-color: #0b0d14;
-  --bs-btn-bg: var(--accent);
-  --bs-btn-border-color: var(--accent);
-  --bs-btn-hover-color: #090b11;
-  --bs-btn-hover-bg: #d6ff92;
-  --bs-btn-hover-border-color: #d6ff92;
-  --bs-btn-active-color: #090b11;
-  --bs-btn-active-bg: #b8ed5c;
-  --bs-btn-active-border-color: #b8ed5c;
-  box-shadow: 0 10px 30px rgba(200, 255, 107, 0.18);
+  --bs-btn-color: #fff;
+  --bs-btn-bg: #7621b0;
+  --bs-btn-border-color: rgba(255, 255, 255, 0.42);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #9d209f;
+  --bs-btn-hover-border-color: rgba(255, 255, 255, 0.7);
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #7621b0;
+  --bs-btn-active-border-color: white;
+  outline: 1px solid rgba(255, 255, 255, 0.9);
+  outline-offset: -3px;
+  background:
+    linear-gradient(123deg, #18011f 7%, #b600a8 37%, #7621b0 72%, #be4c00 100%);
+  box-shadow:
+    0 12px 35px rgba(181, 1, 167, 0.22),
+    4px 4px 12px rgba(119, 33, 177, 0.75) inset;
+  color: white;
 }
 
 .btn-brand:hover {
-  box-shadow: 0 16px 38px rgba(200, 255, 107, 0.27);
+  background:
+    linear-gradient(123deg, #2c0437 7%, #d214c4 37%, #8e32c7 72%, #db6420 100%);
+  box-shadow:
+    0 18px 42px rgba(181, 1, 167, 0.32),
+    4px 4px 12px rgba(119, 33, 177, 0.65) inset;
+  color: white;
 }
 
 .btn-soft {
