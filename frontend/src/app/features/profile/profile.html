@@ -1,20 +1,57 @@
 <section class="page-shell profile-page">
   <div class="profile-intro">
-    <p class="eyebrow">Account profile</p>
-    <h1>Make the account yours.</h1>
+    <p class="eyebrow">Identity control</p>
+    <h1>Your digital profile, refined.</h1>
     <p>
-      Your email and role define the secure identity inside every JWT. Your
-      display name—and seller avatar—can change here.
+      Keep the human side of your marketplace identity current. Security-critical
+      details stay locked while your public presentation remains yours to shape.
     </p>
+
+    <div class="identity-map" aria-hidden="true">
+      <div class="identity-radar">
+        <span class="radar-ring ring-one"></span>
+        <span class="radar-ring ring-two"></span>
+        <span class="radar-core">
+          {{ authService.currentUser()?.name?.charAt(0)?.toUpperCase() }}
+        </span>
+      </div>
+      <div class="map-copy">
+        <span>Identity node</span>
+        <strong>{{ authService.currentUser()?.role }}</strong>
+        <small>Verified and online</small>
+      </div>
+      <span class="map-signal"></span>
+    </div>
+
+    <div class="profile-facts">
+      <div>
+        <span>01</span>
+        <p>Signed identity</p>
+      </div>
+      <div>
+        <span>02</span>
+        <p>Scoped permissions</p>
+      </div>
+      <div>
+        <span>03</span>
+        <p>Secure media</p>
+      </div>
+    </div>
   </div>
 
   <form class="profile-card surface-card" [formGroup]="form" (ngSubmit)="submit()">
+    <div class="card-topline">
+      <span>ACCOUNT / 01</span>
+      <span class="verified-pill"><i></i> Verified</span>
+    </div>
+
     <div class="identity">
       <button
         class="avatar"
         type="button"
         [disabled]="!authService.isSeller()"
         (click)="avatarInput.click()"
+        [attr.aria-label]="authService.isSeller() ? 'Change profile avatar' : 'Profile avatar'"
       >
         @if (avatarPreview() || avatarUrl()) {
           <img [src]="avatarPreview() || avatarUrl()" alt="Profile avatar" />
@@ -22,7 +59,7 @@
           <span>{{ authService.currentUser()?.name?.charAt(0)?.toUpperCase() }}</span>
         }
         @if (authService.isSeller()) {
-          <small>Change</small>
+          <small><i>＋</i> Change</small>
         }
       </button>
       <input
@@ -32,34 +69,52 @@
         accept="image/jpeg,image/png,image/gif,image/webp"
         (change)="chooseAvatar($event)"
       />
-      <div>
-        <h2>{{ authService.currentUser()?.email }}</h2>
-        <p>{{ authService.currentUser()?.role === 'SELLER' ? 'Seller account' : 'Client account' }}</p>
+      <div class="identity-copy">
+        <span class="role-label">
+          {{ authService.currentUser()?.role === 'SELLER' ? 'Seller account' : 'Client account' }}
+        </span>
+        <h2>{{ authService.currentUser()?.name }}</h2>
+        <p>{{ authService.currentUser()?.email }}</p>
         @if (authService.isSeller() && (avatarPreview() || avatarUrl())) {
-          <button class="remove-avatar" type="button" (click)="removeAvatar()">Remove avatar</button>
+          <button class="remove-avatar" type="button" (click)="removeAvatar()">
+            Remove image
+          </button>
         }
       </div>
     </div>
 
-    <hr />
+    <div class="profile-divider"><span>Public details</span></div>
 
     <div class="mb-4">
       <label class="form-label" for="profile-name">Display name</label>
-      <input class="form-control" id="profile-name" formControlName="name" />
+      <input
+        class="form-control"
+        id="profile-name"
+        formControlName="name"
+        placeholder="How people see you"
+      />
       @if (form.controls.name.touched && form.controls.name.invalid) {
         <div class="field-error">Name must be between 2 and 80 characters.</div>
       }
     </div>
 
     @if (authService.isSeller()) {
-      <p class="avatar-help">
-        Seller avatars are uploaded through the Media Service and checked against
-        the same 2 MB and real-image rules as product media.
-      </p>
+      <div class="avatar-help">
+        <span>◈</span>
+        <p>
+          Seller avatars pass through the Media Service with a 2 MB limit and
+          real-image signature verification.
+        </p>
+      </div>
+    } @else {
+      <div class="avatar-help">
+        <span>◈</span>
+        <p>Your client identity is private and protected by role-based access.</p>
+      </div>
     }
 
-    <button class="btn btn-brand px-4 py-2" type="submit" [disabled]="saving()">
-      {{ saving() ? 'Saving profile…' : 'Save profile' }}
+    <button class="btn btn-brand w-100 py-2" type="submit" [disabled]="saving()">
+      {{ saving() ? 'Synchronizing…' : 'Save profile changes →' }}
     </button>
   </form>
 </section>
