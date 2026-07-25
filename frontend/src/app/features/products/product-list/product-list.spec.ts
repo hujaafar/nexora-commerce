@@ -108,8 +108,8 @@ describe('ProductList', () => {
         renderedFrames += 1;
       }
 
-      expect(renderedFrames).toBeGreaterThanOrEqual(6);
-      expect(scrollTo.mock.calls.length).toBeGreaterThanOrEqual(5);
+      expect(renderedFrames).toBeGreaterThanOrEqual(9);
+      expect(scrollTo.mock.calls.length).toBeGreaterThanOrEqual(8);
       expect(location.hash).toBe(`#${targetId}`);
     }
   });

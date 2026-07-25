@@ -84,8 +84,12 @@ export class ProductList implements OnInit, OnDestroy {
       return;
     }
 
-    // Long sections should feel like a deliberate human scroll, not a jump.
-    const duration = Math.min(2200, Math.max(1400, Math.abs(distance) * 0.6));
+    // Travel at a readable pace so intermediate sections stay visible.
+    // Nearby sections take at least 2.2s; long journeys can take up to 8s.
+    const duration = Math.min(
+      8000,
+      Math.max(2200, Math.abs(distance) / 0.42)
+    );
     const startedAt = performance.now();
     const root = document.documentElement;
     this.previousScrollBehavior = root.style.scrollBehavior;
@@ -94,9 +98,8 @@ export class ProductList implements OnInit, OnDestroy {
 
     const animate = (now: number): void => {
       const progress = Math.min((now - startedAt) / duration, 1);
-      // Smootherstep keeps velocity and acceleration gentle at both ends.
-      const eased =
-        progress ** 3 * (progress * (progress * 6 - 15) + 10);
+      // A sine curve feels close to a person steadily scrolling the page.
+      const eased = (1 - Math.cos(Math.PI * progress)) / 2;
 
       window.scrollTo({
         top: start + distance * eased,
