@@ -1,5 +1,12 @@
 import { CurrencyPipe } from '@angular/common';
-import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal
+} from '@angular/core';
 import {
   FormBuilder,
   ReactiveFormsModule,
@@ -35,6 +42,21 @@ export class SellerDashboard implements OnInit, OnDestroy {
   protected readonly editingProduct = signal<Product | null>(null);
   protected readonly pendingImages = signal<PendingImage[]>([]);
   protected readonly existingImageUrls = signal<string[]>([]);
+  protected readonly totalUnits = computed(() =>
+    this.products().reduce((total, product) => total + product.quantity, 0)
+  );
+  protected readonly totalImages = computed(() =>
+    this.products().reduce(
+      (total, product) => total + product.imageUrls.length,
+      0
+    )
+  );
+  protected readonly catalogValue = computed(() =>
+    this.products().reduce(
+      (total, product) => total + product.price * product.quantity,
+      0
+    )
+  );
 
   protected readonly form = this.formBuilder.nonNullable.group({
     name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(120)]],
