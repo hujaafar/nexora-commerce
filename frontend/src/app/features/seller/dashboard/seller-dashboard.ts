@@ -1,6 +1,5 @@
-/* BUY-01 learning header
+/*
  * File purpose: Implements the seller feature behavior.
- * Learning focus: Reactive Forms, computed inventory metrics, and multi-step product/image workflows.
  */
 import { CurrencyPipe } from '@angular/common';
 import {

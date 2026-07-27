@@ -1,6 +1,5 @@
-/* BUY-01 learning header
+/*
  * File purpose: Centralizes admin API or UI state operations.
- * Learning focus: Typed HttpClient services, observables, and separation from components.
  */
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';

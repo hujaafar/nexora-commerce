@@ -1,6 +1,5 @@
-/* BUY-01 learning header
+/*
  * File purpose: Translates validation and domain failures into stable JSON errors.
- * Learning focus: Centralized @RestControllerAdvice and safe error boundaries.
  */
 package com.buy01.user.web;
 

@@ -1,6 +1,4 @@
-# BUY-01 learning header
 # File purpose: Adds the HTTPS ingress override to the base Compose stack.
-# Learning focus: Container networks, health-based dependencies, volumes, environment configuration, and overrides.
 services:
   caddy:
     image: caddy:2.10-alpine

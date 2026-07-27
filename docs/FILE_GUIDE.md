@@ -1,25 +1,24 @@
-<!-- BUY-01 learning header
+<!--
 File purpose: Indexes every tracked file, what it contains, and what to learn from it.
-Learning focus: Codebase navigation, architectural ownership, and safe documentation of strict formats.
 -->
 # BUY-01 file-by-file learning guide
 
 Use this guide as a map before opening an unfamiliar file. Hand-written files
-that safely support comments also contain the same purpose and learning focus at
-their top. Strict JSON, generated wrappers/lockfiles, and the binary favicon are
-explained here instead of being modified, because inline comments would either
-break their parser or create noisy generated diffs.
+that safely support comments contain their purpose at the top; the related study
+concept stays in this guide. Strict JSON, generated wrappers/lockfiles, and the
+binary favicon are explained here instead of being modified, because inline
+comments would either break their parser or create noisy generated diffs.
 
 ## How to study a file
 
 1. Read its **File purpose** to locate it in the request or build flow.
-2. Read its **Learning focus** and identify that pattern in the implementation.
+2. Read its **What to learn** and identify that pattern in the implementation.
 3. Use `git log --follow -- <file>` to see the concept evolve commit by commit.
 4. Run the nearest test after experimenting.
 
 ## Complete tracked-file index
 
-| File | File purpose | Learning focus | Documentation |
+| File | File purpose | What to learn | Documentation |
 |---|---|---|---|
 | `.dockerignore` | Defines repository/tooling rules through .dockerignore. | Repository hygiene, consistent text handling, and small build contexts. | Existing inline header |
 | `.editorconfig` | Defines repository/tooling rules through .editorconfig. | Repository hygiene, consistent text handling, and small build contexts. | Existing inline header |

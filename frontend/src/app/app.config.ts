@@ -1,6 +1,5 @@
-/* BUY-01 learning header
+/*
  * File purpose: Registers application-wide Angular providers.
- * Learning focus: Standalone Angular bootstrap configuration and functional providers.
  */
 import {
   ApplicationConfig,

@@ -1,6 +1,5 @@
-/* BUY-01 learning header
+/*
  * File purpose: Protects Angular routes that require seller access.
- * Learning focus: Functional route guards and role-aware navigation.
  */
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';

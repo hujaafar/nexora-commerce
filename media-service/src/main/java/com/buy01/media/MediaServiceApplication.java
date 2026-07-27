@@ -1,6 +1,5 @@
-/* BUY-01 learning header
+/*
  * File purpose: Bootstraps the media-service Spring application.
- * Learning focus: Spring Boot auto-configuration and executable service entry points.
  */
 package com.buy01.media;
 

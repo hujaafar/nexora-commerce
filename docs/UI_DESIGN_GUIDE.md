@@ -1,6 +1,5 @@
-<!-- BUY-01 learning header
+<!--
 File purpose: Documents the project ui design guide.
-Learning focus: Living documentation and traceability alongside implementation.
 -->
 # BUY-01 UI Design Guide
 

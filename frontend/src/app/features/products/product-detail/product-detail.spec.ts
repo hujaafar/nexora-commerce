@@ -1,6 +1,5 @@
-/* BUY-01 learning header
+/*
  * File purpose: Verifies product detail.spec behavior.
- * Learning focus: Testing asynchronous loading and error UI states.
  */
 import { TestBed } from '@angular/core/testing';
 import {

@@ -1,6 +1,4 @@
-# BUY-01 learning header
 # File purpose: Defines repository/tooling rules through .gitattributes.
-# Learning focus: Repository hygiene, consistent text handling, and small build contexts.
 * text=auto
 *.sh text eol=lf
 *.cmd text eol=crlf

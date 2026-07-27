@@ -1,6 +1,5 @@
-/* BUY-01 learning header
+/*
  * File purpose: Implements the products feature behavior.
- * Learning focus: Signals, API loading states, route parameters, and custom requestAnimationFrame scrolling.
  */
 import { CurrencyPipe } from '@angular/common';
 import { Component, DestroyRef, inject, signal } from '@angular/core';

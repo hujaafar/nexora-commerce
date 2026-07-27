@@ -1,6 +1,4 @@
-# BUY-01 learning header
 # File purpose: Builds Angular and serves the optimized files with Nginx.
-# Learning focus: Multi-stage container builds, dependency caching, and non-root runtimes.
 FROM node:22.12-alpine AS build
 
 WORKDIR /app

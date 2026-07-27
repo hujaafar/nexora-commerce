@@ -1,6 +1,4 @@
-# BUY-01 learning header
 # File purpose: Defines repository/tooling rules through .gitignore.
-# Learning focus: Repository hygiene, consistent text handling, and small build contexts.
 # See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
 
 # Compiled output

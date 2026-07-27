@@ -1,6 +1,5 @@
-<!-- BUY-01 learning header
+<!--
 File purpose: Explains how to run, use, secure, test, and study the complete marketplace.
-Learning focus: Operational documentation and maintainable project handoff.
 -->
 # BUY-01 Marketplace
 

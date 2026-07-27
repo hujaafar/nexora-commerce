@@ -1,6 +1,5 @@
-<!-- BUY-01 learning header
+<!--
 File purpose: Records frontend-specific Angular commands and structure.
-Learning focus: Operational documentation and maintainable project handoff.
 -->
 # Frontend
 

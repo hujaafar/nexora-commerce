@@ -1,6 +1,5 @@
-/* BUY-01 learning header
+/*
  * File purpose: Verifies image signature validator test behavior.
- * Learning focus: Adversarial file-signature and MIME validation tests.
  */
 package com.buy01.media.validation;
 

@@ -1,6 +1,5 @@
-/* BUY-01 learning header
+/*
  * File purpose: Verifies product list.spec behavior.
- * Learning focus: Testing multi-frame UI motion and navigation destinations.
  */
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';

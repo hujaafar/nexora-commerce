@@ -1,6 +1,5 @@
-/* BUY-01 learning header
+/*
  * File purpose: Implements product service business rules.
- * Learning focus: Service-layer orchestration, JWT-subject ownership, persistence, and events.
  */
 package com.buy01.product.service;
 

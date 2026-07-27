@@ -1,6 +1,5 @@
-/* BUY-01 learning header
+/*
  * File purpose: Creates and configures object storage config.
- * Learning focus: Externalized configuration and dependency creation with Spring beans.
  */
 package com.buy01.media.config;
 

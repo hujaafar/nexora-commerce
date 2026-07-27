@@ -1,6 +1,5 @@
-/* BUY-01 learning header
+/*
  * File purpose: Implements media service business rules.
- * Learning focus: Service-layer orchestration, JWT-subject ownership, persistence, and events.
  */
 package com.buy01.media.service;
 

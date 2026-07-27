@@ -1,6 +1,5 @@
-/* BUY-01 learning header
+/*
  * File purpose: Limits authentication and media-write request bursts per client.
- * Learning focus: Reactive WebFilters, token-bucket rate limiting, and 429 responses.
  */
 package com.buy01.gateway.filter;
 

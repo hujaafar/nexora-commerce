@@ -1,6 +1,5 @@
-/* BUY-01 learning header
+/*
  * File purpose: Handles common HTTP authorization and API failures.
- * Learning focus: Functional HTTP interceptors for cross-cutting client behavior.
  */
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';

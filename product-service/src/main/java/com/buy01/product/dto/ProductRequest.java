@@ -1,6 +1,5 @@
-/* BUY-01 learning header
+/*
  * File purpose: Defines the product request API data contract.
- * Learning focus: Immutable record DTOs, boundary validation, and avoiding domain-object exposure.
  */
 package com.buy01.product.dto;
 

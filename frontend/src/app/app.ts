@@ -1,6 +1,5 @@
-/* BUY-01 learning header
+/*
  * File purpose: Controls the global application shell and session actions.
- * Learning focus: Root components, signals, router events, and shared navigation.
  */
 import { Component, inject, signal } from '@angular/core';
 import {

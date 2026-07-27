@@ -1,6 +1,5 @@
-/* BUY-01 learning header
+/*
  * File purpose: Defines authentication, authorization, JWT, or HTTP security rules.
- * Learning focus: Defense in depth with Spring Security, resource-server JWT validation, and role rules.
  */
 package com.buy01.user.security;
 

@@ -1,6 +1,5 @@
-<!-- BUY-01 learning header
+<!--
 File purpose: Documents the project security.
-Learning focus: Living documentation and traceability alongside implementation.
 -->
 # Security notes
 

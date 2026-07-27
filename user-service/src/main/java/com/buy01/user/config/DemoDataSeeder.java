@@ -1,6 +1,5 @@
-/* BUY-01 learning header
+/*
  * File purpose: Creates and configures demo data seeder.
- * Learning focus: Externalized configuration and dependency creation with Spring beans.
  */
 package com.buy01.user.config;
 

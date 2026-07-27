@@ -1,6 +1,5 @@
-/* BUY-01 learning header
+/*
  * File purpose: Verifies gateway service application tests behavior.
- * Learning focus: Isolated regression testing and behavior-focused assertions.
  */
 package com.buy01.gateway;
 

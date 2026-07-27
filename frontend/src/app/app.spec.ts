@@ -1,6 +1,5 @@
-/* BUY-01 learning header
+/*
  * File purpose: Verifies app.spec behavior.
- * Learning focus: Isolated regression testing and behavior-focused assertions.
  */
 import { provideHttpClient } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';

@@ -1,6 +1,5 @@
-/* BUY-01 learning header
+/*
  * File purpose: Defines the immutable Kafka event envelope.
- * Learning focus: Stable event contracts for asynchronous consumers.
  */
 package com.buy01.media.event;
 
