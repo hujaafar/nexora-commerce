@@ -140,3 +140,15 @@ Return with `git switch main`.
 - `6b7af58 feat(profile): clarify and verify seller avatar replacement` —
   explicit avatar creation/change UX plus an end-to-end replacement and cleanup
   check.
+
+## 10. File-by-file guided study
+
+- `b9bf022 docs(backend): explain every service file and learning concept` —
+  start here to follow Spring Boot entry points, configuration, security,
+  domain models, DTOs, repositories, services, controllers, events, and tests.
+- `1ac86ad docs(frontend): explain every Angular file and learning concept` —
+  continue with routes, guards, interceptors, typed services, signals, Reactive
+  Forms, templates, responsive Sass, animation, and component tests.
+- `559c853 docs(learning): index every project file and platform concept` —
+  finish with Docker, Compose, Caddy, Nginx, automation scripts, operational
+  documentation, and the complete `FILE_GUIDE.md` index.
