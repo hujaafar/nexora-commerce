@@ -1,3 +1,7 @@
+/* BUY-01 learning header
+ * File purpose: Defines the consistent error response returned by the service.
+ * Learning focus: Predictable API error contracts for frontend consumers.
+ */
 package com.buy01.media.web;
 
 import java.time.Instant;

@@ -1,3 +1,7 @@
+/* BUY-01 learning header
+ * File purpose: Exposes product HTTP endpoints.
+ * Learning focus: Thin REST controllers, request validation, status codes, and delegated business logic.
+ */
 package com.buy01.product.web;
 
 import com.buy01.product.dto.ProductRequest;

@@ -1,3 +1,7 @@
+/* BUY-01 learning header
+ * File purpose: Bootstraps the user-service Spring application.
+ * Learning focus: Spring Boot auto-configuration and executable service entry points.
+ */
 package com.buy01.user;
 
 import org.springframework.boot.SpringApplication;

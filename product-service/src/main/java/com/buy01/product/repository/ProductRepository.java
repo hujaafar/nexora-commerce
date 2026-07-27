@@ -1,3 +1,7 @@
+/* BUY-01 learning header
+ * File purpose: Provides persistence queries for product data.
+ * Learning focus: Spring Data repository abstraction and query derivation.
+ */
 package com.buy01.product.repository;
 
 import com.buy01.product.domain.Product;

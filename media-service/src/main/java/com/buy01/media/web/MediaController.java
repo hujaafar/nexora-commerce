@@ -1,3 +1,7 @@
+/* BUY-01 learning header
+ * File purpose: Exposes media HTTP endpoints.
+ * Learning focus: Thin REST controllers, request validation, status codes, and delegated business logic.
+ */
 package com.buy01.media.web;
 
 import com.buy01.media.domain.MediaPurpose;

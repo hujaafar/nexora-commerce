@@ -1,3 +1,7 @@
+/* BUY-01 learning header
+ * File purpose: Validates or normalizes uploaded image data through image signature validator.
+ * Learning focus: Secure file handling with allowlists, magic bytes, and path-safe names.
+ */
 package com.buy01.media.validation;
 
 import com.buy01.media.exception.InvalidMediaException;

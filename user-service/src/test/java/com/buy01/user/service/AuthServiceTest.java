@@ -1,3 +1,7 @@
+/* BUY-01 learning header
+ * File purpose: Verifies auth service test behavior.
+ * Learning focus: Isolated regression testing and behavior-focused assertions.
+ */
 package com.buy01.user.service;
 
 import static org.assertj.core.api.Assertions.assertThat;

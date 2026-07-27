@@ -1,3 +1,7 @@
+/* BUY-01 learning header
+ * File purpose: Validates or normalizes uploaded image data through detected image type.
+ * Learning focus: Secure file handling with allowlists, magic bytes, and path-safe names.
+ */
 package com.buy01.media.validation;
 
 public enum DetectedImageType {

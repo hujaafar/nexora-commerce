@@ -1,3 +1,7 @@
+/* BUY-01 learning header
+ * File purpose: Creates and configures object storage initializer.
+ * Learning focus: Externalized configuration and dependency creation with Spring beans.
+ */
 package com.buy01.media.config;
 
 import org.springframework.beans.factory.annotation.Value;

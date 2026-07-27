@@ -1,3 +1,7 @@
+/* BUY-01 learning header
+ * File purpose: Publishes service lifecycle events to Kafka.
+ * Learning focus: Asynchronous messaging, topic configuration, and loose service coupling.
+ */
 package com.buy01.media.event;
 
 import org.slf4j.Logger;

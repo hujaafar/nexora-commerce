@@ -1,3 +1,6 @@
+# BUY-01 learning header
+# File purpose: Externalizes runtime settings for media-service.
+# Learning focus: Spring profiles, environment-variable overrides, health checks, and service discovery.
 server:
   port: ${PORT:8083}
 

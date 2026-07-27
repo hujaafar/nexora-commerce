@@ -1,3 +1,7 @@
+/* BUY-01 learning header
+ * File purpose: Creates and configures cors config.
+ * Learning focus: Externalized configuration and dependency creation with Spring beans.
+ */
 package com.buy01.gateway.config;
 
 import java.util.Arrays;

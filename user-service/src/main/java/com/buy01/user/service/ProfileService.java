@@ -1,3 +1,7 @@
+/* BUY-01 learning header
+ * File purpose: Implements profile service business rules.
+ * Learning focus: Service-layer orchestration, password security, identity, and profile rules.
+ */
 package com.buy01.user.service;
 
 import com.buy01.user.domain.Role;

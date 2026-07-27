@@ -1,3 +1,7 @@
+/* BUY-01 learning header
+ * File purpose: Adds or propagates a correlation ID for each request.
+ * Learning focus: Cross-cutting observability at the API edge.
+ */
 package com.buy01.gateway.filter;
 
 import java.util.UUID;

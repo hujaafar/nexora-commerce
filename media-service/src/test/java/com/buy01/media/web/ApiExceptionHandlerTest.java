@@ -1,3 +1,7 @@
+/* BUY-01 learning header
+ * File purpose: Verifies api exception handler test behavior.
+ * Learning focus: Isolated regression testing and behavior-focused assertions.
+ */
 package com.buy01.media.web;
 
 import static org.assertj.core.api.Assertions.assertThat;

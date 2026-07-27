@@ -1,3 +1,7 @@
+/* BUY-01 learning header
+ * File purpose: Implements image-byte storage using the S3-compatible SDK.
+ * Learning focus: Ports-and-adapters design and keeping object bytes outside MongoDB.
+ */
 package com.buy01.media.storage;
 
 import com.buy01.media.exception.ObjectStorageException;

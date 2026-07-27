@@ -1,3 +1,7 @@
+/* BUY-01 learning header
+ * File purpose: Provides persistence queries for media asset data.
+ * Learning focus: Spring Data repository abstraction and query derivation.
+ */
 package com.buy01.media.repository;
 
 import com.buy01.media.domain.MediaAsset;

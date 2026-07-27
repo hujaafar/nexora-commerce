@@ -1,3 +1,7 @@
+/* BUY-01 learning header
+ * File purpose: Verifies rate limit web filter test behavior.
+ * Learning focus: Testing time-based edge protection without a live server.
+ */
 package com.buy01.gateway.filter;
 
 import static org.assertj.core.api.Assertions.assertThat;

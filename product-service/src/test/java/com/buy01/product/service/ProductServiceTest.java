@@ -1,3 +1,7 @@
+/* BUY-01 learning header
+ * File purpose: Verifies product service test behavior.
+ * Learning focus: Isolated regression testing and behavior-focused assertions.
+ */
 package com.buy01.product.service;
 
 import static org.assertj.core.api.Assertions.assertThat;

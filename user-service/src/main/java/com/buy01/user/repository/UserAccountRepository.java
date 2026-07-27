@@ -1,3 +1,7 @@
+/* BUY-01 learning header
+ * File purpose: Provides persistence queries for user account data.
+ * Learning focus: Spring Data repository abstraction and query derivation.
+ */
 package com.buy01.user.repository;
 
 import com.buy01.user.domain.UserAccount;
