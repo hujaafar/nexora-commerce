@@ -1,3 +1,6 @@
+# BUY-01 learning header
+# File purpose: Orchestrates every application and infrastructure dependency locally.
+# Learning focus: Container networks, health-based dependencies, volumes, environment configuration, and overrides.
 name: buy01
 
 services:

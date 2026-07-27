@@ -1,3 +1,7 @@
+<!-- BUY-01 learning header
+File purpose: Documents the project requirements checklist.
+Learning focus: Living documentation and traceability alongside implementation.
+-->
 # BUY-01 requirements checklist
 
 ## Backend and architecture

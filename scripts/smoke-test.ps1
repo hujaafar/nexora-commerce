@@ -1,3 +1,6 @@
+# BUY-01 learning header
+# File purpose: Exercises the complete deployed marketplace and cleans temporary data.
+# Learning focus: End-to-end production-path testing across every service.
 param(
     [Parameter(Mandatory = $true)]
     [string]$ImagePath,

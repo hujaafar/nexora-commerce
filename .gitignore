@@ -1,3 +1,6 @@
+# BUY-01 learning header
+# File purpose: Defines repository/tooling rules through .gitignore.
+# Learning focus: Repository hygiene, consistent text handling, and small build contexts.
 # Java / Maven
 target/
 *.class

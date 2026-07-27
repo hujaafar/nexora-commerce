@@ -1,3 +1,7 @@
+<!-- BUY-01 learning header
+File purpose: Explains how to run, use, secure, test, and study the complete marketplace.
+Learning focus: Operational documentation and maintainable project handoff.
+-->
 # BUY-01 Marketplace
 
 A complete learning project for a secure e-commerce marketplace: five Spring
@@ -221,6 +225,9 @@ study order. [REQUIREMENTS_CHECKLIST.md](docs/REQUIREMENTS_CHECKLIST.md) maps
 the original assignment to the implementation. [UI_DESIGN_GUIDE.md](docs/UI_DESIGN_GUIDE.md)
 explains the visual system, animations, accessibility choices, reactive dashboard
 metrics, and production budgets commit by commit.
+[FILE_GUIDE.md](docs/FILE_GUIDE.md) explains the purpose and learning concept
+for every tracked file, including strict configuration and generated files that
+cannot safely contain inline comments.
 
 ## Repository layout
 

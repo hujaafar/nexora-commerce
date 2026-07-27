@@ -1,3 +1,6 @@
+# BUY-01 learning header
+# File purpose: Runs reproducible backend and frontend verification.
+# Learning focus: Containerized build toolchains and full regression suites.
 $ErrorActionPreference = 'Stop'
 
 $projectRoot = Split-Path -Parent $PSScriptRoot

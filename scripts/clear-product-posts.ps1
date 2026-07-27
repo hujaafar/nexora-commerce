@@ -1,3 +1,6 @@
+# BUY-01 learning header
+# File purpose: Removes product posts and their linked media through authorized APIs.
+# Learning focus: Safe scoped cleanup with confirmation, authentication, and recoverable targeting.
 [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'High')]
 param(
     [string]$MongoContainer = 'buy01-mongo-1',

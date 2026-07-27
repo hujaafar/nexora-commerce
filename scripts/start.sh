@@ -1,4 +1,7 @@
 #!/usr/bin/env sh
+# BUY-01 learning header
+# File purpose: Builds and starts the complete Compose platform from a POSIX shell.
+# Learning focus: Cross-platform developer workflow automation.
 set -eu
 
 PROJECT_ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)

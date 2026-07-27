@@ -1,3 +1,7 @@
+<!-- BUY-01 learning header
+File purpose: Documents the project troubleshooting.
+Learning focus: Living documentation and traceability alongside implementation.
+-->
 # Troubleshooting
 
 ## A container stays unhealthy

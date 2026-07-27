@@ -1,3 +1,6 @@
+# BUY-01 learning header
+# File purpose: Terminates HTTPS and forwards public traffic to the frontend container.
+# Learning focus: Automatic TLS certificate provisioning and secure reverse proxying.
 {$DOMAIN:localhost} {
     encode zstd gzip
     reverse_proxy frontend:80

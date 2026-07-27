@@ -1,3 +1,6 @@
+# BUY-01 learning header
+# File purpose: Provides executable HTTP examples for every public and protected API.
+# Learning focus: API exploration, bearer authentication, multipart requests, and moderation calls.
 @gateway = http://localhost:8080
 @sellerEmail = seller@example.com
 @sellerPassword = Seller123!

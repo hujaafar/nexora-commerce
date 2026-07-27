@@ -1,3 +1,6 @@
+# BUY-01 learning header
+# File purpose: Builds and starts the complete Compose platform from PowerShell.
+# Learning focus: Developer workflow automation and health-aware startup.
 $ErrorActionPreference = 'Stop'
 
 $projectRoot = Split-Path -Parent $PSScriptRoot

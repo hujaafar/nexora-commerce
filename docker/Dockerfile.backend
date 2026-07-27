@@ -1,3 +1,6 @@
+# BUY-01 learning header
+# File purpose: Builds any selected Spring module into a minimal runtime image.
+# Learning focus: Multi-stage container builds, dependency caching, and non-root runtimes.
 FROM maven:3.9.11-eclipse-temurin-17 AS build
 
 ARG SERVICE

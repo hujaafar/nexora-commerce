@@ -1,3 +1,7 @@
+<!-- BUY-01 learning header
+File purpose: Documents the project learning path.
+Learning focus: Living documentation and traceability alongside implementation.
+-->
 # Learning path
 
 The Git history is deliberately split by concept. Start with:
