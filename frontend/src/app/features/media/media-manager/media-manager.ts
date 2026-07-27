@@ -1,3 +1,7 @@
+/* BUY-01 learning header
+ * File purpose: Implements the media feature behavior.
+ * Learning focus: File previews, client-side validation, upload progress states, and computed signals.
+ */
 import {
   Component,
   computed,

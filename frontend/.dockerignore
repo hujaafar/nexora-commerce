@@ -1,3 +1,6 @@
+# BUY-01 learning header
+# File purpose: Defines repository/tooling rules through .dockerignore.
+# Learning focus: Repository hygiene, consistent text handling, and small build contexts.
 node_modules
 dist
 .angular

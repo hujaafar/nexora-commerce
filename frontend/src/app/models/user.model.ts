@@ -1,3 +1,7 @@
+/* BUY-01 learning header
+ * File purpose: Defines TypeScript contracts for user data.
+ * Learning focus: End-to-end type safety between Angular and backend DTOs.
+ */
 export type Role = 'CLIENT' | 'SELLER' | 'ADMIN';
 export type RegistrationRole = Exclude<Role, 'ADMIN'>;
 

@@ -1,3 +1,7 @@
+/* BUY-01 learning header
+ * File purpose: Implements the profile feature behavior.
+ * Learning focus: Profile state, image previews, avatar replacement, and multipart uploads.
+ */
 import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import {
   FormBuilder,

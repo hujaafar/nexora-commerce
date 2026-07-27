@@ -1,3 +1,7 @@
+/* BUY-01 learning header
+ * File purpose: Centralizes notification API or UI state operations.
+ * Learning focus: Signal-based shared UI state and transient notifications.
+ */
 import { Injectable, signal } from '@angular/core';
 
 export type NotificationKind = 'success' | 'error' | 'info';

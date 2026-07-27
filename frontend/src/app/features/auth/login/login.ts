@@ -1,3 +1,7 @@
+/* BUY-01 learning header
+ * File purpose: Implements the auth feature behavior.
+ * Learning focus: Reactive Forms, validation, role selection, and navigation after authentication.
+ */
 import { Component, inject, signal } from '@angular/core';
 import {
   FormBuilder,

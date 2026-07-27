@@ -1,3 +1,7 @@
+/* BUY-01 learning header
+ * File purpose: Attaches the stored bearer token to API requests.
+ * Learning focus: Functional HTTP interceptors for cross-cutting client behavior.
+ */
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { environment } from '../../../environments/environment';

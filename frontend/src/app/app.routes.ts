@@ -1,3 +1,7 @@
+/* BUY-01 learning header
+ * File purpose: Defines lazy application routes and their guards.
+ * Learning focus: Route-level code splitting and authorization.
+ */
 import { Routes } from '@angular/router';
 import { adminGuard } from './core/guards/admin.guard';
 import { authGuard } from './core/guards/auth.guard';

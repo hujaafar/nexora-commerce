@@ -1,3 +1,7 @@
+/* BUY-01 learning header
+ * File purpose: Implements the admin feature behavior.
+ * Learning focus: Standalone Angular components, parallel API loading, signals, and moderation actions.
+ */
 import { CurrencyPipe, DatePipe, DecimalPipe } from '@angular/common';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
