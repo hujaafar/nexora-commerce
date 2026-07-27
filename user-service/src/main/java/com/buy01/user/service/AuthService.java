@@ -18,6 +18,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+// Learning annotation: @Service marks business-logic code as a Spring-managed service-layer component.
 @Service
 public class AuthService {
 

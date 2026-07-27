@@ -16,6 +16,7 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 
+// Learning annotation: @Service marks business-logic code as a Spring-managed service-layer component.
 @Service
 public class JwtService {
 
@@ -25,7 +26,9 @@ public class JwtService {
 
     public JwtService(
             JwtEncoder jwtEncoder,
+            // Learning annotation: @Value injects an external configuration property into this constructor parameter or bean.
             @Value("${security.jwt.issuer}") String issuer,
+            // Learning annotation: @Value injects an external configuration property into this constructor parameter or bean.
             @Value("${security.jwt.expiration}") Duration expiration) {
         this.jwtEncoder = jwtEncoder;
         this.issuer = issuer;

@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import org.springframework.stereotype.Component;
 
+// Learning annotation: @Component marks the class for component scanning so Spring creates and manages one instance.
 @Component
 public class ImageSignatureValidator {
 

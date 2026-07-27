@@ -13,6 +13,7 @@ import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 import software.amazon.awssdk.services.s3.model.HeadBucketRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
+// Learning annotation: @Component marks the class for component scanning so Spring creates and manages one instance.
 @Component
 public class ObjectStorageInitializer implements ApplicationRunner {
 
@@ -21,11 +22,13 @@ public class ObjectStorageInitializer implements ApplicationRunner {
 
     public ObjectStorageInitializer(
             S3Client s3Client,
+            // Learning annotation: @Value injects an external configuration property into this constructor parameter or bean.
             @Value("${app.storage.bucket}") String bucket) {
         this.s3Client = s3Client;
         this.bucket = bucket;
     }
 
+    // Learning annotation: @Override asks the Java compiler to verify that this method implements or overrides a parent contract.
     @Override
     public void run(ApplicationArguments args) {
         try {

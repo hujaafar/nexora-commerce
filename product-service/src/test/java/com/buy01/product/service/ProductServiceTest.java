@@ -25,22 +25,27 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+// Learning annotation: @ExtendWith connects JUnit 5 to the named extension; MockitoExtension creates and injects mocks.
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
 
+    // Learning annotation: @Mock creates a Mockito test double so the unit test can isolate one class.
     @Mock
     private ProductRepository repository;
 
+    // Learning annotation: @Mock creates a Mockito test double so the unit test can isolate one class.
     @Mock
     private ProductEventPublisher eventPublisher;
 
     private ProductService productService;
 
+    // Learning annotation: @BeforeEach runs this setup method before every JUnit test to keep tests isolated.
     @BeforeEach
     void setUp() {
         productService = new ProductService(repository, eventPublisher);
     }
 
+    // Learning annotation: @Test marks this method as an independently executable JUnit 5 test case.
     @Test
     void createAlwaysTakesOwnershipFromTheJwtSubject() {
         when(repository.save(any(Product.class)))
@@ -52,6 +57,7 @@ class ProductServiceTest {
         verify(eventPublisher).publish(any());
     }
 
+    // Learning annotation: @Test marks this method as an independently executable JUnit 5 test case.
     @Test
     void anotherSellerCannotDiscoverOrUpdateTheProduct() {
         Product product = productOwnedBy("owner");
@@ -63,6 +69,7 @@ class ProductServiceTest {
                 .hasMessage("Product was not found");
     }
 
+    // Learning annotation: @Test marks this method as an independently executable JUnit 5 test case.
     @Test
     void ownerCanDeleteTheProduct() {
         Product product = productOwnedBy("owner");
@@ -74,6 +81,7 @@ class ProductServiceTest {
         verify(eventPublisher).publish(any());
     }
 
+    // Learning annotation: @Test marks this method as an independently executable JUnit 5 test case.
     @Test
     void administratorCanDeleteAnyProductForModeration() {
         Product product = productOwnedBy("another-seller");

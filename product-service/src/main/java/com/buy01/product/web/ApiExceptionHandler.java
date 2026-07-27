@@ -19,11 +19,13 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+// Learning annotation: @RestControllerAdvice applies centralized exception handling to all REST controllers in this service.
 @RestControllerAdvice
 public class ApiExceptionHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ApiExceptionHandler.class);
 
+    // Learning annotation: @ExceptionHandler routes the listed exception type(s) to this method for a controlled HTTP response.
     @ExceptionHandler(MethodArgumentNotValidException.class)
     ResponseEntity<ApiError> handleValidation(
             MethodArgumentNotValidException exception,
@@ -41,6 +43,7 @@ public class ApiExceptionHandler {
         return ResponseEntity.badRequest().body(body);
     }
 
+    // Learning annotation: @ExceptionHandler routes the listed exception type(s) to this method for a controlled HTTP response.
     @ExceptionHandler(HttpMessageNotReadableException.class)
     ResponseEntity<ApiError> handleUnreadable(
             HttpMessageNotReadableException exception,
@@ -51,6 +54,7 @@ public class ApiExceptionHandler {
                 request);
     }
 
+    // Learning annotation: @ExceptionHandler routes the listed exception type(s) to this method for a controlled HTTP response.
     @ExceptionHandler(ProductNotFoundException.class)
     ResponseEntity<ApiError> handleNotFound(
             ProductNotFoundException exception,
@@ -58,6 +62,7 @@ public class ApiExceptionHandler {
         return error(HttpStatus.NOT_FOUND, exception.getMessage(), request);
     }
 
+    // Learning annotation: @ExceptionHandler routes the listed exception type(s) to this method for a controlled HTTP response.
     @ExceptionHandler(AccessDeniedException.class)
     ResponseEntity<ApiError> handleForbidden(
             AccessDeniedException exception,
@@ -65,6 +70,7 @@ public class ApiExceptionHandler {
         return error(HttpStatus.FORBIDDEN, "Access is denied", request);
     }
 
+    // Learning annotation: @ExceptionHandler routes the listed exception type(s) to this method for a controlled HTTP response.
     @ExceptionHandler(Exception.class)
     ResponseEntity<ApiError> handleUnexpected(
             Exception exception,

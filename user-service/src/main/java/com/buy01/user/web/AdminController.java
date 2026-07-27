@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+// Learning annotation: @RestController combines @Controller and @ResponseBody so methods return serialized API data.
 @RestController
+// Learning annotation: @RequestMapping defines the shared base URL (and optionally other rules) for this controller.
 @RequestMapping("/admin/users")
 public class AdminController {
 
@@ -22,7 +24,9 @@ public class AdminController {
         this.repository = repository;
     }
 
+    // Learning annotation: @GetMapping maps HTTP GET requests to this read-only controller method.
     @GetMapping
+    // Learning annotation: @PreAuthorize evaluates this authorization expression before the method is allowed to run.
     @PreAuthorize("hasRole('ADMIN')")
     List<UserResponse> listUsers() {
         return repository.findAll().stream()

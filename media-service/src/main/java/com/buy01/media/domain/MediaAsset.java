@@ -9,9 +9,11 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+// Learning annotation: @Document maps this class to the named MongoDB collection.
 @Document(collection = "media_assets")
 public class MediaAsset {
 
+    // Learning annotation: @Id marks this field as the MongoDB document identifier.
     @Id
     private String id;
 
@@ -20,9 +22,11 @@ public class MediaAsset {
     private String contentType;
     private long size;
 
+    // Learning annotation: @Indexed asks MongoDB to index this field for faster lookup or uniqueness enforcement.
     @Indexed
     private String sellerId;
 
+    // Learning annotation: @Indexed asks MongoDB to index this field for faster lookup or uniqueness enforcement.
     @Indexed
     private String productId;
 

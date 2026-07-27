@@ -27,23 +27,29 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.multipart.MultipartFile;
 
+// Learning annotation: @ExtendWith connects JUnit 5 to the named extension; MockitoExtension creates and injects mocks.
 @ExtendWith(MockitoExtension.class)
 class MediaServiceTest {
 
+    // Learning annotation: @Mock creates a Mockito test double so the unit test can isolate one class.
     @Mock
     private MediaAssetRepository repository;
 
+    // Learning annotation: @Mock creates a Mockito test double so the unit test can isolate one class.
     @Mock
     private ObjectStorage objectStorage;
 
+    // Learning annotation: @Mock creates a Mockito test double so the unit test can isolate one class.
     @Mock
     private MediaEventPublisher eventPublisher;
 
+    // Learning annotation: @Mock creates a Mockito test double so the unit test can isolate one class.
     @Mock
     private MultipartFile multipartFile;
 
     private MediaService mediaService;
 
+    // Learning annotation: @BeforeEach runs this setup method before every JUnit test to keep tests isolated.
     @BeforeEach
     void setUp() {
         mediaService = new MediaService(
@@ -56,6 +62,7 @@ class MediaServiceTest {
                 "http://localhost:8080/media/images");
     }
 
+    // Learning annotation: @Test marks this method as an independently executable JUnit 5 test case.
     @Test
     void rejectsOversizedImagesBeforeReadingOrStoringThem() {
         when(multipartFile.isEmpty()).thenReturn(false);
@@ -75,6 +82,7 @@ class MediaServiceTest {
                 org.mockito.ArgumentMatchers.any());
     }
 
+    // Learning annotation: @Test marks this method as an independently executable JUnit 5 test case.
     @Test
     void anotherSellerCannotDeleteOrDiscoverAnAsset() {
         MediaAsset asset = new MediaAsset(
@@ -95,6 +103,7 @@ class MediaServiceTest {
         verify(objectStorage, never()).delete(asset.getObjectKey());
     }
 
+    // Learning annotation: @Test marks this method as an independently executable JUnit 5 test case.
     @Test
     void administratorCanDeleteAnyAssetForModeration() {
         MediaAsset asset = new MediaAsset(

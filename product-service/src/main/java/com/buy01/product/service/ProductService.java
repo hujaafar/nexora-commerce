@@ -15,6 +15,7 @@ import java.time.Instant;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
+// Learning annotation: @Service marks business-logic code as a Spring-managed service-layer component.
 @Service
 public class ProductService {
 

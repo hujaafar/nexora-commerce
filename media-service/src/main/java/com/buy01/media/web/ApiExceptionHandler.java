@@ -20,11 +20,13 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
+// Learning annotation: @RestControllerAdvice applies centralized exception handling to all REST controllers in this service.
 @RestControllerAdvice
 public class ApiExceptionHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ApiExceptionHandler.class);
 
+    // Learning annotation: @ExceptionHandler routes the listed exception type(s) to this method for a controlled HTTP response.
     @ExceptionHandler({
             InvalidMediaException.class,
             MaxUploadSizeExceededException.class,
@@ -41,6 +43,7 @@ public class ApiExceptionHandler {
         return error(HttpStatus.BAD_REQUEST, message, request);
     }
 
+    // Learning annotation: @ExceptionHandler routes the listed exception type(s) to this method for a controlled HTTP response.
     @ExceptionHandler(MediaNotFoundException.class)
     ResponseEntity<ApiError> handleNotFound(
             MediaNotFoundException exception,
@@ -48,6 +51,7 @@ public class ApiExceptionHandler {
         return error(HttpStatus.NOT_FOUND, exception.getMessage(), request);
     }
 
+    // Learning annotation: @ExceptionHandler routes the listed exception type(s) to this method for a controlled HTTP response.
     @ExceptionHandler(AccessDeniedException.class)
     ResponseEntity<ApiError> handleForbidden(
             AccessDeniedException exception,
@@ -55,6 +59,7 @@ public class ApiExceptionHandler {
         return error(HttpStatus.FORBIDDEN, "Access is denied", request);
     }
 
+    // Learning annotation: @ExceptionHandler routes the listed exception type(s) to this method for a controlled HTTP response.
     @ExceptionHandler(ObjectStorageException.class)
     ResponseEntity<ApiError> handleStorage(
             ObjectStorageException exception,
@@ -66,6 +71,7 @@ public class ApiExceptionHandler {
                 request);
     }
 
+    // Learning annotation: @ExceptionHandler routes the listed exception type(s) to this method for a controlled HTTP response.
     @ExceptionHandler(Exception.class)
     ResponseEntity<ApiError> handleUnexpected(
             Exception exception,

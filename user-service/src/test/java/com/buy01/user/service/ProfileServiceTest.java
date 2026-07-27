@@ -21,19 +21,23 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.access.AccessDeniedException;
 
+// Learning annotation: @ExtendWith connects JUnit 5 to the named extension; MockitoExtension creates and injects mocks.
 @ExtendWith(MockitoExtension.class)
 class ProfileServiceTest {
 
+    // Learning annotation: @Mock creates a Mockito test double so the unit test can isolate one class.
     @Mock
     private UserAccountRepository repository;
 
     private ProfileService profileService;
 
+    // Learning annotation: @BeforeEach runs this setup method before every JUnit test to keep tests isolated.
     @BeforeEach
     void setUp() {
         profileService = new ProfileService(repository);
     }
 
+    // Learning annotation: @Test marks this method as an independently executable JUnit 5 test case.
     @Test
     void sellerCanAttachAnAvatarUploadedByTheMediaService() {
         UserAccount seller = account(Role.SELLER);
@@ -49,6 +53,7 @@ class ProfileServiceTest {
         assertThat(response.avatarUrl()).endsWith("/media/images/avatar-id");
     }
 
+    // Learning annotation: @Test marks this method as an independently executable JUnit 5 test case.
     @Test
     void clientCannotSetAnAvatar() {
         UserAccount client = account(Role.CLIENT);

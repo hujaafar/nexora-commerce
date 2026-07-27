@@ -13,11 +13,14 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsWebFilter;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 
+// Learning annotation: @Configuration marks this class as a source of Spring bean definitions and application setup.
 @Configuration
 public class CorsConfig {
 
+    // Learning annotation: @Bean registers the returned object in Spring’s IoC container so other classes can inject it.
     @Bean
     CorsWebFilter corsWebFilter(
+            // Learning annotation: @Value injects an external configuration property into this constructor parameter or bean.
             @Value("${app.cors.allowed-origins}") String allowedOrigins) {
         CorsConfiguration configuration = new CorsConfiguration();
         List<String> origins = Arrays.stream(allowedOrigins.split(","))

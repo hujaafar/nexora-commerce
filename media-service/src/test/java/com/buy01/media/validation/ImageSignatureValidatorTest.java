@@ -15,6 +15,7 @@ class ImageSignatureValidatorTest {
 
     private final ImageSignatureValidator validator = new ImageSignatureValidator();
 
+    // Learning annotation: @Test marks this method as an independently executable JUnit 5 test case.
     @Test
     void recognizesPngFromBytesRatherThanTheFilename() {
         byte[] png = new byte[] {
@@ -25,6 +26,7 @@ class ImageSignatureValidatorTest {
                 .isEqualTo(DetectedImageType.PNG);
     }
 
+    // Learning annotation: @Test marks this method as an independently executable JUnit 5 test case.
     @Test
     void rejectsExecutableContentRenamedAsAnImage() {
         byte[] executable = "MZ fake executable".getBytes(StandardCharsets.US_ASCII);
@@ -34,6 +36,7 @@ class ImageSignatureValidatorTest {
                 .hasMessageContaining("genuine");
     }
 
+    // Learning annotation: @Test marks this method as an independently executable JUnit 5 test case.
     @Test
     void rejectsADeclaredTypeThatDoesNotMatchTheSignature() {
         byte[] gif = "GIF89a".getBytes(StandardCharsets.US_ASCII);

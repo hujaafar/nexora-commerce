@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
+// Learning annotation: @Component marks the class for component scanning so Spring creates and manages one instance.
 @Component
 public class MediaEventPublisher {
 
@@ -20,6 +21,7 @@ public class MediaEventPublisher {
 
     public MediaEventPublisher(
             KafkaTemplate<String, Object> kafkaTemplate,
+            // Learning annotation: @Value injects an external configuration property into this constructor parameter or bean.
             @Value("${app.events.media-topic}") String topic) {
         this.kafkaTemplate = kafkaTemplate;
         this.topic = topic;

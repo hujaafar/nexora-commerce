@@ -7,6 +7,7 @@ package com.buy01.gateway;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+// Learning annotation: @SpringBootApplication combines configuration, auto-configuration, and component scanning for service startup.
 @SpringBootApplication
 public class GatewayServiceApplication {
 

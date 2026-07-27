@@ -25,7 +25,9 @@ import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
+// Learning annotation: @Component marks the class for component scanning so Spring creates and manages one instance.
 @Component
+// Learning annotation: @Order sets this filter/component’s execution priority relative to other ordered components.
 @Order(Ordered.HIGHEST_PRECEDENCE + 20)
 public class RateLimitWebFilter implements WebFilter {
 
@@ -40,10 +42,15 @@ public class RateLimitWebFilter implements WebFilter {
 
     public RateLimitWebFilter(
             ObjectMapper objectMapper,
+            // Learning annotation: @Value injects an external configuration property into this constructor parameter or bean.
             @Value("${app.rate-limit.enabled:true}") boolean enabled,
+            // Learning annotation: @Value injects an external configuration property into this constructor parameter or bean.
             @Value("${app.rate-limit.auth.requests:20}") int authRequests,
+            // Learning annotation: @Value injects an external configuration property into this constructor parameter or bean.
             @Value("${app.rate-limit.auth.window:60s}") Duration authWindow,
+            // Learning annotation: @Value injects an external configuration property into this constructor parameter or bean.
             @Value("${app.rate-limit.media.requests:60}") int mediaRequests,
+            // Learning annotation: @Value injects an external configuration property into this constructor parameter or bean.
             @Value("${app.rate-limit.media.window:60s}") Duration mediaWindow) {
         this.objectMapper = objectMapper;
         this.enabled = enabled;
@@ -51,6 +58,7 @@ public class RateLimitWebFilter implements WebFilter {
         this.mediaLimit = new Limit(mediaRequests, mediaWindow);
     }
 
+    // Learning annotation: @Override asks the Java compiler to verify that this method implements or overrides a parent contract.
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         LimitSelection selection = selectLimit(exchange);

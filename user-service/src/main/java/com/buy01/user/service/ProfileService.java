@@ -14,6 +14,7 @@ import java.time.Instant;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
+// Learning annotation: @Service marks business-logic code as a Spring-managed service-layer component.
 @Service
 public class ProfileService {
 

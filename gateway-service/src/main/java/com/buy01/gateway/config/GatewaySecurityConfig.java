@@ -32,10 +32,13 @@ import org.springframework.security.web.server.authorization.ServerAccessDeniedH
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+// Learning annotation: @Configuration marks this class as a source of Spring bean definitions and application setup.
 @Configuration
+// Learning annotation: @EnableReactiveMethodSecurity activates method-level authorization for reactive Publisher return types.
 @EnableReactiveMethodSecurity
 public class GatewaySecurityConfig {
 
+    // Learning annotation: @Bean registers the returned object in Spring’s IoC container so other classes can inject it.
     @Bean
     SecurityWebFilterChain securityWebFilterChain(
             ServerHttpSecurity http,
@@ -76,8 +79,10 @@ public class GatewaySecurityConfig {
                 .build();
     }
 
+    // Learning annotation: @Bean registers the returned object in Spring’s IoC container so other classes can inject it.
     @Bean
     ReactiveJwtDecoder jwtDecoder(
+            // Learning annotation: @Value injects an external configuration property into this constructor parameter or bean.
             @Value("${security.jwt.secret}") String secret) {
         SecretKey key = new SecretKeySpec(
                 secret.getBytes(StandardCharsets.UTF_8),

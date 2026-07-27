@@ -32,10 +32,13 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 
+// Learning annotation: @Configuration marks this class as a source of Spring bean definitions and application setup.
 @Configuration
+// Learning annotation: @EnableMethodSecurity activates method-level rules such as @PreAuthorize in servlet-based services.
 @EnableMethodSecurity
 public class ApiSecurityConfig {
 
+    // Learning annotation: @Bean registers the returned object in Spring’s IoC container so other classes can inject it.
     @Bean
     SecurityFilterChain securityFilterChain(
             HttpSecurity http,
@@ -79,7 +82,9 @@ public class ApiSecurityConfig {
                 .build();
     }
 
+    // Learning annotation: @Bean registers the returned object in Spring’s IoC container so other classes can inject it.
     @Bean
+    // Learning annotation: @Value injects the shared JWT secret from external configuration.
     JwtDecoder jwtDecoder(@Value("${security.jwt.secret}") String secret) {
         SecretKey key = new SecretKeySpec(
                 secret.getBytes(StandardCharsets.UTF_8),
@@ -89,6 +94,7 @@ public class ApiSecurityConfig {
                 .build();
     }
 
+    // Learning annotation: @Bean registers the returned object in Spring’s IoC container so other classes can inject it.
     @Bean
     JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();

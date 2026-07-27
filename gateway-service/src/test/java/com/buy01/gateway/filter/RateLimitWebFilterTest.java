@@ -19,6 +19,7 @@ import reactor.core.publisher.Mono;
 
 class RateLimitWebFilterTest {
 
+    // Learning annotation: @Test marks this method as an independently executable JUnit 5 test case.
     @Test
     void limitsAuthenticationRequestsPerClient() {
         RateLimitWebFilter filter = filter(2, 10);
@@ -45,6 +46,7 @@ class RateLimitWebFilterTest {
                 .isEqualTo("0");
     }
 
+    // Learning annotation: @Test marks this method as an independently executable JUnit 5 test case.
     @Test
     void leavesPublicReadsOutsideTheLimiter() {
         RateLimitWebFilter filter = filter(1, 1);
@@ -64,6 +66,7 @@ class RateLimitWebFilterTest {
         assertThat(accepted).hasValue(10);
     }
 
+    // Learning annotation: @Test marks this method as an independently executable JUnit 5 test case.
     @Test
     void separatesMediaWritesFromAuthenticationTraffic() {
         RateLimitWebFilter filter = filter(1, 1);

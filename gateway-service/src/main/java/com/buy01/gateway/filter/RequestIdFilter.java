@@ -13,11 +13,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+// Learning annotation: @Component marks the class for component scanning so Spring creates and manages one instance.
 @Component
 public class RequestIdFilter implements GlobalFilter, Ordered {
 
     public static final String REQUEST_ID_HEADER = "X-Request-Id";
 
+    // Learning annotation: @Override asks the Java compiler to verify that this method implements or overrides a parent contract.
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         String incomingRequestId =
@@ -33,6 +35,7 @@ public class RequestIdFilter implements GlobalFilter, Ordered {
         return chain.filter(exchange.mutate().request(request).build());
     }
 
+    // Learning annotation: @Override asks the Java compiler to verify that this method implements or overrides a parent contract.
     @Override
     public int getOrder() {
         return Ordered.HIGHEST_PRECEDENCE;

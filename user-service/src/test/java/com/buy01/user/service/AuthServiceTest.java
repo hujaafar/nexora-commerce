@@ -30,24 +30,29 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+// Learning annotation: @ExtendWith connects JUnit 5 to the named extension; MockitoExtension creates and injects mocks.
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
 
+    // Learning annotation: @Mock creates a Mockito test double so the unit test can isolate one class.
     @Mock
     private UserAccountRepository repository;
 
+    // Learning annotation: @Mock creates a Mockito test double so the unit test can isolate one class.
     @Mock
     private JwtService jwtService;
 
     private PasswordEncoder passwordEncoder;
     private AuthService authService;
 
+    // Learning annotation: @BeforeEach runs this setup method before every JUnit test to keep tests isolated.
     @BeforeEach
     void setUp() {
         passwordEncoder = new BCryptPasswordEncoder(4);
         authService = new AuthService(repository, passwordEncoder, jwtService);
     }
 
+    // Learning annotation: @Test marks this method as an independently executable JUnit 5 test case.
     @Test
     void registerNormalizesEmailAndNeverStoresThePlainPassword() {
         when(repository.save(any(UserAccount.class)))
@@ -70,6 +75,7 @@ class AuthServiceTest {
         assertThat(passwordEncoder.matches("Strong123", stored.getPasswordHash())).isTrue();
     }
 
+    // Learning annotation: @Test marks this method as an independently executable JUnit 5 test case.
     @Test
     void duplicateEmailIsRejected() {
         when(repository.existsByEmailIgnoreCase("used@example.com")).thenReturn(true);
@@ -82,6 +88,7 @@ class AuthServiceTest {
                 .isInstanceOf(DuplicateEmailException.class);
     }
 
+    // Learning annotation: @Test marks this method as an independently executable JUnit 5 test case.
     @Test
     void loginUsesOneGenericFailureForUnknownEmailOrWrongPassword() {
         when(repository.findByEmailIgnoreCase("missing@example.com"))

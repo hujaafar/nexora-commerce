@@ -16,6 +16,7 @@ import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
+// Learning annotation: @Component marks the class for component scanning so Spring creates and manages one instance.
 @Component
 public class S3ObjectStorage implements ObjectStorage {
 
@@ -24,11 +25,13 @@ public class S3ObjectStorage implements ObjectStorage {
 
     public S3ObjectStorage(
             S3Client s3Client,
+            // Learning annotation: @Value injects an external configuration property into this constructor parameter or bean.
             @Value("${app.storage.bucket}") String bucket) {
         this.s3Client = s3Client;
         this.bucket = bucket;
     }
 
+    // Learning annotation: @Override asks the Java compiler to verify that this method implements or overrides a parent contract.
     @Override
     public void put(String objectKey, String contentType, byte[] content) {
         try {
@@ -44,6 +47,7 @@ public class S3ObjectStorage implements ObjectStorage {
         }
     }
 
+    // Learning annotation: @Override asks the Java compiler to verify that this method implements or overrides a parent contract.
     @Override
     public byte[] get(String objectKey) {
         try {
@@ -58,6 +62,7 @@ public class S3ObjectStorage implements ObjectStorage {
         }
     }
 
+    // Learning annotation: @Override asks the Java compiler to verify that this method implements or overrides a parent contract.
     @Override
     public void delete(String objectKey) {
         try {

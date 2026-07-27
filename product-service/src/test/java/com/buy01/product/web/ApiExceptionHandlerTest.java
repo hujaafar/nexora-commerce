@@ -15,6 +15,7 @@ class ApiExceptionHandlerTest {
 
     private final ApiExceptionHandler handler = new ApiExceptionHandler();
 
+    // Learning annotation: @Test marks this method as an independently executable JUnit 5 test case.
     @Test
     void mapsMethodSecurityDenialToForbidden() {
         MockHttpServletRequest request = new MockHttpServletRequest("POST", "/products");

@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+// Learning annotation: @Service marks business-logic code as a Spring-managed service-layer component.
 @Service
 public class MediaService {
 
@@ -46,7 +47,9 @@ public class MediaService {
             ImageSignatureValidator imageSignatureValidator,
             FilenameSanitizer filenameSanitizer,
             MediaEventPublisher eventPublisher,
+            // Learning annotation: @Value injects an external configuration property into this constructor parameter or bean.
             @Value("${app.media.max-bytes}") long maxBytes,
+            // Learning annotation: @Value injects an external configuration property into this constructor parameter or bean.
             @Value("${app.media.public-base-url}") String publicBaseUrl) {
         this.repository = repository;
         this.objectStorage = objectStorage;

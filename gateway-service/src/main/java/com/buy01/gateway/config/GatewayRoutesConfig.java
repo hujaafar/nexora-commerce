@@ -9,9 +9,11 @@ import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+// Learning annotation: @Configuration marks this class as a source of Spring bean definitions and application setup.
 @Configuration
 public class GatewayRoutesConfig {
 
+    // Learning annotation: @Bean registers the returned object in Spring’s IoC container so other classes can inject it.
     @Bean
     RouteLocator marketplaceRoutes(RouteLocatorBuilder builder) {
         return builder.routes()
