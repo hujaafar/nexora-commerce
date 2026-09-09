@@ -1,0 +1,151 @@
+<!-- File purpose: Presents a three-step pay-on-delivery checkout wizard. -->
+<section class="page-shell checkout-page">
+  <header class="checkout-header">
+    <a routerLink="/cart">← Back to cart</a>
+    <div class="stepper" aria-label="Checkout progress">
+      <span [class.active]="step() >= 1"><i>1</i>Address</span><b></b>
+      <span [class.active]="step() >= 2"><i>2</i>Review</span><b></b>
+      <span [class.active]="step() >= 3"><i>3</i>Confirmed</span>
+    </div>
+  </header>
+
+  @if (step() === 1) {
+    <div class="checkout-layout">
+      <form class="checkout-card surface-card" [formGroup]="form" (ngSubmit)="review()">
+        <p class="eyebrow">Step one</p>
+        <h1>Where should it arrive?</h1>
+        <div class="field-grid">
+          <label
+            >Full name<input
+              class="form-control"
+              formControlName="fullName"
+              placeholder="Your full name"
+          /></label>
+          <label
+            >Phone<input class="form-control" formControlName="phone" placeholder="+973 3333 3333"
+          /></label>
+          <label class="wide"
+            >Address<input
+              class="form-control"
+              formControlName="addressLine"
+              placeholder="Building, road, block"
+          /></label>
+          <label
+            >City<input class="form-control" formControlName="city" placeholder="Manama"
+          /></label>
+          <label>Country<input class="form-control" formControlName="country" /></label>
+          <label
+            >Postal code <small>Optional</small
+            ><input class="form-control" formControlName="postalCode"
+          /></label>
+        </div>
+        @if (form.touched && form.invalid) {
+          <p class="field-error">Please complete the required delivery details.</p>
+        }
+        <div class="payment-choice">
+          <p class="eyebrow">Payment</p>
+          <label [class.selected]="form.controls.paymentMethod.value === 'PAY_ON_DELIVERY'">
+            <input type="radio" formControlName="paymentMethod" value="PAY_ON_DELIVERY" />
+            <span><strong>Pay on delivery</strong><small>Pay when your order arrives</small></span
+            ><i>Recommended</i>
+          </label>
+          <label [class.selected]="form.controls.paymentMethod.value === 'CARD_SIMULATED'">
+            <input type="radio" formControlName="paymentMethod" value="CARD_SIMULATED" />
+            <span
+              ><strong>Card simulation</strong
+              ><small>Demo authorization—no real card details</small></span
+            ><i>Bonus</i>
+          </label>
+        </div>
+        <button class="btn btn-brand w-100" type="submit">Review order →</button>
+      </form>
+      <ng-container *ngTemplateOutlet="summary"></ng-container>
+    </div>
+  } @else if (step() === 2) {
+    <div class="review-layout">
+      <section class="review-card surface-card">
+        <p class="eyebrow">Step two</p>
+        <h1>Everything look right?</h1>
+        <div class="review-block">
+          <span>Delivery</span><strong>{{ form.value.fullName }}</strong>
+          <p>
+            {{ form.value.addressLine }}<br />{{ form.value.city }}, {{ form.value.country
+            }}<br />{{ form.value.phone }}
+          </p>
+          <button type="button" (click)="step.set(1)">Edit address</button>
+        </div>
+        <div class="review-block">
+          <span>Payment</span
+          ><strong>{{
+            form.value.paymentMethod === 'PAY_ON_DELIVERY'
+              ? 'Pay on delivery'
+              : 'Simulated card authorization'
+          }}</strong>
+          <p>
+            {{
+              form.value.paymentMethod === 'PAY_ON_DELIVERY'
+                ? 'Nothing is charged now.'
+                : 'For demonstration only. No card information is collected.'
+            }}
+          </p>
+        </div>
+        <div class="review-items">
+          @for (item of cart()?.items; track item.productId) {
+            <div>
+              <span>{{ item.quantity }} × {{ item.name }}</span
+              ><strong>{{ item.unitPrice * item.quantity | currency: 'USD' }}</strong>
+            </div>
+          }
+        </div>
+        <button class="confirm-button" type="button" (click)="placeOrder()" [disabled]="placing()">
+          <span><small>Final total</small>{{ total() | currency: 'USD' }}</span
+          ><b>{{ placing() ? 'Placing order…' : 'Confirm order →' }}</b>
+        </button>
+      </section>
+      <ng-container *ngTemplateOutlet="summary"></ng-container>
+    </div>
+  } @else if (order(); as placedOrder) {
+    <section class="success-card surface-card">
+      <div class="success-mark">✓</div>
+      <p class="eyebrow">Order confirmed</p>
+      <h1>We’ve got it.</h1>
+      <p>
+        Your order <strong>{{ placedOrder.orderNumber }}</strong> is now being prepared. You can
+        follow every update from your orders page.
+      </p>
+      <div class="success-facts">
+        <span><small>Total</small>{{ placedOrder.total | currency: 'USD' }}</span
+        ><span
+          ><small>Payment</small
+          >{{ placedOrder.paymentMethod === 'PAY_ON_DELIVERY' ? 'On delivery' : 'Demo card' }}</span
+        ><span><small>Status</small>{{ placedOrder.status }}</span>
+      </div>
+      <div class="success-actions">
+        <a class="btn btn-brand" [routerLink]="['/orders', placedOrder.id]">Track this order</a
+        ><a class="btn btn-soft" routerLink="/products">Keep shopping</a>
+      </div>
+    </section>
+  }
+
+  <ng-template #summary>
+    <aside class="checkout-summary surface-card">
+      <p class="eyebrow">Your order</p>
+      <h2>{{ cart()?.itemCount || 0 }} items</h2>
+      <dl>
+        <div>
+          <dt>Subtotal</dt>
+          <dd>{{ cart()?.subtotal || 0 | currency: 'USD' }}</dd>
+        </div>
+        <div>
+          <dt>Delivery</dt>
+          <dd>{{ delivery() === 0 ? 'Free' : (delivery() | currency: 'USD') }}</dd>
+        </div>
+        <div>
+          <dt>Total</dt>
+          <dd>{{ total() | currency: 'USD' }}</dd>
+        </div>
+      </dl>
+      <p>Delivery details remain private and are only shared as needed to fulfil the order.</p>
+    </aside>
+  </ng-template>
+</section>

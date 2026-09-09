@@ -1,0 +1,94 @@
+<!-- File purpose: Presents an accessible cart with editable quantities and server totals. -->
+<section class="page-shell cart-page">
+  <header class="commerce-heading">
+    <div>
+      <p class="eyebrow">Your selection</p>
+      <h1>Shopping cart</h1>
+    </div>
+    <a routerLink="/products">Continue shopping <span>→</span></a>
+  </header>
+
+  @if (loading()) {
+    <div class="cart-loading surface-card">
+      <i></i>
+      <p>Preparing your cart…</p>
+    </div>
+  } @else if (!cart()?.items?.length) {
+    <div class="empty-state">
+      <h2>Your cart is open for something good.</h2>
+      <p>Explore the collection and add a product when it feels right.</p>
+      <a class="btn btn-brand mt-4" routerLink="/products">Browse products</a>
+    </div>
+  } @else if (cart(); as currentCart) {
+    <div class="cart-layout">
+      <section class="cart-lines" aria-label="Cart products">
+        @for (item of currentCart.items; track item.productId; let index = $index) {
+          <article class="cart-line surface-card" [style.animation-delay.ms]="index * 60">
+            <a class="line-image" [routerLink]="['/products', item.productId]">
+              @if (item.imageUrl) {
+                <img [src]="item.imageUrl" [alt]="item.name" />
+              } @else {
+                <span>{{ item.name.charAt(0) }}</span>
+              }
+            </a>
+            <div class="line-copy">
+              <small>{{ item.category }}</small>
+              <a [routerLink]="['/products', item.productId]">{{ item.name }}</a>
+              <p>{{ item.unitPrice | currency: 'USD' }} each</p>
+            </div>
+            <div class="quantity-control" aria-label="Quantity">
+              <button
+                type="button"
+                (click)="change(item, item.quantity - 1)"
+                [disabled]="item.quantity <= 1"
+              >
+                −
+              </button>
+              <strong>{{ item.quantity }}</strong>
+              <button
+                type="button"
+                (click)="change(item, item.quantity + 1)"
+                [disabled]="item.quantity >= item.availableQuantity"
+              >
+                +
+              </button>
+            </div>
+            <div class="line-total">
+              <strong>{{ lineTotal(item) | currency: 'USD' }}</strong>
+              <button
+                type="button"
+                (click)="remove(item)"
+                [disabled]="updatingId() === item.productId"
+              >
+                Remove
+              </button>
+            </div>
+          </article>
+        }
+      </section>
+
+      <aside class="cart-summary surface-card">
+        <p class="eyebrow">Order summary</p>
+        <h2>{{ currentCart.itemCount }} {{ currentCart.itemCount === 1 ? 'item' : 'items' }}</h2>
+        <dl>
+          <div>
+            <dt>Subtotal</dt>
+            <dd>{{ currentCart.subtotal | currency: 'USD' }}</dd>
+          </div>
+          <div>
+            <dt>Delivery</dt>
+            <dd>{{ delivery() === 0 ? 'Free' : (delivery() | currency: 'USD') }}</dd>
+          </div>
+          <div class="summary-total">
+            <dt>Total</dt>
+            <dd>{{ total() | currency: 'USD' }}</dd>
+          </div>
+        </dl>
+        <a class="checkout-action" routerLink="/checkout">
+          <span><small>Pay when it arrives</small>Continue to checkout</span><i>→</i>
+        </a>
+        <p class="summary-note">Free delivery on orders of $100 or more.</p>
+      </aside>
+    </div>
+  }
+</section>

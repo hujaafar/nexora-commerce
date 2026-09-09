@@ -1,0 +1,141 @@
+<!-- File purpose: Presents order items, private delivery details, totals, timeline, and allowed actions. -->
+<section class="page-shell order-detail-page">
+  <a class="back-link" routerLink="/orders">← Back to orders</a>
+  @if (loading()) {
+    <div class="detail-loading surface-card">Loading order…</div>
+  } @else if (order(); as item) {
+    <header class="order-hero">
+      <div>
+        <p class="eyebrow">{{ sellerView() ? 'Customer order' : 'Order tracking' }}</p>
+        <h1>{{ item.orderNumber }}</h1>
+        <p>Placed {{ item.createdAt | date: 'medium' }}</p>
+      </div>
+      <span [attr.data-status]="item.status"><i></i>{{ label(item.status) }}</span>
+    </header>
+
+    @if (item.status !== 'CANCELLED') {
+      <section class="timeline surface-card" aria-label="Order timeline">
+        @for (stage of stages; track stage; let index = $index) {
+          <div [class.reached]="stageReached(stage)">
+            <i>{{ stageReached(stage) ? '✓' : index + 1 }}</i
+            ><span>{{ label(stage) }}</span>
+            @if (index < stages.length - 1) {
+              <b></b>
+            }
+          </div>
+        }
+      </section>
+    } @else {
+      <div class="cancelled-banner">
+        <strong>This order was cancelled.</strong
+        ><span>Reserved products were returned to stock.</span>
+      </div>
+    }
+
+    <div class="order-detail-grid">
+      <section class="ordered-items surface-card">
+        <div class="section-title">
+          <div>
+            <p class="eyebrow">Items</p>
+            <h2>{{ item.items.length }} product lines</h2>
+          </div>
+        </div>
+        @for (product of item.items; track product.productId) {
+          <article>
+            <a [routerLink]="['/products', product.productId]">
+              @if (product.imageUrl) {
+                <img [src]="product.imageUrl" [alt]="product.name" />
+              } @else {
+                <span>{{ product.name.charAt(0) }}</span>
+              }
+            </a>
+            <div>
+              <small>{{ product.category }}</small>
+              <h3>{{ product.name }}</h3>
+              <p>{{ product.quantity }} × {{ product.unitPrice | currency: 'USD' }}</p>
+            </div>
+            <strong>{{ product.lineTotal | currency: 'USD' }}</strong>
+          </article>
+        }
+      </section>
+      <aside class="order-sidebar">
+        <section class="surface-card delivery-card">
+          <p class="eyebrow">Delivery</p>
+          <h3>{{ item.shippingAddress.fullName }}</h3>
+          <p>
+            {{ item.shippingAddress.addressLine }}<br />{{ item.shippingAddress.city }},
+            {{ item.shippingAddress.country }} {{ item.shippingAddress.postalCode }}<br />{{
+              item.shippingAddress.phone
+            }}
+          </p>
+        </section>
+        <section class="surface-card total-card">
+          <p class="eyebrow">Summary</p>
+          <dl>
+            <div>
+              <dt>Subtotal</dt>
+              <dd>{{ item.subtotal | currency: 'USD' }}</dd>
+            </div>
+            <div>
+              <dt>Delivery</dt>
+              <dd>{{ item.deliveryFee === 0 ? 'Free' : (item.deliveryFee | currency: 'USD') }}</dd>
+            </div>
+            <div>
+              <dt>Total</dt>
+              <dd>{{ item.total | currency: 'USD' }}</dd>
+            </div>
+          </dl>
+          <p>
+            {{
+              item.paymentMethod === 'PAY_ON_DELIVERY'
+                ? 'Pay on delivery'
+                : 'Simulated card payment'
+            }}
+          </p>
+        </section>
+      </aside>
+    </div>
+
+    <section class="order-actions surface-card">
+      <div>
+        <p class="eyebrow">What’s next</p>
+        <h2>
+          {{
+            sellerView()
+              ? 'Keep fulfilment moving.'
+              : item.status === 'CANCELLED'
+                ? 'Want the same products again?'
+                : 'Manage this order.'
+          }}
+        </h2>
+      </div>
+      <div>
+        @if (sellerView() && nextStatus()) {
+          <button class="btn btn-brand" type="button" (click)="advance()" [disabled]="acting()">
+            Move to {{ label(nextStatus()!) }} →
+          </button>
+        }
+        @if (!sellerView() && (item.status === 'PLACED' || item.status === 'CONFIRMED')) {
+          <button
+            class="btn btn-soft danger-action"
+            type="button"
+            (click)="cancel()"
+            [disabled]="acting()"
+          >
+            Cancel order
+          </button>
+        }
+        @if (!sellerView()) {
+          <button class="btn btn-brand" type="button" (click)="redo()" [disabled]="acting()">
+            Order again
+          </button>
+        }
+        @if (!sellerView() && item.status === 'CANCELLED') {
+          <button class="text-button" type="button" (click)="remove()" [disabled]="acting()">
+            Remove from history
+          </button>
+        }
+      </div>
+    </section>
+  }
+</section>

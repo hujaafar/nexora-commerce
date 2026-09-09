@@ -1,0 +1,43 @@
+# File purpose: Defines repository/tooling rules through .gitignore.
+# Java / Maven
+target/
+*.class
+*.jar
+!.mvn/wrapper/maven-wrapper.jar
+
+# Angular / Node
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/coverage/
+
+# IDE / OS
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+
+# Runtime data and secrets
+.env
+jenkins/.env
+quality/.env
+quality/reports/
+.scannerwork/
+jenkins/certs/*.crt
+data/
+uploads/
+certs/*.p12
+certs/*.pem
+!certs/README.md
+
+# Logs
+*.log
+logs/
+
+# CI and end-to-end evidence is generated for each run, then archived by Jenkins.
+test-results/
+frontend/coverage/
+frontend/test-results/
+frontend/playwright-report/
+frontend/test-results-e2e/

@@ -1,0 +1,80 @@
+# File purpose: Runs the code-quality server and its database as isolated,
+# reproducible Docker services.
+#
+# Important concepts:
+# - A named volume survives container recreation, so analysis history remains.
+# - A health check makes startup wait for PostgreSQL and SonarQube readiness.
+# - Exact image versions avoid an unexpected upgrade during an audit.
+# - Secrets come from ignored quality/.env instead of committed YAML.
+name: nexora-commerce-quality
+
+services:
+  sonar-db:
+    image: postgres:17.5-alpine3.22@sha256:6567bca8d7bc8c82c5922425a0baee57be8402df92bae5eacad5f01ae9544daa
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${SONAR_DB_NAME:-sonarqube}
+      POSTGRES_USER: ${SONAR_DB_USER:-sonarqube}
+      POSTGRES_PASSWORD: ${SONAR_DB_PASSWORD:?Set SONAR_DB_PASSWORD in quality/.env}
+    volumes:
+      - sonar-db-data:/var/lib/postgresql/data
+    networks:
+      - quality-internal
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
+
+  sonarqube:
+    image: sonarqube:26.6.0.123539-community@sha256:1ddbad7b16f754bc3985f336b8ef3ebe885c1655101bdb9cb4156c9560526f58
+    restart: unless-stopped
+    depends_on:
+      sonar-db:
+        condition: service_healthy
+    environment:
+      SONAR_JDBC_URL: jdbc:postgresql://sonar-db:5432/${SONAR_DB_NAME:-sonarqube}
+      SONAR_JDBC_USERNAME: ${SONAR_DB_USER:-sonarqube}
+      SONAR_JDBC_PASSWORD: ${SONAR_DB_PASSWORD:?Set SONAR_DB_PASSWORD in quality/.env}
+      SONAR_WEB_SYSTEMPASSCODE: ${SONAR_SYSTEM_PASSCODE:?Set SONAR_SYSTEM_PASSCODE in quality/.env}
+    ports:
+      # Binding to loopback keeps a local training installation off the LAN.
+      - "127.0.0.1:${SONAR_HTTP_PORT:-9000}:9000"
+    volumes:
+      - sonar-data:/opt/sonarqube/data
+      - sonar-extensions:/opt/sonarqube/extensions
+      - sonar-logs:/opt/sonarqube/logs
+    networks:
+      - quality-internal
+    extra_hosts:
+      # Lets a local SonarQube webhook reach Jenkins on Docker Desktop.
+      - "host.docker.internal:host-gateway"
+    ulimits:
+      nofile:
+        soft: 131072
+        hard: 131072
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl --fail --silent http://localhost:9000/api/system/status | grep --quiet '\"status\":\"UP\"'"
+        ]
+      interval: 15s
+      timeout: 5s
+      retries: 40
+      start_period: 90s
+
+networks:
+  # Only SonarQube joins this network; PostgreSQL has no published host port.
+  quality-internal:
+
+volumes:
+  sonar-db-data:
+  sonar-data:
+  sonar-extensions:
+  sonar-logs:

@@ -1,0 +1,112 @@
+<!--
+File purpose: Defines the accessible auth feature template.
+-->
+<section class="auth-page">
+  <div class="auth-story">
+    <p class="eyebrow">Your new marketplace profile</p>
+    <h1>Browse bold. Sell smarter.</h1>
+    <p>
+      Choose how you enter Nexora Commerce. Browse the catalog as a client, or open your own shop
+      with a dashboard for products, stock, and photos.
+    </p>
+
+    <div class="story-visual" aria-hidden="true">
+      <div class="story-topline">
+        <span>Account setup</span>
+        <span class="story-status">Ready</span>
+      </div>
+      <div class="story-metrics">
+        <div class="story-metric">
+          <strong>01</strong>
+          <span>create a profile</span>
+        </div>
+        <div class="story-metric">
+          <strong>02</strong>
+          <span>choose your path</span>
+        </div>
+        <div class="story-metric">
+          <strong>∞</strong>
+          <span>possibilities</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="security-note">
+      <span>✓</span>
+      Choose a client profile to browse or a seller profile to start your shop.
+    </div>
+  </div>
+
+  <form class="auth-card surface-card" [formGroup]="form" (ngSubmit)="submit()">
+    <div class="auth-brandline">
+      <span class="auth-mark"><i>01</i> Nexora Commerce MARKET</span>
+      <span class="auth-encryption">Join Nexora Commerce</span>
+    </div>
+
+    <p class="eyebrow">Create account</p>
+    <h2>Choose your path.</h2>
+    <p>You can start exploring in less than a minute.</p>
+
+    <div class="role-picker" role="radiogroup" aria-label="Account role">
+      <label>
+        <input type="radio" formControlName="role" value="CLIENT" />
+        <strong>Client</strong>
+        <small>Discover products</small>
+      </label>
+      <label>
+        <input type="radio" formControlName="role" value="SELLER" />
+        <strong>Seller</strong>
+        <small>Launch a catalog</small>
+      </label>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label" for="name">Full name</label>
+      <input
+        class="form-control"
+        id="name"
+        formControlName="name"
+        autocomplete="name"
+        placeholder="Your name"
+      />
+      @if (form.controls.name.touched && form.controls.name.invalid) {
+        <div class="field-error">Name must be between 2 and 80 characters.</div>
+      }
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label" for="register-email">Email address</label>
+      <input
+        class="form-control"
+        id="register-email"
+        type="email"
+        formControlName="email"
+        autocomplete="email"
+        placeholder="you@example.com"
+      />
+      @if (form.controls.email.touched && form.controls.email.invalid) {
+        <div class="field-error">Enter a valid email address.</div>
+      }
+    </div>
+
+    <div class="mb-4">
+      <label class="form-label" for="register-password">Password</label>
+      <input
+        class="form-control"
+        id="register-password"
+        type="password"
+        formControlName="password"
+        autocomplete="new-password"
+        placeholder="At least 8 characters"
+      />
+      @if (form.controls.password.touched && form.controls.password.invalid) {
+        <div class="field-error">Use 8–72 characters with at least one letter and one number.</div>
+      }
+    </div>
+
+    <button class="btn btn-brand w-100 py-2" type="submit" [disabled]="submitting()">
+      {{ submitting() ? 'Creating account…' : 'Create my account →' }}
+    </button>
+    <p class="auth-switch">Already a member? <a routerLink="/login">Sign in</a></p>
+  </form>
+</section>

@@ -1,0 +1,204 @@
+# File purpose: Starts Jenkins and an isolated Docker daemon with persistent state.
+#
+# Learning map:
+# - Compose defines the CI infrastructure as code.
+# - Jenkins sends Docker commands to the separate `docker` service over TLS.
+# - Separate agents execute builds so untrusted build code avoids the controller.
+# - Mailpit receives real email notifications without external accounts.
+# - Named volumes preserve Jenkins history, certificates, and built images.
+# - Health checks prevent Jenkins from starting before its Docker daemon works.
+# - Environment substitutions keep secrets outside this committed YAML file.
+name: nexora-commerce-ci
+
+services:
+  # Docker-in-Docker prevents the Jenkins container from directly controlling
+  # the host socket. TLS protects traffic between Jenkins and this daemon.
+  docker:
+    image: docker:28-dind
+    privileged: true
+    restart: unless-stopped
+    command:
+      - --storage-driver=overlay2
+    environment:
+      DOCKER_TLS_CERTDIR: /certs
+    volumes:
+      - jenkins-docker-certs:/certs/client
+      # The remote Docker daemon must see the same absolute workspace path used
+      # by each agent when Pipeline containers bind-mount $WORKSPACE. Distinct
+      # paths prevent concurrent workers from reading each other's checkout.
+      - jenkins-agent-home:/home/jenkins/agent
+      - jenkins-agent-two-home:/home/jenkins/agent-2
+      - jenkins-docker-data:/var/lib/docker
+      # Stage containers are created by this remote daemon, so the daemon must
+      # expose host-local public CAs at a stable path they can bind-mount.
+      - ./certs:/nexora-commerce-certs:ro
+    networks:
+      jenkins:
+        aliases:
+          - docker
+    # Only the frontend is exposed from each parameterized deployment. All
+    # backend services remain private behind Nginx and Spring Cloud Gateway.
+    ports:
+      - "${STAGING_FRONTEND_PORT:-14200}:${STAGING_FRONTEND_PORT:-14200}"
+      - "${PRODUCTION_FRONTEND_PORT:-24200}:${PRODUCTION_FRONTEND_PORT:-24200}"
+    healthcheck:
+      test: ["CMD", "docker", "info"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  jenkins:
+    # `build` creates our customized controller image from the Dockerfile;
+    # it does not build the marketplace application images yet.
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      docker:
+        condition: service_healthy
+      mailpit:
+        condition: service_healthy
+    ports:
+      - "${JENKINS_HTTP_PORT:-8088}:8080"
+    environment:
+      # Skipping the interactive wizard is safe because JCasC creates the
+      # administrator, authorization rules, credentials, and Pipeline job.
+      JAVA_OPTS: -Djenkins.install.runSetupWizard=false
+      CASC_JENKINS_CONFIG: /var/jenkins_home/casc/jenkins.yaml
+      JENKINS_ADMIN_ID: ${JENKINS_ADMIN_ID:-admin}
+      JENKINS_ADMIN_PASSWORD: ${JENKINS_ADMIN_PASSWORD:-change-me-before-first-run}
+      JENKINS_ADMIN_EMAIL: ${JENKINS_ADMIN_EMAIL:-admin@example.com}
+      JENKINS_AGENT_ID: ${JENKINS_AGENT_ID:-agent-bootstrap}
+      JENKINS_AGENT_PASSWORD: ${JENKINS_AGENT_PASSWORD:-change-me-before-first-run}
+      JENKINS_URL: ${JENKINS_URL:-http://localhost:8088/}
+      NOTIFICATION_EMAIL: ${NOTIFICATION_EMAIL:-builds@example.com}
+      SMTP_HOST: ${SMTP_HOST:-mailpit}
+      SMTP_PORT: ${SMTP_PORT:-1025}
+      SMTP_USERNAME: ${SMTP_USERNAME:-unused}
+      SMTP_APP_PASSWORD: ${SMTP_APP_PASSWORD:-unused}
+      SMTP_CREDENTIALS_ID: ${SMTP_CREDENTIALS_ID:-}
+      SMTP_USE_TLS: ${SMTP_USE_TLS:-false}
+      SONAR_HOST_URL: ${SONAR_HOST_URL:-http://host.docker.internal:9000}
+      SONAR_TOKEN: ${SONAR_TOKEN:?Start SonarQube first so its token can be imported}
+      NEXORA_GIT_URL: ${NEXORA_GIT_URL:-https://github.com/hujaafar/nexora-commerce.git}
+      NEXORA_GIT_USERNAME: ${NEXORA_GIT_USERNAME:-replace-with-git-username}
+      NEXORA_GIT_PASSWORD: ${NEXORA_GIT_PASSWORD:-replace-with-git-password-or-token}
+      DOCKER_HOST: tcp://docker:2376
+      DOCKER_CERT_PATH: /certs/client
+      DOCKER_TLS_VERIFY: "1"
+      DEPLOY_JWT_SECRET: ${DEPLOY_JWT_SECRET:-replace-with-at-least-32-random-characters}
+      DEPLOY_INTERNAL_SERVICE_TOKEN: ${DEPLOY_INTERNAL_SERVICE_TOKEN:-replace-with-at-least-32-random-characters}
+      DEPLOY_MONGO_USERNAME: ${DEPLOY_MONGO_USERNAME:-marketplace}
+      DEPLOY_MONGO_PASSWORD: ${DEPLOY_MONGO_PASSWORD:-replace-this-mongo-password}
+      DEPLOY_MINIO_USERNAME: ${DEPLOY_MINIO_USERNAME:-marketplace}
+      DEPLOY_MINIO_PASSWORD: ${DEPLOY_MINIO_PASSWORD:-replace-this-minio-password}
+      SLACK_WEBHOOK_URL: ${SLACK_WEBHOOK_URL:-disabled}
+      STAGING_FRONTEND_PORT: ${STAGING_FRONTEND_PORT:-14200}
+      PRODUCTION_FRONTEND_PORT: ${PRODUCTION_FRONTEND_PORT:-24200}
+    volumes:
+      # The controller state is writable, while JCasC and Docker client
+      # certificates are mounted read-only to reduce accidental modification.
+      - jenkins-home:/var/jenkins_home
+      - jenkins-docker-certs:/certs/client:ro
+      - ./casc:/var/jenkins_home/casc:ro
+      # Pipeline-from-SCM reads the Jenkinsfile on the controller before an
+      # agent exists, so the controller imports the same host-local public CAs.
+      - ./certs:/usr/local/share/ca-certificates/nexora-commerce:ro
+    networks:
+      - jenkins
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl --fail --silent http://localhost:8080/login >/dev/null"
+        ]
+      interval: 15s
+      timeout: 5s
+      retries: 20
+
+  # This worker owns the build workspace and Docker client. Jenkins Remoting
+  # connects over WebSocket after JCasC creates the permanent node definition.
+  agent:
+    build:
+      context: agent
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      docker:
+        condition: service_healthy
+      jenkins:
+        condition: service_healthy
+    environment:
+      JENKINS_INTERNAL_URL: http://jenkins:8080
+      JENKINS_AGENT_NAME: docker-agent
+      JENKINS_AGENT_WORKDIR: /home/jenkins/agent
+      # This service account has only Overall/Read and Agent/Connect. The
+      # administrator credential never enters the build container.
+      JENKINS_AGENT_ID: ${JENKINS_AGENT_ID:-agent-bootstrap}
+      JENKINS_AGENT_PASSWORD: ${JENKINS_AGENT_PASSWORD:-change-me-before-first-run}
+      DOCKER_HOST: tcp://docker:2376
+      DOCKER_CERT_PATH: /certs/client
+      DOCKER_TLS_VERIFY: "1"
+    volumes:
+      - jenkins-agent-home:/home/jenkins/agent
+      - jenkins-deployments:/deployments
+      - jenkins-docker-certs:/certs/client:ro
+      # Local antivirus products can inspect SMTP TLS with a machine-specific
+      # public root. The ignored cert directory lets the agent trust the same
+      # roots as the host without committing them or disabling verification.
+      - ./certs:/usr/local/share/ca-certificates/nexora-commerce:ro
+    networks:
+      - jenkins
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl --fail --silent --user \"$${JENKINS_AGENT_ID}:$${JENKINS_AGENT_PASSWORD}\" http://jenkins:8080/computer/$${JENKINS_AGENT_NAME}/api/json?tree=offline | grep --quiet '\"offline\":false'"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+
+  # Compose extends reuses the hardened worker definition while overriding the
+  # node identity and workspace volume. This keeps both distributed workers
+  # consistent without duplicating their security and health-check settings.
+  agent-2:
+    extends:
+      service: agent
+    environment:
+      JENKINS_AGENT_NAME: docker-agent-2
+      JENKINS_AGENT_WORKDIR: /home/jenkins/agent-2
+    volumes:
+      - jenkins-agent-two-home:/home/jenkins/agent-2
+
+  # Mailpit is a local SMTP inbox used to prove that Jenkins really sends
+  # success and failure emails. Its web interface is exposed only for review.
+  mailpit:
+    image: axllent/mailpit:v1.27@sha256:e22dce5b36f93c77082e204a3942fb6b283b7896e057458400a4c88344c3df68
+    restart: unless-stopped
+    environment:
+      MP_DATABASE: /data/mailpit.db
+    volumes:
+      - jenkins-mailpit-data:/data
+    ports:
+      - "${MAILPIT_HTTP_PORT:-8025}:8025"
+    networks:
+      - jenkins
+    healthcheck:
+      test: ["CMD", "/mailpit", "readyz"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+
+networks:
+  jenkins:
+
+volumes:
+  jenkins-home:
+  jenkins-agent-home:
+  jenkins-agent-two-home:
+  jenkins-deployments:
+  jenkins-docker-certs:
+  jenkins-docker-data:
+  jenkins-mailpit-data:

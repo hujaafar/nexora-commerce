@@ -1,0 +1,264 @@
+/* File purpose: Styles the animated checkout wizard and confirmation. */
+.checkout-header {
+  display: flex;
+  margin-bottom: 2.5rem;
+  align-items: center;
+  justify-content: space-between;
+}
+.checkout-header > a {
+  color: var(--muted-strong);
+  text-decoration: none;
+}
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.stepper span {
+  display: flex;
+  align-items: center;
+  color: var(--muted);
+  gap: 0.4rem;
+  font-size: 0.72rem;
+}
+.stepper i {
+  display: grid;
+  width: 1.8rem;
+  height: 1.8rem;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  font-style: normal;
+}
+.stepper span.active {
+  color: var(--ink);
+}
+.stepper span.active i {
+  border-color: var(--brand-bright);
+  background: rgba(207, 75, 195, 0.14);
+}
+.stepper b {
+  width: 2.5rem;
+  height: 1px;
+  background: var(--line);
+}
+.checkout-layout,
+.review-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.38fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+.checkout-card,
+.review-card {
+  padding: clamp(1.4rem, 4vw, 3rem);
+}
+.checkout-card h1,
+.review-card h1,
+.success-card h1 {
+  font-size: clamp(2.8rem, 6vw, 5rem);
+}
+.field-grid {
+  display: grid;
+  margin: 2rem 0;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+.field-grid label {
+  color: var(--muted-strong);
+  font-size: 0.76rem;
+}
+.field-grid label small {
+  color: var(--muted);
+}
+.field-grid .wide {
+  grid-column: 1/-1;
+}
+.field-grid input {
+  margin-top: 0.4rem;
+}
+.payment-choice {
+  display: grid;
+  margin: 2rem 0;
+  gap: 0.7rem;
+}
+.payment-choice > .eyebrow {
+  margin: 0;
+}
+.payment-choice label {
+  display: flex;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  align-items: center;
+  gap: 0.8rem;
+  cursor: pointer;
+}
+.payment-choice label.selected {
+  border-color: var(--brand-bright);
+  background: rgba(207, 75, 195, 0.07);
+}
+.payment-choice label > span {
+  display: grid;
+  flex: 1;
+}
+.payment-choice label small {
+  color: var(--muted);
+}
+.payment-choice label i {
+  color: var(--brand-bright);
+  font-size: 0.65rem;
+  font-style: normal;
+}
+.checkout-summary {
+  position: sticky;
+  top: 7rem;
+  padding: 1.5rem;
+}
+.checkout-summary dl > div {
+  display: flex;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid var(--line);
+  justify-content: space-between;
+}
+.checkout-summary dd {
+  margin: 0;
+}
+.checkout-summary dl > div:last-child {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+.checkout-summary > p:last-child {
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+.review-block {
+  position: relative;
+  padding: 1.3rem 0;
+  border-top: 1px solid var(--line);
+}
+.review-block > span {
+  color: var(--brand-bright);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+.review-block strong {
+  display: block;
+  margin: 0.35rem 0;
+}
+.review-block p {
+  color: var(--muted);
+}
+.review-block button {
+  position: absolute;
+  top: 1.3rem;
+  right: 0;
+  border: 0;
+  color: var(--muted-strong);
+  background: none;
+}
+.review-items {
+  padding: 1rem 0;
+  border-block: 1px solid var(--line);
+}
+.review-items > div {
+  display: flex;
+  padding: 0.35rem 0;
+  justify-content: space-between;
+  color: var(--muted-strong);
+}
+.confirm-button {
+  display: flex;
+  width: 100%;
+  margin-top: 1.3rem;
+  padding: 1rem;
+  border: 0;
+  border-radius: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  color: #111;
+  background: var(--accent);
+}
+.confirm-button span {
+  display: grid;
+  text-align: left;
+}
+.confirm-button small {
+  font-size: 0.6rem;
+  opacity: 0.6;
+}
+.success-card {
+  max-width: 52rem;
+  margin: 3rem auto;
+  padding: clamp(2rem, 6vw, 5rem);
+  text-align: center;
+}
+.success-mark {
+  display: grid;
+  width: 5rem;
+  height: 5rem;
+  margin: 0 auto 2rem;
+  place-items: center;
+  border-radius: 50%;
+  color: #111;
+  background: var(--success);
+  font-size: 2rem;
+}
+.success-card .eyebrow {
+  justify-content: center;
+}
+.success-facts {
+  display: grid;
+  margin: 2rem 0;
+  padding: 1.2rem;
+  border-block: 1px solid var(--line);
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+.success-facts span {
+  display: grid;
+}
+.success-facts small {
+  color: var(--muted);
+  font-size: 0.65rem;
+}
+.success-actions {
+  display: flex;
+  justify-content: center;
+  gap: 0.8rem;
+}
+@media (max-width: 800px) {
+  .checkout-layout,
+  .review-layout {
+    grid-template-columns: 1fr;
+  }
+  .checkout-summary {
+    position: static;
+  }
+  .stepper span {
+    font-size: 0;
+  }
+  .stepper span i {
+    font-size: 0.72rem;
+  }
+}
+@media (max-width: 560px) {
+  .checkout-header {
+    align-items: start;
+    flex-direction: column;
+    gap: 1.4rem;
+  }
+  .field-grid {
+    grid-template-columns: 1fr;
+  }
+  .field-grid .wide {
+    grid-column: auto;
+  }
+  .success-facts {
+    grid-template-columns: 1fr;
+  }
+  .success-actions {
+    flex-direction: column;
+  }
+}

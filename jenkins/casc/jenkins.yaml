@@ -1,0 +1,228 @@
+# File purpose: Configures Jenkins security, credentials, environment, and the Pipeline job as code.
+#
+# Learning map:
+# - JCasC means Jenkins Configuration as Code: controller settings are reviewable.
+# - Job DSL creates the Pipeline job, while Jenkinsfile defines what that job runs.
+# - Credentials receive stable IDs; the Pipeline asks for an ID, never a raw secret.
+# - ${NAME} values come from the ignored runtime environment during startup.
+# - Rebuilding the controller reproduces configuration without manual UI steps.
+jenkins:
+  systemMessage: |
+    Nexora Commerce CI/CD is managed by Configuration as Code.
+    Edit jenkins/casc/jenkins.yaml and rebuild instead of making undocumented UI changes.
+  # The controller coordinates work but executes no project code. Builds run on
+  # the isolated Docker agents declared below.
+  numExecutors: 0
+  mode: NORMAL
+  scmCheckoutRetryCount: 2
+  # The agent uses WebSocket over HTTP, so the separate inbound TCP port is off.
+  slaveAgentPort: -1
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: "${JENKINS_ADMIN_ID}"
+          password: "${JENKINS_ADMIN_PASSWORD}"
+        # This service identity can connect the worker but cannot configure
+        # jobs, read credentials, run builds, or administer Jenkins.
+        - id: "${JENKINS_AGENT_ID}"
+          password: "${JENKINS_AGENT_PASSWORD}"
+  authorizationStrategy:
+    globalMatrix:
+      entries:
+        - user:
+            name: "${JENKINS_ADMIN_ID}"
+            permissions:
+              - Overall/Administer
+        - user:
+            name: "${JENKINS_AGENT_ID}"
+            permissions:
+              - Overall/Read
+              - Agent/Connect
+  # The standard issuer enables CSRF crumbs. Current Jenkins versions no
+  # longer expose the historical client-IP option through JCasC.
+  crumbIssuer:
+    standard: {}
+  globalNodeProperties:
+    - envVars:
+        env:
+          - key: DEPLOY_STATE_ROOT
+            value: /deployments/nexora-commerce
+          - key: STAGING_FRONTEND_PORT
+            value: "${STAGING_FRONTEND_PORT}"
+          - key: PRODUCTION_FRONTEND_PORT
+            value: "${PRODUCTION_FRONTEND_PORT}"
+          # The distinct name prevents the Pipeline parameter from shadowing
+          # the runtime recipient used by automatic SCM builds.
+          - key: DEFAULT_NOTIFICATION_EMAIL
+            value: "${NOTIFICATION_EMAIL}"
+          # Non-secret SMTP routing is available on the build agent. Login
+          # details are still injected only through Jenkins credentials.
+          - key: SMTP_HOST
+            value: "${SMTP_HOST}"
+          - key: SMTP_PORT
+            value: "${SMTP_PORT}"
+          - key: SMTP_CREDENTIALS_ID
+            value: "${SMTP_CREDENTIALS_ID}"
+          - key: SMTP_USE_TLS
+            value: "${SMTP_USE_TLS}"
+          # The URL is not secret. The token below remains a masked Jenkins
+          # credential and is injected only during the analysis stage.
+          - key: SONAR_HOST_URL
+            value: "${SONAR_HOST_URL}"
+  # Two permanent workers prove the distributed-build bonus. Both share the
+  # generic docker-agent label, while their unique labels let an auditor target
+  # either worker with the BUILD_AGENT_LABEL parameter.
+  nodes:
+    - permanent:
+        name: docker-agent
+        remoteFS: /home/jenkins/agent
+        numExecutors: 2
+        labelString: docker-agent docker-agent-1 docker linux
+        mode: EXCLUSIVE
+        retentionStrategy: always
+        launcher:
+          inbound:
+            workDirSettings:
+              disabled: false
+              failIfWorkDirIsMissing: false
+              internalDir: remoting
+    - permanent:
+        name: docker-agent-2
+        remoteFS: /home/jenkins/agent-2
+        numExecutors: 2
+        labelString: docker-agent docker-agent-2 docker linux
+        mode: EXCLUSIVE
+        retentionStrategy: always
+        launcher:
+          inbound:
+            workDirSettings:
+              disabled: false
+              failIfWorkDirIsMissing: false
+              internalDir: remoting
+
+unclassified:
+  location:
+    adminAddress: "${JENKINS_ADMIN_EMAIL}"
+    url: "${JENKINS_URL}"
+  # The standard Mailer remains pointed at Mailpit for its UI test action. The
+  # Pipeline uses the SMTP environment above and a masked credential so its
+  # delivery behavior is identical for Mailpit and optional Gmail.
+  mailer:
+    charset: UTF-8
+    smtpHost: mailpit
+    smtpPort: "1025"
+    useSsl: false
+    useTls: false
+  # Use the plugin's canonical JCasC symbol. `extendedEmailPublisher` is an
+  # older alias that strict validation can resolve through deprecated fields.
+  email-ext:
+    charset: UTF-8
+    defaultContentType: text/plain
+    defaultRecipients: "${NOTIFICATION_EMAIL}"
+    defaultReplyTo: "${JENKINS_ADMIN_EMAIL}"
+    mailAccount:
+      smtpHost: "${SMTP_HOST}"
+      smtpPort: "${SMTP_PORT}"
+      credentialsId: "${SMTP_CREDENTIALS_ID}"
+      useTls: "${SMTP_USE_TLS}"
+
+# Secrets are injected by Docker Compose and encrypted in Jenkins's credential
+# store. Pipeline logs mask values bound through withCredentials.
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+          # `scope: GLOBAL` makes these credentials available to Pipeline jobs
+          # on this controller. Jenkins encrypts their stored representation.
+          - usernamePassword:
+              id: nexora-commerce-git
+              description: Private source repository credential
+              scope: GLOBAL
+              username: "${NEXORA_GIT_USERNAME}"
+              password: "${NEXORA_GIT_PASSWORD}"
+          # Email Extension references this credential only when
+          # SMTP_CREDENTIALS_ID=notification-smtp. Mailpit needs no login.
+          - usernamePassword:
+              id: notification-smtp
+              description: Authenticated SMTP account for optional real email delivery
+              scope: GLOBAL
+              username: "${SMTP_USERNAME}"
+              password: "${SMTP_APP_PASSWORD}"
+          - string:
+              id: marketplace-jwt-secret
+              description: JWT signing secret for deployed environments
+              scope: GLOBAL
+              secret: "${DEPLOY_JWT_SECRET}"
+          - string:
+              id: marketplace-internal-token
+              description: Shared token used only for order-to-product inventory calls
+              scope: GLOBAL
+              secret: "${DEPLOY_INTERNAL_SERVICE_TOKEN}"
+          - usernamePassword:
+              id: marketplace-mongo-credentials
+              description: MongoDB credentials for deployed environments
+              scope: GLOBAL
+              username: "${DEPLOY_MONGO_USERNAME}"
+              password: "${DEPLOY_MONGO_PASSWORD}"
+          - usernamePassword:
+              id: marketplace-minio-credentials
+              description: MinIO credentials for deployed environments
+              scope: GLOBAL
+              username: "${DEPLOY_MINIO_USERNAME}"
+              password: "${DEPLOY_MINIO_PASSWORD}"
+          - string:
+              id: sonarqube-token
+              description: SonarQube token limited to submitting code analysis
+              scope: GLOBAL
+              secret: "${SONAR_TOKEN}"
+          - string:
+              id: slack-webhook
+              description: Optional Slack incoming-webhook URL
+              scope: GLOBAL
+              secret: "${SLACK_WEBHOOK_URL}"
+
+# Job DSL creates a Pipeline-from-SCM job on first boot. Polling is a portable
+# commit trigger for Reboot/Gitea and can be supplemented with a webhook.
+jobs:
+  - script: |
+      pipelineJob('nexora-commerce') {
+        displayName('Nexora Commerce marketplace CI/CD')
+        description('Builds, tests, packages, deploys, verifies, rolls back, and notifies from the repository Jenkinsfile.')
+        // Seed parameters during the very first boot. Declarative Pipeline
+        // keeps the same definitions synchronized after each Jenkinsfile run.
+        parameters {
+          stringParam('BUILD_AGENT_LABEL', 'docker-agent', 'Docker-capable Jenkins node label used to execute the Pipeline.')
+          booleanParam('BUILD_CONTAINER_IMAGES', true, 'Build immutable Docker images after all tests pass.')
+          choiceParam('PIPELINE_ACTION', ['build-test-deploy', 'build-test', 'rollback'], 'Run the complete Pipeline, CI only, or restore the previous healthy release.')
+          choiceParam('DEPLOY_ENV', ['staging', 'production'], 'Target environment used by deployment and rollback.')
+          booleanParam('AUTO_ROLLBACK', true, 'Restore the last known-good release when deployment verification fails.')
+          booleanParam('REQUIRE_PRODUCTION_APPROVAL', true, 'Pause production actions until a user confirms them.')
+          stringParam('DEPLOY_TIMEOUT_SECONDS', '360', 'Maximum time allowed for deployment verification.')
+          stringParam('NOTIFICATION_EMAIL', '${NOTIFICATION_EMAIL}', 'Email recipient captured by the local Mailpit inbox.')
+        }
+        definition {
+          cpsScm {
+            scm {
+              git {
+                remote {
+                  url('${NEXORA_GIT_URL}')
+                }
+                branch('*/main')
+                extensions {
+                  cloneOptions {
+                    shallow(false)
+                    noTags(false)
+                    timeout(15)
+                  }
+                }
+              }
+            }
+            scriptPath('Jenkinsfile')
+            lightweight()
+          }
+        }
+        triggers {
+          scm('H/2 * * * *')
+        }
+      }

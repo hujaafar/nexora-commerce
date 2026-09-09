@@ -1,0 +1,311 @@
+<!-- File purpose: Defines the public Nexora Commerce storefront, discovery tools, and guided marketplace sections. -->
+<div class="storefront" storefrontMotion>
+  <header class="landing-header">
+    <a class="landing-brand" href="#top" (click)="scrollToSection($event, 'top')"
+      ><span>N</span><strong>NEXORA</strong></a
+    >
+    <nav aria-label="Storefront navigation">
+      <a href="#products" (click)="scrollToSection($event, 'products')">Shop</a
+      ><a href="#about" (click)="scrollToSection($event, 'about')">About</a
+      ><a href="#how-it-works" (click)="scrollToSection($event, 'how-it-works')">How it works</a>
+    </nav>
+    <div class="landing-actions">
+      @if (authService.isClient()) {
+        <a class="nav-icon" routerLink="/wishlist" aria-label="Saved products">♡</a
+        ><a class="nav-icon" routerLink="/cart" aria-label="Shopping cart">Bag</a
+        ><a class="seller-link" routerLink="/orders">Orders</a>
+      }
+      @if (authService.isSeller()) {
+        <a class="seller-link" routerLink="/seller">My shop</a
+        ><a class="seller-link" routerLink="/orders">Orders</a>
+      }
+      @if (authService.isAdmin()) {
+        <a class="seller-link" routerLink="/admin">Moderate</a>
+      }
+      @if (authService.isAuthenticated()) {
+        <a class="account-link" routerLink="/profile">
+          @if (authService.currentUser()?.avatarUrl) {
+            <img [src]="authService.currentUser()?.avatarUrl" alt="" />
+          } @else {
+            <span>{{ authService.currentUser()?.name?.charAt(0)?.toUpperCase() }}</span>
+          }
+          <b>Profile</b></a
+        >
+      } @else {
+        <a class="seller-link" routerLink="/login">Sign in</a
+        ><a class="account-link join-link" routerLink="/register">Join NEXORA</a>
+      }
+    </div>
+  </header>
+
+  <main>
+    <section class="market-hero" id="top" data-sc-act="pin" data-sc-span="1.7">
+      <div class="sc-stage hero-stage">
+        <img
+          class="hero-art"
+          src="/assets/nexora-hero.png"
+          alt="A collection of headphones, a camera, a sneaker and fabric in a sculptural studio"
+          fetchpriority="high"
+        />
+        <div class="hero-shade"></div>
+        <div class="hero-copy">
+          <p class="section-kicker"><i></i> Independent finds. Everyday favorites.</p>
+          <h1>Objects.<br /><em>With a little</em><br />more meaning.</h1>
+          <p class="hero-description">
+            Discover your next favorite. From the first look to your front door, make it yours.
+          </p>
+          <div class="hero-actions">
+            <a class="primary-action" href="#products" (click)="scrollToSection($event, 'products')"
+              >Shop the collection <span>↗</span></a
+            >
+            <a class="secondary-action" routerLink="/register">Open your shop ↗</a>
+          </div>
+        </div>
+        <div class="hero-bottom">
+          <span>NEXORA / THE EVERYDAY EDIT</span
+          ><a href="#products" (click)="scrollToSection($event, 'products')"
+            >Scroll to discover ↓</a
+          >
+        </div>
+      </div>
+    </section>
+    <div class="collection-ribbon" aria-hidden="true">
+      <span>Considered design</span><i>✳</i><span>Independent shops</span><i>✳</i
+      ><span>Your next favorite</span><i>✳</i><span>Considered design</span>
+    </div>
+    <section class="product-section" id="products" tabindex="-1">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker"><i></i> Shop the collection</p>
+          <h2>Find your next favorite.</h2>
+        </div>
+        <p>
+          Search by name, narrow the price, choose a category, and sort the collection your way.
+        </p>
+      </div>
+      <form class="discovery-bar" [formGroup]="filters">
+        <label class="keyword-field"
+          ><span>Search products</span
+          ><input formControlName="q" placeholder="What are you looking for?" /><i>⌕</i></label
+        >
+        <label
+          ><span>Category</span
+          ><select formControlName="category">
+            <option value="">All categories</option>
+            @for (category of categories(); track category) {
+              <option [value]="category">{{ category }}</option>
+            }
+          </select></label
+        >
+        <label
+          ><span>Min price</span
+          ><input type="number" min="0" formControlName="minPrice" placeholder="$0"
+        /></label>
+        <label
+          ><span>Max price</span
+          ><input type="number" min="0" formControlName="maxPrice" placeholder="Any"
+        /></label>
+        <label
+          ><span>Sort</span
+          ><select formControlName="sort">
+            <option value="newest">Newest</option>
+            <option value="price-asc">Price: low to high</option>
+            <option value="price-desc">Price: high to low</option>
+            <option value="name">Name</option>
+          </select></label
+        >
+      </form>
+      <div class="result-line">
+        <span>{{ totalItems() }} results</span
+        ><button type="button" (click)="clearFilters()">Clear filters</button>
+      </div>
+
+      @if (loading()) {
+        <div class="product-grid">
+          @for (item of [1, 2, 3, 4]; track item) {
+            <article class="product-card product-skeleton">
+              <div></div>
+              <span></span><span></span>
+            </article>
+          }
+        </div>
+      } @else if (loadError()) {
+        <div class="empty-market" role="alert">
+          <h3>The collection could not load.</h3>
+          <p>Check your connection and try again.</p>
+          <button class="primary-action" type="button" (click)="retry()">Try again</button>
+        </div>
+      } @else if (!products().length) {
+        <div class="empty-market">
+          <div class="empty-visual"><span>02</span><i></i><i></i></div>
+          <div>
+            <p class="section-kicker"><i></i> Try another search</p>
+            <h3>No products match yet.</h3>
+            <p>Clear a filter or search with a broader word.</p>
+            <button class="primary-action" type="button" (click)="clearFilters()">
+              Reset discovery
+            </button>
+          </div>
+        </div>
+      } @else {
+        <div class="product-grid">
+          @for (product of products(); track product.id; let index = $index) {
+            <article class="product-card" [style.--card-index]="index">
+              <a class="product-image" [routerLink]="['/products', product.id]">
+                @if (product.imageUrls[0]) {
+                  <img [src]="product.imageUrls[0]" [alt]="product.name" loading="lazy" />
+                } @else {
+                  <span class="product-placeholder"
+                    ><i></i><strong>{{ product.name.charAt(0) }}</strong></span
+                  >
+                }
+                <small>{{ (page() * 12 + index + 1).toString().padStart(2, '0') }}</small
+                ><b>{{ product.category }}</b></a
+              >
+              @if (authService.isClient()) {
+                <button
+                  class="save-button"
+                  type="button"
+                  [class.saved]="savedIds().has(product.id)"
+                  (click)="toggleWishlist(product)"
+                  [attr.aria-label]="
+                    savedIds().has(product.id) ? 'Remove from wishlist' : 'Save to wishlist'
+                  "
+                >
+                  {{ savedIds().has(product.id) ? '♥' : '♡' }}
+                </button>
+              }
+              <div class="product-copy">
+                <div>
+                  <small>{{ product.quantity }} available</small>
+                  <h3>{{ product.name }}</h3>
+                </div>
+                <strong>{{ product.price | currency: 'USD' }}</strong>
+              </div>
+              <p>{{ product.description }}</p>
+              <div class="card-actions">
+                <a [routerLink]="['/products', product.id]">View details <span>↗</span></a>
+                @if (authService.isClient()) {
+                  <button
+                    type="button"
+                    (click)="addToCart(product)"
+                    [disabled]="!product.quantity || actionId() === product.id"
+                  >
+                    {{ product.quantity ? 'Add to bag' : 'Sold out' }}
+                  </button>
+                }
+              </div>
+            </article>
+          }
+        </div>
+        @if (totalPages() > 1) {
+          <nav class="catalog-pagination" aria-label="Product pages">
+            <button type="button" (click)="goToPage(page() - 1)" [disabled]="page() === 0">
+              ← Previous</button
+            ><span>{{ page() + 1 }} of {{ totalPages() }}</span
+            ><button
+              type="button"
+              (click)="goToPage(page() + 1)"
+              [disabled]="page() + 1 >= totalPages()"
+            >
+              Next →
+            </button>
+          </nav>
+        }
+      }
+    </section>
+
+    <section class="about-section" id="about" data-sc-act="pin" data-sc-span="1.8">
+      <div class="sc-stage story-stage">
+        <div class="about-copy">
+          <p class="section-kicker"><i></i> A closer connection</p>
+          <h2>A good find.<br /><em>A better feeling.</em></h2>
+          <p>
+            One place for the things you love and the people who make them. Discover freely, save
+            what catches your eye, and keep every order in view.
+          </p>
+          <a
+            class="text-action"
+            href="#how-it-works"
+            (click)="scrollToSection($event, 'how-it-works')"
+            >From find to front door ↓</a
+          >
+        </div>
+        <div class="story-cards">
+          <article class="story-card card-one">
+            <span>01 / DISCOVER</span
+            ><strong>Something<br />for your<br /><em>everyday.</em></strong>
+            <p>Find the right fit with categories, prices and search.</p>
+            <a href="#products" (click)="scrollToSection($event, 'products')"
+              >Explore the collection ↗</a
+            >
+          </article>
+          <article class="story-card card-two">
+            <span>02 / MAKE IT YOURS</span><strong>A little<br /><em>less ordinary.</em></strong>
+            <p>Save favorites, build your bag, and check out at your pace.</p>
+            <a routerLink="/wishlist">Your saved finds ↗</a>
+          </article>
+          <article class="story-card card-three">
+            <span>03 / STAY CONNECTED</span
+            ><strong>From their<br />shop.<br /><em>To your door.</em></strong>
+            <p>Follow each step from confirmation to delivery.</p>
+            <a routerLink="/orders">Follow your orders ↗</a>
+          </article>
+        </div>
+      </div>
+    </section>
+    <section class="steps-section" id="how-it-works">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker"><i></i> Simple from start to finish</p>
+          <h2>Find. Love. Repeat.</h2>
+        </div>
+        <a class="text-action" href="#products" (click)="scrollToSection($event, 'products')"
+          >Back to the collection ↗</a
+        >
+      </div>
+      <div class="step-grid" data-sc-stagger="100">
+        <article data-sc-in>
+          <span>01</span>
+          <h3>Follow your curiosity.</h3>
+          <p>Browse the collection, narrow your search, and save what feels like you.</p>
+        </article>
+        <article data-sc-in>
+          <span>02</span>
+          <h3>Make it yours.</h3>
+          <p>Review your bag, add delivery details, and pay when your order arrives.</p>
+        </article>
+        <article data-sc-in>
+          <span>03</span>
+          <h3>Keep it in sight.</h3>
+          <p>Check your order timeline and see when your finds are on their way.</p>
+        </article>
+      </div>
+    </section>
+    <section class="join-section">
+      <div>
+        <p class="section-kicker"><i></i> For the independently minded</p>
+        <h2>Your next<br /><em>favorite awaits.</em></h2>
+      </div>
+      <div class="join-actions">
+        <p>Good things start with a closer look.</p>
+        <a class="primary-action" href="#products" (click)="scrollToSection($event, 'products')"
+          >Find your thing ↗</a
+        ><a class="text-action" href="#top" (click)="scrollToSection($event, 'top')"
+          >Back to top ↑</a
+        >
+      </div>
+    </section>
+  </main>
+  <footer class="landing-footer">
+    <a class="landing-brand" href="#top" (click)="scrollToSection($event, 'top')"
+      ><span>N</span><strong>NEXORA</strong></a
+    >
+    <p>Objects with a little more meaning.</p>
+    <nav>
+      <a href="#products" (click)="scrollToSection($event, 'products')">Shop</a
+      ><a href="#about" (click)="scrollToSection($event, 'about')">About</a
+      ><a href="#how-it-works" (click)="scrollToSection($event, 'how-it-works')">How it works</a>
+    </nav>
+  </footer>
+</div>

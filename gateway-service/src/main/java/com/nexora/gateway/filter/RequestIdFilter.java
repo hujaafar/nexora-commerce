@@ -1,0 +1,42 @@
+/*
+ * File purpose: Adds or propagates a correlation ID for each request.
+ */
+package com.nexora.gateway.filter;
+
+import java.util.UUID;
+import org.springframework.cloud.gateway.filter.GatewayFilterChain;
+import org.springframework.cloud.gateway.filter.GlobalFilter;
+import org.springframework.core.Ordered;
+import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.stereotype.Component;
+import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Mono;
+
+// Learning annotation: @Component marks the class for component scanning so Spring creates and manages one instance.
+@Component
+public class RequestIdFilter implements GlobalFilter, Ordered {
+
+    public static final String REQUEST_ID_HEADER = "X-Request-Id";
+
+    // Learning annotation: @Override asks the Java compiler to verify that this method implements or overrides a parent contract.
+    @Override
+    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        String incomingRequestId =
+                exchange.getRequest().getHeaders().getFirst(REQUEST_ID_HEADER);
+        String requestId = incomingRequestId == null || incomingRequestId.isBlank()
+                ? UUID.randomUUID().toString()
+                : incomingRequestId;
+
+        ServerHttpRequest request = exchange.getRequest().mutate()
+                .headers(headers -> headers.set(REQUEST_ID_HEADER, requestId))
+                .build();
+        exchange.getResponse().getHeaders().set(REQUEST_ID_HEADER, requestId);
+        return chain.filter(exchange.mutate().request(request).build());
+    }
+
+    // Learning annotation: @Override asks the Java compiler to verify that this method implements or overrides a parent contract.
+    @Override
+    public int getOrder() {
+        return Ordered.HIGHEST_PRECEDENCE;
+    }
+}

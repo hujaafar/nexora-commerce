@@ -1,0 +1,247 @@
+<!--
+File purpose: Defines the accessible profile feature template.
+-->
+<section class="page-shell profile-page">
+  <div class="profile-intro">
+    <p class="eyebrow">Your account</p>
+    <h1>Make your profile feel like you.</h1>
+    <p>
+      Update the name people see and, if you are a seller, create or change the avatar shown with
+      your shop.
+    </p>
+
+    <div class="identity-map" aria-hidden="true">
+      <div class="identity-radar">
+        <span class="radar-ring ring-one"></span>
+        <span class="radar-ring ring-two"></span>
+        <span class="radar-core">
+          {{ authService.currentUser()?.name?.charAt(0)?.toUpperCase() }}
+        </span>
+      </div>
+      <div class="map-copy">
+        <span>Account type</span>
+        <strong>{{ authService.currentUser()?.role }}</strong>
+        <small>Profile active</small>
+      </div>
+      <span class="map-signal"></span>
+    </div>
+
+    <div class="profile-facts">
+      <div>
+        <span>01</span>
+        <p>Display name</p>
+      </div>
+      <div>
+        <span>02</span>
+        <p>Account role</p>
+      </div>
+      <div>
+        <span>03</span>
+        <p>Seller avatar</p>
+      </div>
+    </div>
+  </div>
+
+  <form class="profile-card surface-card" [formGroup]="form" (ngSubmit)="submit()">
+    <div class="card-topline">
+      <span>ACCOUNT / 01</span>
+      <span class="verified-pill"><i></i> Profile ready</span>
+    </div>
+
+    <div class="identity">
+      <button
+        class="avatar"
+        type="button"
+        [disabled]="!authService.isSeller()"
+        (click)="avatarInput.click()"
+        [attr.aria-label]="
+          authService.isSeller()
+            ? avatarPreview() || avatarUrl()
+              ? 'Change seller avatar'
+              : 'Create seller avatar'
+            : 'Profile avatar'
+        "
+      >
+        @if (avatarPreview() || avatarUrl()) {
+          <img [src]="avatarPreview() || avatarUrl()" alt="Seller avatar preview" />
+        } @else {
+          <span>{{ authService.currentUser()?.name?.charAt(0)?.toUpperCase() }}</span>
+        }
+        @if (authService.isSeller()) {
+          <small>
+            <i>+</i>
+            {{ avatarPreview() || avatarUrl() ? 'Change avatar' : 'Add avatar' }}
+          </small>
+        }
+      </button>
+      <input
+        #avatarInput
+        class="visually-hidden"
+        type="file"
+        accept="image/jpeg,image/png,image/gif,image/webp"
+        (change)="chooseAvatar($event)"
+      />
+      <div class="identity-copy">
+        <span class="role-label">
+          {{
+            authService.currentUser()?.role === 'SELLER'
+              ? 'Seller account'
+              : authService.currentUser()?.role === 'ADMIN'
+                ? 'Admin account'
+                : 'Client account'
+          }}
+        </span>
+        <h2>{{ authService.currentUser()?.name }}</h2>
+        <p>{{ authService.currentUser()?.email }}</p>
+        @if (authService.isSeller() && (avatarPreview() || avatarUrl())) {
+          <button class="remove-avatar" type="button" (click)="removeAvatar()">
+            Remove avatar
+          </button>
+        }
+      </div>
+    </div>
+
+    <div class="profile-divider"><span>Public details</span></div>
+
+    <div class="mb-4">
+      <label class="form-label" for="profile-name">Display name</label>
+      <input
+        class="form-control"
+        id="profile-name"
+        formControlName="name"
+        placeholder="How people see you"
+      />
+      @if (form.controls.name.touched && form.controls.name.invalid) {
+        <div class="field-error">Name must be between 2 and 80 characters.</div>
+      }
+    </div>
+
+    @if (authService.isSeller()) {
+      <div class="avatar-help">
+        <span>◆</span>
+        <p>
+          Click the avatar above to add or replace it. Choose a JPEG, PNG, GIF, or WebP image up to
+          2 MB, preview it, then save your changes.
+        </p>
+      </div>
+    } @else {
+      <div class="avatar-help">
+        <span>◆</span>
+        <p>Your display name personalizes your NEXORA account.</p>
+      </div>
+    }
+
+    <button class="btn btn-brand w-100 py-2" type="submit" [disabled]="saving()">
+      {{ saving() ? 'Saving…' : 'Save profile changes →' }}
+    </button>
+  </form>
+</section>
+
+@if (customerAnalytics(); as analytics) {
+  <section class="page-shell analytics-panel">
+    <header>
+      <div>
+        <p class="eyebrow">Your year in the market</p>
+        <h2>What you’ve loved most.</h2>
+      </div>
+      <a class="btn btn-soft" routerLink="/orders">View orders</a>
+    </header>
+    <div class="analytics-metrics">
+      <article>
+        <span>Total spent</span><strong>{{ analytics.totalSpent | currency: 'USD' }}</strong
+        ><small>Across active orders</small>
+      </article>
+      <article>
+        <span>Orders</span><strong>{{ analytics.completedOrders }}</strong
+        ><small>Placed successfully</small>
+      </article>
+      <article>
+        <span>Products bought</span><strong>{{ analytics.purchasedUnits }}</strong
+        ><small>Total units</small>
+      </article>
+    </div>
+    <div class="analytics-grid">
+      <section class="surface-card">
+        <p class="eyebrow">Most bought</p>
+        <h3>Your repeat favorites</h3>
+        @if (analytics.mostBoughtProducts.length) {
+          <div class="bar-list">
+            @for (metric of analytics.mostBoughtProducts; track metric.productId) {
+              <div>
+                <span
+                  ><b>{{ metric.name }}</b
+                  ><small>{{ metric.units }} units</small></span
+                ><i><em [style.width.%]="barWidth(metric.units)"></em></i
+                ><strong>{{ metric.amount | currency: 'USD' }}</strong>
+              </div>
+            }
+          </div>
+        } @else {
+          <p class="analytics-empty">Your product insights will appear after checkout.</p>
+        }
+      </section>
+      <section class="surface-card">
+        <p class="eyebrow">Top categories</p>
+        <h3>Your shopping mix</h3>
+        @if (analytics.topCategories.length) {
+          <div class="category-list">
+            @for (metric of analytics.topCategories; track metric.category) {
+              <div>
+                <span>{{ metric.category }}</span
+                ><strong>{{ metric.amount | currency: 'USD' }}</strong
+                ><small>{{ metric.units }} units</small>
+              </div>
+            }
+          </div>
+        } @else {
+          <p class="analytics-empty">No category data yet.</p>
+        }
+      </section>
+    </div>
+  </section>
+}
+
+@if (sellerAnalytics(); as analytics) {
+  <section class="page-shell analytics-panel">
+    <header>
+      <div>
+        <p class="eyebrow">Shop performance</p>
+        <h2>Your work, in numbers.</h2>
+      </div>
+      <a class="btn btn-soft" routerLink="/orders">Manage orders</a>
+    </header>
+    <div class="analytics-metrics">
+      <article>
+        <span>Revenue</span><strong>{{ analytics.revenue | currency: 'USD' }}</strong
+        ><small>From active orders</small>
+      </article>
+      <article>
+        <span>Orders</span><strong>{{ analytics.orderCount }}</strong
+        ><small>Customer purchases</small>
+      </article>
+      <article>
+        <span>Units sold</span><strong>{{ analytics.unitsSold }}</strong
+        ><small>Across your catalog</small>
+      </article>
+    </div>
+    <section class="surface-card seller-chart">
+      <p class="eyebrow">Best sellers</p>
+      <h3>The products leading your shop</h3>
+      @if (analytics.bestSellingProducts.length) {
+        <div class="bar-list">
+          @for (metric of analytics.bestSellingProducts; track metric.productId) {
+            <div>
+              <span
+                ><b>{{ metric.name }}</b
+                ><small>{{ metric.units }} sold</small></span
+              ><i><em [style.width.%]="barWidth(metric.units)"></em></i
+              ><strong>{{ metric.amount | currency: 'USD' }}</strong>
+            </div>
+          }
+        </div>
+      } @else {
+        <p class="analytics-empty">Sales insights will appear after your first customer order.</p>
+      }
+    </section>
+  </section>
+}

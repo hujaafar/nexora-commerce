@@ -1,0 +1,16 @@
+/*
+ * File purpose: Bootstraps the user-service Spring application.
+ */
+package com.nexora.user;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+// Learning annotation: @SpringBootApplication combines configuration, auto-configuration, and component scanning for service startup.
+@SpringBootApplication
+public class UserServiceApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(UserServiceApplication.class, args);
+    }
+}

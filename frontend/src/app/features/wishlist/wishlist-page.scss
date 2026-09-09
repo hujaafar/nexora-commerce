@@ -1,0 +1,104 @@
+/* File purpose: Styles responsive saved-product cards and actions. */
+.wishlist-page > header {
+  display: flex;
+  margin-bottom: 2.2rem;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+.wishlist-page h1 {
+  margin: 0;
+  font-size: clamp(3rem, 7vw, 6rem);
+}
+.wishlist-page header p:last-child {
+  color: var(--muted);
+}
+.wishlist-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+.wishlist-grid article {
+  overflow: hidden;
+  animation: page-rise 0.5s var(--ease-out) both;
+}
+.saved-image {
+  display: grid;
+  height: 20rem;
+  overflow: hidden;
+  place-items: center;
+  color: var(--ink);
+  background: #252525;
+  text-decoration: none;
+}
+.saved-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s var(--ease-out);
+}
+.saved-image:hover img {
+  transform: scale(1.04);
+}
+.saved-image span {
+  font-size: 4rem;
+  font-weight: 800;
+}
+.saved-copy {
+  padding: 1.1rem;
+}
+.saved-copy small {
+  color: var(--brand-bright);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+}
+.saved-copy > a {
+  display: block;
+  margin: 0.3rem 0;
+  color: var(--ink);
+  font-size: 1.25rem;
+  font-weight: 750;
+  text-decoration: none;
+}
+.saved-copy p {
+  margin: 0;
+  color: var(--muted-strong);
+}
+.saved-actions {
+  display: flex;
+  padding: 0 1.1rem 1.1rem;
+  gap: 0.5rem;
+}
+.saved-actions .btn {
+  flex: 1;
+}
+.saved-actions > button:last-child {
+  width: 2.8rem;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: var(--muted);
+  background: transparent;
+}
+.wishlist-skeleton {
+  height: 28rem;
+  background: linear-gradient(90deg, var(--surface), var(--surface-strong), var(--surface));
+  background-size: 200%;
+  animation: shimmer 1.5s infinite;
+}
+@media (max-width: 850px) {
+  .wishlist-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 560px) {
+  .wishlist-page > header {
+    align-items: start;
+    flex-direction: column;
+  }
+  .wishlist-grid {
+    grid-template-columns: 1fr;
+  }
+  .saved-image {
+    height: 17rem;
+  }
+}

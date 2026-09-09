@@ -1,0 +1,10 @@
+# File purpose: Defines repository/tooling rules through .gitattributes.
+* text=auto eol=lf
+*.sh text eol=lf
+*.cmd text eol=crlf
+*.ps1 text eol=lf
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary

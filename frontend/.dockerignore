@@ -1,0 +1,7 @@
+# File purpose: Defines repository/tooling rules through .dockerignore.
+node_modules
+dist
+.angular
+coverage
+.git
+npm-debug.log*

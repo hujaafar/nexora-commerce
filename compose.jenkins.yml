@@ -1,0 +1,46 @@
+# File purpose: Gives every application image an immutable Jenkins build tag.
+# The base Compose file still owns configuration, dependencies, and health checks.
+services:
+  discovery-service:
+    image: nexora-commerce/discovery-service:${IMAGE_TAG:-development}
+    pull_policy: never
+    restart: unless-stopped
+
+  gateway-service:
+    image: nexora-commerce/gateway-service:${IMAGE_TAG:-development}
+    pull_policy: never
+    restart: unless-stopped
+
+  user-service:
+    image: nexora-commerce/user-service:${IMAGE_TAG:-development}
+    pull_policy: never
+    restart: unless-stopped
+
+  product-service:
+    image: nexora-commerce/product-service:${IMAGE_TAG:-development}
+    pull_policy: never
+    restart: unless-stopped
+
+  media-service:
+    image: nexora-commerce/media-service:${IMAGE_TAG:-development}
+    pull_policy: never
+    restart: unless-stopped
+
+  order-service:
+    image: nexora-commerce/order-service:${IMAGE_TAG:-development}
+    pull_policy: never
+    restart: unless-stopped
+
+  frontend:
+    image: nexora-commerce/frontend:${IMAGE_TAG:-development}
+    pull_policy: never
+    restart: unless-stopped
+
+  mongo:
+    restart: unless-stopped
+
+  kafka:
+    restart: unless-stopped
+
+  minio:
+    restart: unless-stopped

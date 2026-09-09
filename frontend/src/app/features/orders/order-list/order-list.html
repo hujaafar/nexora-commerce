@@ -1,0 +1,121 @@
+<!-- File purpose: Presents searchable order cards for customers and sellers. -->
+<section class="page-shell orders-page">
+  <header class="orders-header">
+    <div>
+      <p class="eyebrow">{{ sellerView() ? 'Shop fulfilment' : 'Your purchases' }}</p>
+      <h1>{{ sellerView() ? 'Customer orders' : 'Order history' }}</h1>
+      <p>
+        {{
+          sellerView()
+            ? 'Find orders, review sold items, and move each delivery forward.'
+            : 'Track every purchase, repeat a favorite, or manage an order.'
+        }}
+      </p>
+    </div>
+    <span>{{ page()?.totalItems || 0 }} total</span>
+  </header>
+
+  <form class="order-filters surface-card" [formGroup]="filters">
+    <label class="search-field"
+      ><span>Search</span
+      ><input class="form-control" formControlName="q" placeholder="Order number or product"
+    /></label>
+    <label
+      ><span>Status</span
+      ><select class="form-select" formControlName="status">
+        @for (status of statuses; track status) {
+          <option [value]="status">{{ status ? statusLabel(status) : 'All statuses' }}</option>
+        }
+      </select></label
+    >
+    <label
+      ><span>From</span><input class="form-control" type="date" formControlName="from"
+    /></label>
+    <label><span>To</span><input class="form-control" type="date" formControlName="to" /></label>
+  </form>
+
+  @if (loading()) {
+    <div class="order-skeletons">
+      @for (i of [1, 2, 3]; track i) {
+        <div class="surface-card"></div>
+      }
+    </div>
+  } @else if (!page()?.items?.length) {
+    <div class="empty-state">
+      <h2>No matching orders.</h2>
+      <p>
+        {{
+          sellerView()
+            ? 'New customer orders will appear here.'
+            : 'Try another filter or start with the marketplace.'
+        }}
+      </p>
+      @if (!sellerView()) {
+        <a class="btn btn-brand mt-4" routerLink="/products">Browse products</a>
+      }
+    </div>
+  } @else {
+    <div class="order-list">
+      @for (order of page()?.items; track order.id; let index = $index) {
+        <a
+          class="order-card surface-card"
+          [routerLink]="['/orders', order.id]"
+          [style.animation-delay.ms]="index * 60"
+        >
+          <div class="order-card-top">
+            <span>{{ order.orderNumber }}</span
+            ><time>{{ order.createdAt | date: 'mediumDate' }}</time
+            ><b [attr.data-status]="order.status">{{ statusLabel(order.status) }}</b>
+          </div>
+          <div class="order-product-stack">
+            @for (item of order.items.slice(0, 3); track item.productId) {
+              <span>
+                @if (item.imageUrl) {
+                  <img [src]="item.imageUrl" alt="" />
+                } @else {
+                  {{ item.name.charAt(0) }}
+                }
+              </span>
+            }
+            @if (order.items.length > 3) {
+              <span>+{{ order.items.length - 3 }}</span>
+            }
+          </div>
+          <div class="order-card-copy">
+            <strong
+              >{{ order.items[0]?.name }}
+              @if (order.items.length > 1) {
+                <small> + {{ order.items.length - 1 }} more</small>
+              }
+            </strong>
+            <p>
+              {{
+                sellerView()
+                  ? order.items.length + ' sold line(s)'
+                  : order.items.length + ' product line(s)'
+              }}
+            </p>
+          </div>
+          <div class="order-card-total">
+            <small>Total</small><strong>{{ order.total | currency: 'USD' }}</strong
+            ><i>→</i>
+          </div>
+        </a>
+      }
+    </div>
+    @if ((page()?.totalPages || 0) > 1) {
+      <nav class="pagination" aria-label="Order pages">
+        <button type="button" (click)="go(currentPage() - 1)" [disabled]="currentPage() === 0">
+          ← Previous</button
+        ><span>{{ currentPage() + 1 }} / {{ page()?.totalPages }}</span
+        ><button
+          type="button"
+          (click)="go(currentPage() + 1)"
+          [disabled]="currentPage() + 1 >= (page()?.totalPages || 0)"
+        >
+          Next →
+        </button>
+      </nav>
+    }
+  }
+</section>

@@ -1,0 +1,258 @@
+<!--
+File purpose: Defines the accessible seller feature template.
+-->
+<section class="page-shell dashboard-page">
+  <header class="dashboard-header">
+    <div>
+      <p class="eyebrow">Seller dashboard</p>
+      <h1>Manage your shop.</h1>
+      <p>
+        Create sharp product stories, keep inventory precise, and manage every image from one simple
+        workspace.
+      </p>
+    </div>
+    <a class="btn btn-soft" routerLink="/media">
+      <span>Open image library</span>
+      <i>↗</i>
+    </a>
+  </header>
+
+  <section class="metric-rail" aria-label="Catalog statistics">
+    <article>
+      <div class="metric-icon">◫</div>
+      <div>
+        <span>Live products</span>
+        <strong>{{ products().length.toString().padStart(2, '0') }}</strong>
+      </div>
+      <small>Catalog</small>
+    </article>
+    <article>
+      <div class="metric-icon">⌁</div>
+      <div>
+        <span>Units available</span>
+        <strong>{{ totalUnits() }}</strong>
+      </div>
+      <small>Inventory</small>
+    </article>
+    <article>
+      <div class="metric-icon">◇</div>
+      <div>
+        <span>Product photos</span>
+        <strong>{{ totalImages() }}</strong>
+      </div>
+      <small>Images</small>
+    </article>
+    <article class="value-metric">
+      <div class="metric-icon">↗</div>
+      <div>
+        <span>Stock value</span>
+        <strong>{{ catalogValue() | currency: 'USD' : 'symbol' : '1.0-0' }}</strong>
+      </div>
+      <small>Potential</small>
+    </article>
+  </section>
+
+  <div class="dashboard-grid">
+    <form class="editor surface-card" [formGroup]="form" (ngSubmit)="submit()">
+      <div class="editor-statusbar">
+        <span><i></i> Product form ready</span>
+        <span>{{ editingProduct() ? 'UPDATE MODE' : 'CREATE MODE' }}</span>
+      </div>
+
+      <div class="editor-heading">
+        <div>
+          <p class="eyebrow">{{ editingProduct() ? 'Editing listing' : 'New listing' }}</p>
+          <h2>{{ editingProduct()?.name || 'Publish a product' }}</h2>
+        </div>
+        @if (editingProduct()) {
+          <button
+            class="editor-close"
+            type="button"
+            aria-label="Cancel editing"
+            (click)="cancelEdit()"
+          >
+            ×
+          </button>
+        }
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label" for="product-name"> Product name <span>01</span> </label>
+        <input
+          class="form-control"
+          id="product-name"
+          formControlName="name"
+          placeholder="e.g. Hand-thrown stoneware mug"
+        />
+        @if (form.controls.name.touched && form.controls.name.invalid) {
+          <div class="field-error">Use a name between 2 and 120 characters.</div>
+        }
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label" for="description"> Product story <span>02</span> </label>
+        <textarea
+          class="form-control"
+          id="description"
+          rows="4"
+          formControlName="description"
+          placeholder="Describe materials, condition, and what makes it remarkable."
+        ></textarea>
+        @if (form.controls.description.touched && form.controls.description.invalid) {
+          <div class="field-error">A description up to 2,000 characters is required.</div>
+        }
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label" for="category">Category <span>03</span></label>
+        <input
+          class="form-control"
+          id="category"
+          formControlName="category"
+          placeholder="e.g. Home, Electronics, Art"
+        />
+        @if (form.controls.category.touched && form.controls.category.invalid) {
+          <div class="field-error">Use a category between 2 and 60 characters.</div>
+        }
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-sm-6">
+          <label class="form-label" for="price">Price / USD</label>
+          <input
+            class="form-control"
+            id="price"
+            type="number"
+            min="0.01"
+            step="0.01"
+            formControlName="price"
+          />
+          @if (form.controls.price.touched && form.controls.price.invalid) {
+            <div class="field-error">Price must be greater than zero.</div>
+          }
+        </div>
+        <div class="col-sm-6">
+          <label class="form-label" for="quantity">Quantity</label>
+          <input
+            class="form-control"
+            id="quantity"
+            type="number"
+            min="0"
+            step="1"
+            formControlName="quantity"
+          />
+          @if (form.controls.quantity.touched && form.controls.quantity.invalid) {
+            <div class="field-error">Quantity cannot be negative.</div>
+          }
+        </div>
+      </div>
+
+      <div class="upload-zone">
+        <input
+          #productImages
+          type="file"
+          accept="image/jpeg,image/png,image/gif,image/webp"
+          multiple
+          (change)="chooseImages($event)"
+        />
+        <button class="upload-trigger" type="button" (click)="productImages.click()">
+          <span class="upload-symbol">＋</span>
+          <span class="upload-copy">
+            <strong>Attach product images</strong>
+            <small>JPEG, PNG, GIF, or WebP · 2 MB each · 8 maximum</small>
+          </span>
+          <i>{{ existingImageUrls().length + pendingImages().length }}/8</i>
+        </button>
+      </div>
+
+      @if (existingImageUrls().length || pendingImages().length) {
+        <div class="preview-grid">
+          @for (url of existingImageUrls(); track url; let index = $index) {
+            <div class="image-preview">
+              <img [src]="url" [alt]="'Existing product image ' + (index + 1)" />
+              <span>{{ (index + 1).toString().padStart(2, '0') }}</span>
+              <button type="button" aria-label="Remove image" (click)="removeExisting(url)">
+                ×
+              </button>
+            </div>
+          }
+          @for (image of pendingImages(); track image.previewUrl; let index = $index) {
+            <div class="image-preview pending">
+              <img [src]="image.previewUrl" [alt]="image.file.name" />
+              <span>NEW</span>
+              <button type="button" aria-label="Remove image" (click)="removePending(index)">
+                ×
+              </button>
+            </div>
+          }
+        </div>
+      }
+
+      <button class="btn btn-brand w-100 mt-4 py-2" type="submit" [disabled]="submitting()">
+        {{
+          submitting()
+            ? 'Synchronizing…'
+            : editingProduct()
+              ? 'Save product changes →'
+              : 'Launch product →'
+        }}
+      </button>
+    </form>
+
+    <section class="inventory">
+      <div class="inventory-heading">
+        <div>
+          <p class="eyebrow">Live inventory</p>
+          <h2>Your catalog</h2>
+          <p>Everything currently connected to the marketplace.</p>
+        </div>
+        <span>{{ products().length.toString().padStart(2, '0') }}</span>
+      </div>
+
+      @if (loading()) {
+        <div class="inventory-loading">
+          <i></i>
+          <span>Syncing catalog…</span>
+        </div>
+      } @else if (products().length === 0) {
+        <div class="empty-state">
+          <h3>Your catalog is waiting</h3>
+          <p>Complete the editor to send your first product live.</p>
+        </div>
+      } @else {
+        <div class="inventory-list">
+          @for (product of products(); track product.id; let index = $index) {
+            <article
+              [class.active]="editingProduct()?.id === product.id"
+              [style.animation-delay.ms]="index * 70"
+            >
+              <span class="inventory-index">
+                {{ (index + 1).toString().padStart(2, '0') }}
+              </span>
+              <div class="inventory-image">
+                @if (product.imageUrls[0]) {
+                  <img [src]="product.imageUrls[0]" [alt]="product.name" />
+                } @else {
+                  <span>{{ product.name.charAt(0) }}</span>
+                }
+                <i [class.low]="product.quantity < 3"></i>
+              </div>
+              <div class="inventory-copy">
+                <h3>{{ product.name }}</h3>
+                <p>
+                  <strong>{{ product.price | currency: 'USD' }}</strong>
+                  <span>{{ product.quantity }} units</span>
+                  <span>{{ product.imageUrls.length }} photos</span>
+                </p>
+              </div>
+              <div class="inventory-actions">
+                <button type="button" (click)="edit(product)">Edit</button>
+                <button class="danger" type="button" (click)="delete(product)">Delete</button>
+              </div>
+            </article>
+          }
+        </div>
+      }
+    </section>
+  </div>
+</section>

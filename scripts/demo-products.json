@@ -1,0 +1,82 @@
+[
+  {
+    "imageUrls": [
+      "https://cdn.dummyjson.com/product-images/mobile-accessories/amazon-echo-plus/thumbnail.webp"
+    ],
+    "description": "A sample mobile accessories find from the Nexora demo collection.",
+    "quantity": 25,
+    "category": "mobile accessories",
+    "name": "Amazon Echo Plus",
+    "price": 99.99
+  },
+  {
+    "imageUrls": [
+      "https://cdn.dummyjson.com/product-images/mobile-accessories/apple-airpods/thumbnail.webp"
+    ],
+    "description": "A sample mobile accessories find from the Nexora demo collection.",
+    "quantity": 25,
+    "category": "mobile accessories",
+    "name": "Apple Airpods",
+    "price": 129.99
+  },
+  {
+    "imageUrls": [
+      "https://cdn.dummyjson.com/product-images/mens-shoes/nike-air-jordan-1-red-and-black/thumbnail.webp"
+    ],
+    "description": "A sample mens shoes find from the Nexora demo collection.",
+    "quantity": 25,
+    "category": "mens shoes",
+    "name": "Nike Air Jordan 1 Red And Black",
+    "price": 149.99
+  },
+  {
+    "imageUrls": [
+      "https://cdn.dummyjson.com/product-images/mens-shoes/nike-baseball-cleats/thumbnail.webp"
+    ],
+    "description": "A sample mens shoes find from the Nexora demo collection.",
+    "quantity": 25,
+    "category": "mens shoes",
+    "name": "Nike Baseball Cleats",
+    "price": 79.99
+  },
+  {
+    "imageUrls": [
+      "https://cdn.dummyjson.com/product-images/home-decoration/decoration-swing/thumbnail.webp"
+    ],
+    "description": "A sample home decoration find from the Nexora demo collection.",
+    "quantity": 25,
+    "category": "home decoration",
+    "name": "Decoration Swing",
+    "price": 59.99
+  },
+  {
+    "imageUrls": [
+      "https://cdn.dummyjson.com/product-images/home-decoration/family-tree-photo-frame/thumbnail.webp"
+    ],
+    "description": "A sample home decoration find from the Nexora demo collection.",
+    "quantity": 25,
+    "category": "home decoration",
+    "name": "Family Tree Photo Frame",
+    "price": 29.99
+  },
+  {
+    "imageUrls": [
+      "https://cdn.dummyjson.com/product-images/sunglasses/black-sun-glasses/thumbnail.webp"
+    ],
+    "description": "A sample sunglasses find from the Nexora demo collection.",
+    "quantity": 25,
+    "category": "sunglasses",
+    "name": "Black Sun Glasses",
+    "price": 29.99
+  },
+  {
+    "imageUrls": [
+      "https://cdn.dummyjson.com/product-images/sunglasses/classic-sun-glasses/thumbnail.webp"
+    ],
+    "description": "A sample sunglasses find from the Nexora demo collection.",
+    "quantity": 25,
+    "category": "sunglasses",
+    "name": "Classic Sun Glasses",
+    "price": 24.99
+  }
+]

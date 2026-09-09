@@ -1,0 +1,60 @@
+<!-- File purpose: Presents saved products with direct cart and removal actions. -->
+<section class="page-shell wishlist-page">
+  <header>
+    <div>
+      <p class="eyebrow">Saved for later</p>
+      <h1>Your wishlist</h1>
+      <p>Keep the products you want to find again.</p>
+    </div>
+    <a class="btn btn-soft" routerLink="/products">Discover more</a>
+  </header>
+  @if (loading()) {
+    <div class="wishlist-grid">
+      @for (i of [1, 2, 3]; track i) {
+        <div class="wishlist-skeleton surface-card"></div>
+      }
+    </div>
+  } @else if (!items().length) {
+    <div class="empty-state">
+      <h2>Nothing saved yet.</h2>
+      <p>Use the heart button on a product to keep it here.</p>
+      <a class="btn btn-brand mt-4" routerLink="/products">Browse products</a>
+    </div>
+  } @else {
+    <div class="wishlist-grid">
+      @for (product of items(); track product.id; let index = $index) {
+        <article class="surface-card" [style.animation-delay.ms]="index * 70">
+          <a class="saved-image" [routerLink]="['/products', product.id]">
+            @if (product.imageUrls[0]) {
+              <img [src]="product.imageUrls[0]" [alt]="product.name" />
+            } @else {
+              <span>{{ product.name.charAt(0) }}</span>
+            }
+          </a>
+          <div class="saved-copy">
+            <small>{{ product.category }}</small
+            ><a [routerLink]="['/products', product.id]">{{ product.name }}</a>
+            <p>{{ product.price | currency: 'USD' }}</p>
+          </div>
+          <div class="saved-actions">
+            <button
+              class="btn btn-brand"
+              type="button"
+              (click)="addToCart(product)"
+              [disabled]="!product.quantity || actingId() === product.id"
+            >
+              {{ product.quantity ? 'Add to cart' : 'Sold out' }}</button
+            ><button
+              type="button"
+              (click)="remove(product)"
+              [disabled]="actingId() === product.id"
+              aria-label="Remove saved product"
+            >
+              ×
+            </button>
+          </div>
+        </article>
+      }
+    </div>
+  }
+</section>

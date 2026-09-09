@@ -1,0 +1,152 @@
+<!--
+File purpose: Defines the accessible media feature template.
+-->
+<section class="page-shell media-page">
+  <header class="media-header">
+    <div>
+      <p class="eyebrow">Image library</p>
+      <h1>Make every pixel count.</h1>
+      <p>Upload and organize the product photos and profile images used across your shop.</p>
+    </div>
+    <div class="vault-status">
+      <span><i></i> Library ready</span>
+      <strong>{{ assets().length.toString().padStart(2, '0') }}</strong>
+      <small>saved images</small>
+    </div>
+  </header>
+
+  <section class="media-metrics" aria-label="Media statistics">
+    <article>
+      <span>Storage used</span>
+      <strong>{{ sizeLabel(totalBytes()) }}</strong>
+      <i style="--progress: 18%"></i>
+    </article>
+    <article>
+      <span>Product imagery</span>
+      <strong>{{ productAssetCount() }}</strong>
+      <small>linked or ready</small>
+    </article>
+    <article>
+      <span>Maximum file</span>
+      <strong>2 MB</strong>
+      <small>per image</small>
+    </article>
+  </section>
+
+  <div class="media-layout">
+    <form class="uploader surface-card" [formGroup]="form" (ngSubmit)="upload()">
+      <div class="upload-topline">
+        <span><i></i> Upload ready</span>
+        <span>IMAGES / 01</span>
+      </div>
+      <p class="eyebrow">New image</p>
+      <h2>Upload an image</h2>
+      <p class="uploader-intro">
+        Choose where you want to use the image, then add it to your library.
+      </p>
+
+      <button class="drop-area" type="button" (click)="fileInput.click()">
+        @if (previewUrl()) {
+          <span class="preview-frame">
+            <img [src]="previewUrl()" alt="Selected image preview" />
+            <i>READY</i>
+          </span>
+          <span class="selected-name">{{ selectedFile()?.name }}</span>
+          <small>Click to replace</small>
+        } @else {
+          <span class="drop-symbol">
+            <i></i>
+            <strong>＋</strong>
+          </span>
+          <span class="drop-copy">
+            <strong>Choose your visual</strong>
+            <small>JPEG, PNG, GIF, or WebP · maximum 2 MB</small>
+          </span>
+        }
+      </button>
+      <input
+        #fileInput
+        class="visually-hidden"
+        type="file"
+        accept="image/jpeg,image/png,image/gif,image/webp"
+        (change)="chooseFile($event)"
+      />
+
+      <div class="mb-3">
+        <label class="form-label" for="purpose">Image use</label>
+        <select class="form-select" id="purpose" formControlName="purpose">
+          <option value="PRODUCT_IMAGE">Product image</option>
+          <option value="AVATAR">Seller avatar</option>
+        </select>
+      </div>
+
+      <div class="mb-4">
+        <label class="form-label" for="product-id"> Product ID <span>Optional</span> </label>
+        <input
+          class="form-control"
+          id="product-id"
+          formControlName="productId"
+          placeholder="Link metadata to a product"
+        />
+      </div>
+
+      <button
+        class="btn btn-brand w-100 py-2"
+        type="submit"
+        [disabled]="uploading() || !selectedFile()"
+      >
+        {{ uploading() ? 'Uploading image…' : 'Add to library →' }}
+      </button>
+    </form>
+
+    <section class="library">
+      <div class="library-heading">
+        <div>
+          <p class="eyebrow">Saved images</p>
+          <h2>Your visual library</h2>
+          <p>Every image available for your profile and product listings.</p>
+        </div>
+        <span>{{ assets().length.toString().padStart(2, '0') }}</span>
+      </div>
+
+      @if (loading()) {
+        <div class="library-loading">
+          <i></i>
+          <span>Decrypting your library…</span>
+        </div>
+      } @else if (assets().length === 0) {
+        <div class="empty-state">
+          <h3>Your library is empty</h3>
+          <p>Upload your first image to start building a visual library.</p>
+        </div>
+      } @else {
+        <div class="media-grid">
+          @for (asset of assets(); track asset.id; let index = $index) {
+            <article [style.animation-delay.ms]="index * 75">
+              <a [href]="asset.url" target="_blank" rel="noopener">
+                <img [src]="asset.url" [alt]="asset.originalFilename" loading="lazy" />
+                <span>OPEN ↗</span>
+              </a>
+              <div class="asset-copy">
+                <span class="asset-type">
+                  {{ asset.purpose === 'AVATAR' ? 'Profile' : 'Product' }}
+                </span>
+                <h3>{{ asset.originalFilename }}</h3>
+                <p>{{ sizeLabel(asset.size) }} · ready to use</p>
+                @if (asset.productId) {
+                  <small>Linked / {{ asset.productId }}</small>
+                } @else {
+                  <small>Not linked to a product</small>
+                }
+              </div>
+              <button type="button" (click)="delete(asset)" aria-label="Delete image">×</button>
+              <span class="asset-index">
+                {{ (index + 1).toString().padStart(2, '0') }}
+              </span>
+            </article>
+          }
+        </div>
+      }
+    </section>
+  </div>
+</section>

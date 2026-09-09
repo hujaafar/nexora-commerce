@@ -1,0 +1,48 @@
+# File purpose: Externalizes runtime settings for user-service.
+server:
+  port: ${PORT:8081}
+
+spring:
+  application:
+    name: user-service
+  data:
+    mongodb:
+      uri: ${MONGODB_URI:mongodb://localhost:27017/nexora_users}
+      auto-index-creation: true
+
+security:
+  jwt:
+    secret: ${JWT_SECRET:change-this-development-secret-to-at-least-32-characters}
+    issuer: nexora-commerce-user-service
+    expiration: ${JWT_EXPIRATION:8h}
+
+app:
+  seed-demo-users: ${SEED_DEMO_USERS:false}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka/}
+  instance:
+    prefer-ip-address: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  health:
+    mongo:
+      enabled: true
+  info:
+    env:
+      enabled: true
+
+info:
+  application:
+    name: ${spring.application.name}
+    description: Authentication and profiles for Nexora Commerce

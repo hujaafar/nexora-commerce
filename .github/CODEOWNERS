@@ -1,0 +1,11 @@
+# File purpose: Requests review from the project owner for every source,
+# pipeline, deployment, and quality-policy change.
+* @hujaafar
+
+# Security and automation files are called out so later teams can assign a
+# dedicated DevOps/security group without changing the default rule.
+/Jenkinsfile @hujaafar
+/.github/ @hujaafar
+/jenkins/ @hujaafar
+/quality/ @hujaafar
+/scripts/ci/ @hujaafar

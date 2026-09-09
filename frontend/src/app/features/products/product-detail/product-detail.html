@@ -1,0 +1,236 @@
+<!--
+File purpose: Defines the accessible products feature template.
+-->
+<section class="page-shell detail-page">
+  <div class="detail-nav">
+    <a class="back-link" routerLink="/products">
+      <span>←</span>
+      <span>
+        <small>Back to catalog</small>
+        Return to the latest drop
+      </span>
+    </a>
+    <div class="detail-nav-status">
+      <i></i>
+      Available to browse
+    </div>
+  </div>
+
+  @if (loading()) {
+    <section class="loading-experience" aria-live="polite" aria-label="Loading product">
+      <div class="loading-topline">
+        <span><i></i> Retrieving product</span>
+        <small>Nexora Commerce / PRODUCT CATALOG</small>
+      </div>
+      <div class="detail-grid loading-detail">
+        <div class="loading-gallery">
+          <div class="skeleton-label">
+            <span></span>
+            <span></span>
+          </div>
+          <div class="skeleton-image">
+            <div class="loader-mark">
+              <i></i>
+              <strong>01</strong>
+            </div>
+            <p>Loading product image</p>
+          </div>
+        </div>
+        <div class="loading-card surface-card">
+          <span class="skeleton-line short"></span>
+          <span class="skeleton-line title"></span>
+          <span class="skeleton-line title second"></span>
+          <span class="skeleton-line price-line"></span>
+          <div class="skeleton-copy">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <div class="skeleton-pills">
+            <span></span>
+            <span></span>
+          </div>
+          <span class="skeleton-button"></span>
+        </div>
+      </div>
+    </section>
+  } @else if (product(); as item) {
+    <div class="product-intro">
+      <div>
+        <span>CURATED / {{ item.id.slice(-6).toUpperCase() }}</span>
+        <span>INDEPENDENT SELLER</span>
+      </div>
+      <h1>{{ item.name }}</h1>
+      <p>An original product shared by an independent seller in the Nexora Commerce collection.</p>
+    </div>
+
+    <div class="detail-grid">
+      <div class="gallery">
+        <div class="gallery-label">
+          <span>PRODUCT / {{ item.id.slice(-6).toUpperCase() }}</span>
+          <span
+            >{{ item.imageUrls.length || 1 }}
+            {{ item.imageUrls.length === 1 ? 'VIEW' : 'VIEWS' }}</span
+          >
+        </div>
+        <div class="main-image">
+          <div class="image-orbit" aria-hidden="true"></div>
+          @if (activeImage()) {
+            <img [src]="activeImage()" [alt]="item.name" />
+          } @else {
+            <div class="detail-placeholder">
+              <i></i>
+              <span>{{ item.name.charAt(0) }}</span>
+              <small>NO PRODUCT PHOTO</small>
+            </div>
+          }
+          <div class="media-badge">
+            <i></i>
+            {{ activeImage() ? 'Product photo' : 'Product preview' }}
+          </div>
+          <span class="image-index">
+            01 / {{ (item.imageUrls.length || 1).toString().padStart(2, '0') }}
+          </span>
+          <span class="image-corner corner-one"></span>
+          <span class="image-corner corner-two"></span>
+        </div>
+        @if (item.imageUrls.length > 1) {
+          <div class="thumbnail-row" aria-label="Product images">
+            @for (image of item.imageUrls; track image; let index = $index) {
+              <button
+                type="button"
+                [class.active]="image === activeImage()"
+                (click)="activeImage.set(image)"
+                [attr.aria-label]="'Show image ' + (index + 1)"
+              >
+                <img [src]="image" alt="" />
+                <span>{{ (index + 1).toString().padStart(2, '0') }}</span>
+              </button>
+            }
+          </div>
+        }
+      </div>
+
+      <article class="detail-copy surface-card">
+        <div class="listing-status">
+          <span><i></i> Live listing</span>
+          <small>SELLER / {{ item.sellerId.slice(-6).toUpperCase() }}</small>
+        </div>
+
+        <div class="mobile-product-heading">
+          <p class="eyebrow">Independent product</p>
+          <h2>{{ item.name }}</h2>
+        </div>
+
+        <div class="price-row">
+          <div>
+            <small>Direct price</small>
+            <strong class="price">{{ item.price | currency: 'USD' }}</strong>
+          </div>
+          <span>USD / NO MARKETPLACE MARKUP</span>
+        </div>
+
+        <div class="description-block">
+          <span>{{ item.category }} · Product story</span>
+          <p class="description">{{ item.description }}</p>
+        </div>
+
+        <div class="stock" [class.out]="item.quantity === 0">
+          <span></span>
+          <div>
+            <strong>{{ item.quantity > 0 ? 'Available now' : 'Currently sold out' }}</strong>
+            <small>
+              {{
+                item.quantity > 0
+                  ? item.quantity + ' pieces in seller inventory'
+                  : 'Check back for a future restock'
+              }}
+            </small>
+          </div>
+          <b>{{ item.quantity.toString().padStart(2, '0') }}</b>
+        </div>
+
+        <div class="assurance-grid">
+          <div>
+            <span>01</span>
+            <strong>Product photos</strong>
+            <small>See the item in more detail</small>
+          </div>
+          <div>
+            <span>02</span>
+            <strong>Independent seller</strong>
+            <small>Listed by its own shop</small>
+          </div>
+          <div>
+            <span>03</span>
+            <strong>Current availability</strong>
+            <small>Stock updated by the seller</small>
+          </div>
+        </div>
+
+        @if (authService.isClient() && item.quantity > 0) {
+          <div class="purchase-panel">
+            <div class="detail-quantity">
+              <button
+                type="button"
+                (click)="changeQuantity(quantity() - 1)"
+                [disabled]="quantity() <= 1"
+              >
+                −</button
+              ><strong>{{ quantity() }}</strong
+              ><button
+                type="button"
+                (click)="changeQuantity(quantity() + 1)"
+                [disabled]="quantity() >= item.quantity"
+              >
+                +
+              </button>
+            </div>
+            <button
+              class="btn btn-brand detail-cta"
+              type="button"
+              (click)="addToCart()"
+              [disabled]="adding()"
+            >
+              <span
+                ><small>{{ quantity() * item.price | currency: 'USD' }}</small
+                >{{ adding() ? 'Adding…' : 'Add to bag' }}</span
+              ><i>→</i>
+            </button>
+            <button class="save-detail" type="button" (click)="toggleWishlist()">
+              {{ saved() ? '♥ Saved' : '♡ Save for later' }}
+            </button>
+          </div>
+        } @else if (!authService.isAuthenticated()) {
+          <a class="btn btn-brand detail-cta" routerLink="/login"
+            ><span><small>Ready to buy?</small>Sign in to add to cart</span><i>→</i></a
+          >
+        } @else {
+          <a class="btn btn-soft detail-cta" routerLink="/products"
+            ><span><small>Keep exploring</small>View the full catalog</span><i>↗</i></a
+          >
+        }
+        <p class="assurance">
+          Anyone can browse the collection. Product details and availability are kept up to date by
+          the seller.
+        </p>
+      </article>
+    </div>
+  } @else if (loadError()) {
+    <section class="detail-error surface-card">
+      <div class="error-visual" aria-hidden="true">
+        <span>404</span>
+        <i></i>
+      </div>
+      <div>
+        <p class="eyebrow">Listing unavailable</p>
+        <h1>This product isn't here.</h1>
+        <p>
+          It may have been removed by its seller, or the address may no longer be valid. The current
+          catalog is ready when you are.
+        </p>
+        <a class="btn btn-brand" routerLink="/products">Return to the catalog →</a>
+      </div>
+    </section>
+  }
+</section>
