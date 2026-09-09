@@ -19,6 +19,7 @@ services:
     restart: unless-stopped
     command:
       - --storage-driver=overlay2
+      - --insecure-registry=${NEXUS_DOCKER_REGISTRY:-host.docker.internal:18082}
     environment:
       DOCKER_TLS_CERTDIR: /certs
     volumes:

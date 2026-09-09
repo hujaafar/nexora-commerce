@@ -1,3 +1,5 @@
+**/.env
+**/.flattened-pom.xml
 # File purpose: Defines repository/tooling rules through .dockerignore.
 .git
 .gitignore

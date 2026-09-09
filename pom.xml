@@ -16,7 +16,7 @@ File purpose: Configures the multi-module Maven build.
 
     <groupId>com.nexora</groupId>
     <artifactId>nexora-commerce</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>${revision}</version>
     <packaging>pom</packaging>
     <name>Nexora Commerce</name>
     <description>Launch-ready Spring Boot microservices marketplace with commerce analytics</description>
@@ -32,6 +32,7 @@ File purpose: Configures the multi-module Maven build.
 
     <properties>
         <java.version>17</java.version>
+        <revision>1.0.0-SNAPSHOT</revision>
         <spring-cloud.version>2025.0.3</spring-cloud.version>
         <aws-sdk.version>2.31.77</aws-sdk.version>
         <maven.compiler.parameters>true</maven.compiler.parameters>
@@ -58,8 +59,47 @@ File purpose: Configures the multi-module Maven build.
         </dependencies>
     </dependencyManagement>
 
+    <!-- Ordinary builds need no Nexus server or credentials. Publication is explicit. -->
+    <profiles>
+        <profile>
+            <id>nexus</id>
+            <distributionManagement>
+                <repository>
+                    <id>nexus-releases</id>
+                    <url>${env.NEXUS_MAVEN_RELEASES_URL}</url>
+                </repository>
+                <snapshotRepository>
+                    <id>nexus-snapshots</id>
+                    <url>${env.NEXUS_MAVEN_SNAPSHOTS_URL}</url>
+                </snapshotRepository>
+            </distributionManagement>
+        </profile>
+    </profiles>
+
     <build>
         <plugins>
+            <!-- Resolve CI versions in published POMs so consumers can resolve parents. -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <version>1.7.3</version>
+                <configuration>
+                    <updatePomFile>true</updatePomFile>
+                    <flattenMode>resolveCiFriendliesOnly</flattenMode>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>flatten</id>
+                        <phase>process-resources</phase>
+                        <goals><goal>flatten</goal></goals>
+                    </execution>
+                    <execution>
+                        <id>flatten-clean</id>
+                        <phase>clean</phase>
+                        <goals><goal>clean</goal></goals>
+                    </execution>
+                </executions>
+            </plugin>
             <!-- JaCoCo instruments tests and writes XML coverage for Jenkins and SonarQube. -->
             <plugin>
                 <groupId>org.jacoco</groupId>

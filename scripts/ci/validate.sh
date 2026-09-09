@@ -17,6 +17,10 @@ required_files=(
   "jenkins/compose.yml"
   "quality/compose.yml"
   "sonar-project.properties"
+  "nexus/compose.yml"
+  "nexus/settings.xml"
+  "scripts/ci/nexus-maven.sh"
+  "scripts/ci/nexus-images.sh"
   "scripts/ci/sonarqube.sh"
 )
 
@@ -41,6 +45,8 @@ IMAGE_TAG=validation \
 # credential only inside the quality-gate stage.
 SONAR_TOKEN=configuration-validation-only \
   docker compose -f jenkins/compose.yml config --quiet
+
+docker compose -f nexus/compose.yml config --quiet
 
 # Whitespace errors often produce confusing cross-platform shell failures.
 git diff --check

@@ -67,6 +67,8 @@ The demo does not charge real cards or connect to a courier.
   databases, event publishing, and object storage.
 - GitHub Actions CI, Jenkins build/test/deploy/rollback pipeline, SonarQube quality
   gate configuration, JaCoCo and Angular coverage, and API integration tests.
+- Nexus artifact management: dependency caching, versioned service JARs and Docker
+  images, immutable releases, publisher/read-only roles, and recovery tooling.
 
 ## Architecture
 
@@ -104,7 +106,7 @@ not a distributed transaction across every external side effect.
 | `product-service/` | Catalog, search, inventory reservations |
 | `media-service/` | Upload validation, ownership, S3 storage |
 | `order-service/` | Cart, wishlist, checkout, orders, analytics |
-| `jenkins/`, `quality/` | Optional local CI and quality infrastructure |
+| `jenkins/`, `quality/`, `nexus/` | Optional CI, quality gates, and artifact storage |
 | `scripts/` | Setup, seeding, operations, verification |
 | `docs/` | Architecture, APIs, deployment, migration, learning notes |
 
@@ -159,11 +161,15 @@ The optional GitHub Sonar workflow is manually triggered and requires a
 runner-reachable `SONAR_HOST_URL` repository variable and `SONAR_TOKEN` secret.
 A developer's localhost is not reachable from GitHub-hosted runners.
 
+For dependency caching and versioned JAR/Docker publication, see the complete
+[Nexus setup and recovery guide](docs/NEXUS_SETUP.md). Nexus runs alongside the
+application on ports 18081/18082 and integrates with the same Jenkins pipeline.
+
 ## Project lineage and credits
 
 Nexora consolidates the marketplace foundations from `buy-01`, CI/CD from
 `mr-jenk`, quality and media fixes from `safe-zone`, and commerce workflows from
-`buy-02`. It is one runnable application. See [migration notes](docs/MIGRATION.md)
+`buy-02`, plus artifact management from `nexus`. It is one runnable application. See [migration notes](docs/MIGRATION.md)
 and [source commits](docs/source-provenance.json).
 
 The ScrollCraft runtime retains its MIT license and includes a documented

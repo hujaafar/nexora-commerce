@@ -36,3 +36,8 @@ preserve configuration and deployment history. Read `scripts/ci/deploy.sh`,
 SMTP defaults to Mailpit. External email and Slack require an operator's own
 configuration and credentials. Merely building this repository does not enable
 external notifications. `scripts/configure-gmail.ps1` is an optional helper.
+
+## Versioned artifact storage
+
+See [Nexus setup](NEXUS_SETUP.md) for Maven caching, JAR/image publication,
+read-only recovery, and the optional `PUBLISH_ARTIFACTS` Jenkins parameter.

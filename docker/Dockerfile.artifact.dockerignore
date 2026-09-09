@@ -1,0 +1,4 @@
+**
+!*-service
+!*-service/target
+!*-service/target/*.jar

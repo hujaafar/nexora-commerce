@@ -9,7 +9,7 @@ File purpose: Configures product-service dependencies and plugins.
     <parent>
         <groupId>com.nexora</groupId>
         <artifactId>nexora-commerce</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
     <artifactId>product-service</artifactId>
     <name>Product Service</name>

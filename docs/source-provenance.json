@@ -14,5 +14,9 @@
   {
     "repository": "hujaafar/buy-02",
     "commit": "61137cac691755cd88eabecc793f932b89a0e150"
+  },
+  {
+    "repository": "learn.reboot01.com/git/hujaafar/nexus",
+    "commit": "b5ceb1d71c5f9bdc5c542a310d372c65a01fbeba"
   }
 ]

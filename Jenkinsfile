@@ -33,6 +33,21 @@ pipeline {
             description: 'Docker-capable Jenkins node label used to execute the Pipeline.'
         )
         booleanParam(
+            name: 'PUBLISH_ARTIFACTS',
+            defaultValue: false,
+            description: 'Use Nexus for Maven dependencies and publish versioned JARs/images after the quality gate. Requires nexus-publisher credentials.'
+        )
+        string(
+            name: 'NEXUS_BASE_URL',
+            defaultValue: 'http://host.docker.internal:18081',
+            description: 'Nexus URL reachable from Maven build containers.'
+        )
+        string(
+            name: 'NEXUS_DOCKER_REGISTRY',
+            defaultValue: 'host.docker.internal:18082',
+            description: 'Registry host:port reachable from the Jenkins Docker daemon.'
+        )
+        booleanParam(
             name: 'BUILD_CONTAINER_IMAGES',
             defaultValue: true,
             description: 'Build immutable Docker images after all tests pass.'
@@ -97,6 +112,7 @@ pipeline {
                     ).trim()
                     env.SHORT_COMMIT = env.SOURCE_COMMIT.take(12)
                     env.IMAGE_TAG = "${env.SHORT_COMMIT}-${env.BUILD_NUMBER}"
+                    env.ARTIFACT_VERSION = "1.0.${env.BUILD_NUMBER}-${env.SHORT_COMMIT}"
                     currentBuild.displayName = "#${env.BUILD_NUMBER} ${env.SHORT_COMMIT}"
                     currentBuild.description = "${params.PIPELINE_ACTION} → ${params.DEPLOY_ENV}"
                 }
@@ -155,10 +171,20 @@ pipeline {
                                 -file "${first_ca}" \
                                 -keystore "${ci_truststore}" \
                                 -storepass changeit >/dev/null
-                              export MAVEN_OPTS="${MAVEN_OPTS} -Djavax.net.ssl.trustStore=${ci_truststore} -Djavax.net.ssl.trustStorePassword=changeit"
+                              printf '%s\n' "-Djavax.net.ssl.trustStore=${ci_truststore}" "-Djavax.net.ssl.trustStorePassword=changeit" > .mvn/jvm.config
                             fi
-                            mvn -B -ntp clean verify
+                            # Nexus-enabled builds run below with scoped credentials.
                         '''
+                        script {
+                            if (params.PUBLISH_ARTIFACTS) {
+                                withCredentials([usernamePassword(credentialsId: 'nexus-publisher',
+                                    usernameVariable: 'NEXUS_USERNAME', passwordVariable: 'NEXUS_PASSWORD')]) {
+                                    sh 'bash scripts/ci/nexus-maven.sh verify'
+                                }
+                            } else {
+                                sh 'mvn -B -ntp -Drevision="$ARTIFACT_VERSION" clean verify'
+                            }
+                        }
                     }
                     post {
                         always {
@@ -177,10 +203,10 @@ pipeline {
                     }
                 }
 
-                stage('Frontend — Angular / Node 22') {
+                stage('Frontend — Angular / Node 24') {
                     agent {
                         docker {
-                            image 'node:22-bookworm-slim'
+                            image 'node:24-bookworm-slim'
                             args '-v nexora-commerce-npm-cache:/cache -v /nexora-commerce-certs:/usr/local/share/ca-certificates/nexora-commerce:ro'
                             reuseNode true
                         }
@@ -199,6 +225,7 @@ pipeline {
                             # severity advisories stop the same stage.
                             npm audit --omit=dev --audit-level=high
                             npm run test:ci
+                            node ../scripts/motion-test.mjs
                             npm run build
                         '''
                     }
@@ -257,36 +284,54 @@ pipeline {
             }
         }
 
-        stage('Build Immutable Images') {
+        stage('Publish Maven Artifacts') {
             when {
-                expression {
-                    params.BUILD_CONTAINER_IMAGES ||
-                        params.PIPELINE_ACTION == 'build-test-deploy'
+                expression { params.PUBLISH_ARTIFACTS && params.PIPELINE_ACTION != 'rollback' }
+            }
+            agent {
+                docker {
+                    image 'maven:3.9.11-eclipse-temurin-17'
+                    args '-v nexora-commerce-maven-cache:/cache'
+                    reuseNode true
                 }
             }
             steps {
-                sh '''
-                    export IMAGE_TAG
-                    docker compose \
-                      -f compose.yml \
-                      -f compose.jenkins.yml \
-                      build --pull
+                withCredentials([usernamePassword(credentialsId: 'nexus-publisher',
+                    usernameVariable: 'NEXUS_USERNAME', passwordVariable: 'NEXUS_PASSWORD')]) {
+                    // Same version and workspace as verify; only after Sonar passes.
+                    sh 'bash scripts/ci/nexus-maven.sh deploy'
+                }
+            }
+        }
 
-                    mkdir -p test-results/images
-                    for service in discovery-service gateway-service user-service product-service media-service order-service frontend; do
-                      docker image inspect \
-                        --format '{{.Id}} {{index .RepoTags 0}}' \
-                        "${IMAGE_NAMESPACE}/${service}:${IMAGE_TAG}"
-                    done | tee test-results/images/manifest.txt
-                '''
+        stage('Build Immutable Images') {
+            when {
+                expression {
+                    params.PIPELINE_ACTION != 'rollback' &&
+                        (params.BUILD_CONTAINER_IMAGES || params.PUBLISH_ARTIFACTS ||
+                         params.PIPELINE_ACTION == 'build-test-deploy')
+                }
+            }
+            steps {
+                sh 'bash scripts/ci/build-artifact-images.sh'
             }
             post {
                 success {
-                    archiveArtifacts(
-                        artifacts: 'test-results/images/manifest.txt',
-                        fingerprint: true
-                    )
+                    archiveArtifacts(artifacts: 'test-results/images/manifest.txt', fingerprint: true)
                 }
+            }
+        }
+
+        stage('Publish Docker Artifacts') {
+            when {
+                expression { params.PUBLISH_ARTIFACTS && params.PIPELINE_ACTION != 'rollback' }
+            }
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'nexus-publisher',
+                    usernameVariable: 'NEXUS_USERNAME', passwordVariable: 'NEXUS_PASSWORD')]) {
+                    sh 'bash scripts/ci/nexus-images.sh push'
+                }
+                archiveArtifacts(artifacts: 'test-results/images/nexus-push.txt', fingerprint: true)
             }
         }
 

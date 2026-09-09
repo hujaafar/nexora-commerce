@@ -49,3 +49,8 @@ The default workflow uses ephemeral hosted runners with read-only repository
 permissions. Optional Sonar analysis needs a reachable server and token.
 Do not expose a developer machine to arbitrary pull-request builds. See
 [GitHub's runner security guidance](https://docs.github.com/en/actions/reference/security/secure-use).
+
+## Versioned artifact storage
+
+See [Nexus setup](NEXUS_SETUP.md) for Maven caching, JAR/image publication,
+read-only recovery, and the optional `PUBLISH_ARTIFACTS` Jenkins parameter.

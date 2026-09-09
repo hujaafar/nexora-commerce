@@ -18,6 +18,9 @@ frontend/coverage/
 .DS_Store
 Thumbs.db
 
+.flattened-pom.xml
+nexus/.bootstrap-complete
+
 # Runtime data and secrets
 .env
 jenkins/.env

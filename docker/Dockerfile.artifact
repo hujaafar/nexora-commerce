@@ -1,0 +1,13 @@
+# Package the exact JAR that passed the Maven test stage.
+FROM eclipse-temurin:17-jre-jammy
+ARG SERVICE
+ARG ARTIFACT_VERSION=1.0.0-SNAPSHOT
+ARG SOURCE_COMMIT=unknown
+LABEL org.opencontainers.image.revision=$SOURCE_COMMIT
+LABEL org.opencontainers.image.version=$ARTIFACT_VERSION
+RUN useradd --system --uid 10001 --create-home spring
+WORKDIR /app
+COPY ${SERVICE}/target/${SERVICE}-${ARTIFACT_VERSION}.jar /app/application.jar
+USER spring
+EXPOSE 8080
+ENTRYPOINT ["java", "-XX:MaxRAMPercentage=75.0", "-jar", "/app/application.jar"]
