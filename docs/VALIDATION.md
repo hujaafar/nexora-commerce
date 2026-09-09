@@ -13,6 +13,22 @@ Verified locally on 10 September 2026:
 | Complete local Docker stack | Ten application/infrastructure containers running; configured health checks passed |
 | Catalog seeding | Eight sample products created; repeat runs preserve existing records |
 | Real HTTP integration journey | 35 checks passed, plus cleanup of temporary products and media |
+| Versioned Maven reactor | All 30 Java tests passed with a custom release version; six executable JARs and resolved consumer POMs verified |
+| Live Nexus publication | Parent POM, six service JARs/POMs, and seven Docker images published as version 1.0.0 |
+| Nexus access and recovery audit | 44 checks passed, including denied reader writes, denied release replacement, all seven reader pulls, and a healthy retrieved discovery image |
+
+The Nexus run used a new isolated volume and the pinned 3.95.3 image. The
+operator explicitly authorized Community Edition EULA acceptance. Maven
+dependencies were fetched through the authenticated Nexus proxy, and the
+publication run repeated all 30 Java tests plus 11 Angular tests, the motion
+lifecycle test, the production dependency audit (zero findings), and the Angular
+production build. `scripts/verify-nexus.ps1 -Version 1.0.0` recorded 44 passing
+checks in the ignored local `test-results/nexus/verification.json` report.
+
+The public GitHub CI also passed for the Nexus integration, including checks
+that each packaged JAR and flattened parent reference has the selected version.
+This live Nexus verification is separate from a Jenkins/SonarQube pipeline run,
+which remains unverified locally.
 
 The HTTP test covers anonymous catalog access, login/registration, denied role
 escalation, protected routes, product creation, image upload/download, rejected

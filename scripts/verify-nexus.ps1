@@ -27,7 +27,7 @@ function Assert-Check([bool]$Condition, [string]$Description) {
     $checks.Add($Description)
     Write-Host "PASS: $Description"
 }
-function Request-Status([string]$Method, [string]$Url, [hashtable]$Headers, [string]$Body) {
+function Request-Status([string]$Method, [string]$Url, [hashtable]$Headers, [AllowNull()][object]$Body) {
     try {
         $arguments = @{ Method = $Method; Uri = $Url; Headers = $Headers; UseBasicParsing = $true; TimeoutSec = 30 }
         if ($null -ne $Body) { $arguments.Body = $Body; $arguments.ContentType = 'application/xml' }
@@ -108,6 +108,6 @@ if (-not $SkipDocker) {
 }
 $reportDirectory = Join-Path $projectRoot 'test-results/nexus'
 New-Item -ItemType Directory -Force -Path $reportDirectory | Out-Null
-@{ version = $Version; imageTag = $ImageTag; verifiedAt = (Get-Date).ToUniversalTime().ToString('o'); checks = @($checks) } |
+@{ version = $Version; imageTag = $ImageTag; verifiedAt = (Get-Date).ToUniversalTime().ToString('o'); checks = $checks.ToArray() } |
     ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $reportDirectory 'verification.json')
 Write-Host "All $($checks.Count) Nexus checks passed."
