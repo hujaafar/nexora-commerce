@@ -1,0 +1,315 @@
+[
+  {
+    "name": "firefox",
+    "initial": {
+      "url": "http://127.0.0.1:4200/products?motion=full",
+      "viewport": [
+        1870,
+        920
+      ],
+      "reduced": true,
+      "y": 0,
+      "engine": "object",
+      "ready": "storefront motion-ready",
+      "scenes": [
+        {
+          "id": "top",
+          "progress": "0.0000",
+          "height": 1564
+        },
+        {
+          "id": "about",
+          "progress": "0.0000",
+          "height": 2024
+        }
+      ],
+      "image": {
+        "translate": "0px",
+        "rotate": "0deg",
+        "top": 120.35000610351562
+      },
+      "stage": {
+        "position": "sticky",
+        "top": 87
+      },
+      "aperture": "inset(24% 35%)",
+      "errors": []
+    },
+    "middle": {
+      "url": "http://127.0.0.1:4200/products?motion=full",
+      "viewport": [
+        1870,
+        920
+      ],
+      "reduced": true,
+      "y": 540,
+      "engine": "object",
+      "ready": "storefront motion-ready",
+      "scenes": [
+        {
+          "id": "top",
+          "progress": "0.7034",
+          "height": 1564
+        },
+        {
+          "id": "about",
+          "progress": "0.0000",
+          "height": 2024
+        }
+      ],
+      "image": {
+        "translate": "157.833px -32.35px",
+        "rotate": "18.9918deg",
+        "top": -72.01666259765625
+      },
+      "stage": {
+        "position": "sticky",
+        "top": 86
+      },
+      "aperture": "inset(24% 35%)",
+      "errors": []
+    },
+    "campaignStart": {
+      "url": "http://127.0.0.1:4200/products?motion=full",
+      "viewport": [
+        1870,
+        920
+      ],
+      "reduced": true,
+      "y": 1939,
+      "engine": "object",
+      "ready": "storefront motion-ready",
+      "scenes": [
+        {
+          "id": "top",
+          "progress": "1.0000",
+          "height": 1564
+        },
+        {
+          "id": "about",
+          "progress": "0.0000",
+          "height": 2024
+        }
+      ],
+      "image": {
+        "translate": "224.4px -46px",
+        "rotate": "27deg",
+        "top": -1352.550048828125
+      },
+      "stage": {
+        "position": "sticky",
+        "top": -1122
+      },
+      "aperture": "inset(24% 35%)",
+      "errors": []
+    },
+    "campaignEnd": {
+      "url": "http://127.0.0.1:4200/products?motion=full",
+      "viewport": [
+        1870,
+        920
+      ],
+      "reduced": true,
+      "y": 2479,
+      "engine": "object",
+      "ready": "storefront motion-ready",
+      "scenes": [
+        {
+          "id": "top",
+          "progress": "1.0000",
+          "height": 1564
+        },
+        {
+          "id": "about",
+          "progress": "0.4888",
+          "height": 2024
+        }
+      ],
+      "image": {
+        "translate": "224.4px -46px",
+        "rotate": "27deg",
+        "top": -1892.550048828125
+      },
+      "stage": {
+        "position": "sticky",
+        "top": -1662
+      },
+      "aperture": "inset(12.2688% 17.892%)",
+      "errors": []
+    },
+    "afterDisabling": {
+      "url": "http://127.0.0.1:4200/products?motion=reduced",
+      "viewport": [
+        1870,
+        920
+      ],
+      "reduced": true,
+      "y": 0,
+      "engine": "object",
+      "ready": "storefront",
+      "scenes": [
+        {
+          "id": "top",
+          "progress": "0",
+          "height": 834
+        },
+        {
+          "id": "about",
+          "progress": "0",
+          "height": 834
+        }
+      ],
+      "image": {
+        "translate": "none",
+        "rotate": "none",
+        "top": 120.35000610351562
+      },
+      "stage": {
+        "position": "relative",
+        "top": 87
+      },
+      "aperture": "inset(0px)",
+      "errors": []
+    },
+    "wheelInputVerified": true
+  },
+  {
+    "name": "chrome",
+    "initial": {
+      "url": "http://127.0.0.1:4200/products",
+      "viewport": [
+        1870,
+        920
+      ],
+      "reduced": false,
+      "y": 0,
+      "engine": "object",
+      "ready": "storefront motion-ready",
+      "scenes": [
+        {
+          "id": "top",
+          "progress": "0.0000",
+          "height": 1564
+        },
+        {
+          "id": "about",
+          "progress": "0.0000",
+          "height": 2024
+        }
+      ],
+      "image": {
+        "translate": "0px",
+        "rotate": "0deg",
+        "top": 120.359375
+      },
+      "stage": {
+        "position": "sticky",
+        "top": 87
+      },
+      "aperture": "inset(24% 35%)",
+      "errors": []
+    },
+    "middle": {
+      "url": "http://127.0.0.1:4200/products",
+      "viewport": [
+        1870,
+        920
+      ],
+      "reduced": false,
+      "y": 540,
+      "engine": "object",
+      "ready": "storefront motion-ready",
+      "scenes": [
+        {
+          "id": "top",
+          "progress": "0.7034",
+          "height": 1564
+        },
+        {
+          "id": "about",
+          "progress": "0.0000",
+          "height": 2024
+        }
+      ],
+      "image": {
+        "translate": "157.843px -32.3564px",
+        "rotate": "18.9918deg",
+        "top": -72.00900268554688
+      },
+      "stage": {
+        "position": "sticky",
+        "top": 86
+      },
+      "aperture": "inset(24% 35%)",
+      "errors": []
+    },
+    "campaignStart": {
+      "url": "http://127.0.0.1:4200/products",
+      "viewport": [
+        1870,
+        920
+      ],
+      "reduced": false,
+      "y": 1939,
+      "engine": "object",
+      "ready": "storefront motion-ready",
+      "scenes": [
+        {
+          "id": "top",
+          "progress": "1.0000",
+          "height": 1564
+        },
+        {
+          "id": "about",
+          "progress": "0.0000",
+          "height": 2024
+        }
+      ],
+      "image": {
+        "translate": "224.4px -46px",
+        "rotate": "27deg",
+        "top": -1352.54541015625
+      },
+      "stage": {
+        "position": "sticky",
+        "top": -1122
+      },
+      "aperture": "inset(24% 35%)",
+      "errors": []
+    },
+    "campaignEnd": {
+      "url": "http://127.0.0.1:4200/products",
+      "viewport": [
+        1870,
+        920
+      ],
+      "reduced": false,
+      "y": 2479,
+      "engine": "object",
+      "ready": "storefront motion-ready",
+      "scenes": [
+        {
+          "id": "top",
+          "progress": "1.0000",
+          "height": 1564
+        },
+        {
+          "id": "about",
+          "progress": "0.4888",
+          "height": 2024
+        }
+      ],
+      "image": {
+        "translate": "224.4px -46px",
+        "rotate": "27deg",
+        "top": -1892.54541015625
+      },
+      "stage": {
+        "position": "sticky",
+        "top": -1662
+      },
+      "aperture": "inset(12.2688% 17.892%)",
+      "errors": []
+    }
+  }
+]

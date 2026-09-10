@@ -139,7 +139,7 @@
 (function (global) {
   'use strict';
 
-  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var initialReduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   var fineMQ = matchMedia('(hover: hover) and (pointer: fine)');
   var smallMQ = matchMedia('(max-width: 860px)');
   var coarse = matchMedia('(hover: none) and (pointer: coarse)').matches;
@@ -324,6 +324,10 @@
 
     root = typeof root === 'string' ? document.querySelector(root) : (root || document);
     opts = opts || {};
+    // Re-read at mount: a browser preference can change after this script loads.
+    // An explicit site choice applies only to this instance.
+    var reduce = typeof opts.reducedMotion === 'boolean' ? opts.reducedMotion :
+      matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     var acts = [];
     var worlds = [];
@@ -1250,5 +1254,5 @@
   // harness reads the real playhead records: a screenshot taken mid-lerp is a
   // frame the page never actually holds, so the harness has to be able to ask
   // whether the playhead has arrived rather than guess with a timeout.
-  global.ScrollCraft = { mount: mount, reduce: reduce, instances: [] };
+  global.ScrollCraft = { mount: mount, reduce: initialReduce, instances: [] };
 })(window);

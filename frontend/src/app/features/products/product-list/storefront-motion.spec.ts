@@ -46,7 +46,7 @@ describe('ScrollCraft route lifecycle', () => {
   }
   it('mounts on desktop, responds to accessibility changes, and releases handlers on navigation', () => {
     const state = setup();
-    expect(state.mount).toHaveBeenCalledWith(state.host);
+    expect(state.mount).toHaveBeenCalledWith(state.host, { reducedMotion: false });
     expect(state.host.classList.contains('motion-ready')).toBe(true);
     state.reduced.matches = true;
     state.reduced.dispatchEvent(new Event('change'));

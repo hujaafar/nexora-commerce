@@ -6,6 +6,7 @@ import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } fro
 import { filter } from 'rxjs';
 import { AuthService } from './core/services/auth.service';
 import { NotificationService } from './core/services/notification.service';
+import { MotionPreferenceService } from './core/services/motion-preference.service';
 
 @Component({
   selector: 'app-root',
@@ -23,6 +24,7 @@ export class App {
   private readonly router = inject(Router);
 
   constructor() {
+    inject(MotionPreferenceService);
     this.router.events
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
       .subscribe((event) => {

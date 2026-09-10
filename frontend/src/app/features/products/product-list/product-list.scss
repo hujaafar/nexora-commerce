@@ -93,6 +93,24 @@
   line-height: 1.6;
   margin: 0 0 24px;
 }
+.motion-control {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+  font-size: 11px;
+  color: var(--muted-strong);
+}
+.motion-control select {
+  min-height: 44px;
+  max-width: 165px;
+  padding: 6px;
+  border: 1px solid var(--line-strong);
+  border-radius: 2px;
+  background: var(--void);
+  color: var(--ink);
+  font: inherit;
+}
 .hero-scene {
   position: absolute;
   inset: 0;

@@ -173,3 +173,59 @@ test('gallery thumbnails cross-slide, count correctly, and support keyboard navi
   await expect(page.locator('.main-image > img')).toHaveCount(1);
   await page.screenshot({ path: 'test-results/browser-motion-gallery.png' });
 });
+
+test('a visitor can enable scroll effects with reduced motion set by the device, then turn them off', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/products');
+  const control = page.getByLabel('Scroll effects', { exact: true });
+  await expect(control).toHaveValue('system');
+  await expect(page.locator('.storefront')).not.toHaveClass(/motion-ready/);
+  await control.selectOption('full');
+  await expect(page.locator('.storefront')).toHaveClass(/motion-ready/);
+  await sampleAct(page, '#top', 0);
+  const start = await page
+    .locator('.scene-window')
+    .evaluate((el) => getComputedStyle(el).translate);
+  await sampleAct(page, '#top', 0.6);
+  expect(
+    await page.locator('.scene-window').evaluate((el) => getComputedStyle(el).translate),
+  ).not.toBe(start);
+  await sampleAct(page, '#about', 0);
+  const aperture = await page
+    .locator('.campaign-image')
+    .evaluate((el) => getComputedStyle(el).clipPath);
+  await sampleAct(page, '#about', 0.6);
+  expect(
+    await page.locator('.campaign-image').evaluate((el) => getComputedStyle(el).clipPath),
+  ).not.toBe(aperture);
+  await page.reload();
+  await expect(control).toHaveValue('full');
+  await expect(page.locator('.storefront')).toHaveClass(/motion-ready/);
+  await control.selectOption('reduced');
+  await expect(page.locator('.storefront')).not.toHaveClass(/motion-ready/);
+  expect(await page.evaluate(() => (window as any).ScrollCraft.instances.length)).toBe(0);
+  await expect(page.locator('.section-heading')).toHaveCSS('opacity', '1');
+  await control.selectOption('system');
+  await expect(page.locator('.storefront')).not.toHaveClass(/motion-ready/);
+});
+
+test('the full-motion preview link works on a phone without adding desktop pinning', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/products?motion=full');
+  await expect(page.getByLabel('Scroll effects', { exact: true })).toHaveValue('full');
+  await expect(page.locator('.storefront')).toHaveClass(/mobile-motion/);
+  await expect(page.locator('.storefront')).not.toHaveClass(/motion-ready/);
+  const before = await page
+    .locator('.scene-window')
+    .evaluate((el) => getComputedStyle(el).translate);
+  await page.mouse.wheel(0, 240);
+  await expect
+    .poll(() => page.locator('.scene-window').evaluate((el) => getComputedStyle(el).translate))
+    .not.toBe(before);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});

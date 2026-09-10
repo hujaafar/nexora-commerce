@@ -33,15 +33,21 @@ The visual review followed the intended curve: bold opening, useful choices, exp
 
 Three images were generated with the built-in image generation tool, inspected, and encoded as WebP. Their combined size is **623,358 bytes**. [Asset provenance and exact prompts](CAMPAIGN_ASSETS.md) distinguish campaign imagery from actual seller listings. Fonts and imagery are served locally; the storefront does not depend on a remote image service.
 
-The production initial bundle is approximately **536 KB raw / 109 KB estimated transferred**, within the existing 540 KB warning and 600 KB error budgets. No animation library or production dependency was added. The shared ScrollCraft source is unchanged.
+The production initial bundle is approximately **538 KB raw / 110 KB estimated transferred**, within the existing 540 KB warning and 600 KB error budgets. No animation library or production dependency was added. The ScrollCraft adapter accepts a per-instance motion preference and re-reads the device preference on each mount.
 
 Phones use ordinary document flow with short scroll-linked image transforms. The desktop engine is not mounted at 800px or below. Mobile updates run outside Angular and are coalesced into one animation frame per scroll event. Reduced-motion mode keeps the complete static composition, catalog and controls. Route changes release the engine, observers and event handlers.
+
+### When scrolling looks static
+
+The storefront follows the device's reduced-motion preference by default. Use **Scroll effects** below the opening shopping button to select **On**, **Off**, or **Device setting**. An explicit choice is stored for this site; it does not change Windows or browser preferences. If browser storage is unavailable, the choice still works during the current visit.
+
+`/products?motion=full` explicitly opts into the animated preview and remembers that choice. The control can turn it off again. The full setting also works with a device preference of reduced motion; phones retain their compact layout instead of desktop pinning. Firefox and Chrome both render the layered hero and campaign aperture on the local build. The diagnostic caught that Windows continued to report disabled animation effects, so the website now offers a direct, reversible choice. The [Firefox and Chrome measurements](evidence/motion-preference-browsers.json) record rendered movement; Firefox used wheel input with reduced motion enabled and verified that choosing Off survives refresh.
 
 ## Executed verification
 
 - Production Angular build passed with the existing size budgets. Its existing Windows critical-CSS warning for the separately served `motion/scrollcraft.css` remains; browser checks confirm that stylesheet loads.
-- All 32 Angular unit tests passed, including service-state behavior and motion disposal.
-- Eight fixture-isolated browser tests passed: desktop painted movement and pointer tilt, two phone widths, reduced motion, gallery navigation, and 13 route/role combinations at each of 1440, 390 and 360 pixels.
+- All 36 Angular unit tests passed, including service-state behavior, stored motion preferences, and motion disposal.
+- Ten fixture-isolated browser tests passed (the two preference cases were rerun after correcting their accessible label): desktop painted movement and pointer tilt, two phone widths, reduced motion, gallery navigation, explicit motion opt-in with a reduced-motion device setting, and 13 route/role combinations at each of 1440, 390 and 360 pixels.
 - Browser checks exercised search/reset, direct catalog navigation, gallery controls, invalid login/checkout forms, menu open/Escape, mobile sign-out availability, horizontal overflow and image loading.
 - A 1366 × 768 laptop check confirmed the initial shop action remains inside the viewport.
 - Desktop ScrollCraft contact sheets sampled both pinned acts at intermediate positions and reported no dead scroll. The phone and reduced-motion harness uses an application-readiness selector because the app intentionally does not mount the desktop engine in those modes. This changes harness startup only, not the runtime or measurements.
