@@ -14,6 +14,7 @@ import java.util.Base64;
 
 /** Streams a versioned Nexus JAR and checks its independently recorded SHA-256. */
 public final class ArtifactVerifier {
+    private static final System.Logger LOG = System.getLogger(ArtifactVerifier.class.getName());
     private ArtifactVerifier() {}
 
     public static void main(String[] arguments) throws IOException, InterruptedException, NoSuchAlgorithmException {
@@ -24,7 +25,7 @@ public final class ArtifactVerifier {
                 "http://localhost:18081/repository/maven-releases/"));
         URI artifact = artifactUri(repository, arguments[0], arguments[1], arguments[2]);
         String digest = verify(artifact, arguments[3], System.getenv("NEXUS_USERNAME"), System.getenv("NEXUS_PASSWORD"));
-        System.out.println("VERIFIED " + arguments[0] + ":" + arguments[1] + ":" + arguments[2] + " SHA-256 " + digest);
+        LOG.log(System.Logger.Level.INFO, "VERIFIED {0}:{1}:{2} SHA-256 {3}", arguments[0], arguments[1], arguments[2], digest);
     }
 
     static URI artifactUri(URI repository, String group, String artifact, String version) {
