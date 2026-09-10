@@ -18,6 +18,7 @@ PY
 bash scripts/ci/build-artifact-images.sh
 docker compose -f compose.yml -f compose.jenkins.yml -f compose.laptop.yml up -d --no-build --wait --wait-timeout 600
 bash scripts/ci/health-check.sh http://localhost:4200 360
+curl --fail --silent --show-error --max-time 15 http://localhost:4200/media | grep -Fq '<app-root'
 API_BASE=http://localhost:4200/api node scripts/integration-test.mjs 2>&1 | tee test-results/acceptance/http-api.log
 (cd frontend && npm run test:e2e) 2>&1 | tee test-results/acceptance/browser.log
 python3 scripts/ci/check-laptop-runtime.py | tee test-results/acceptance/laptop-http-resources.json
@@ -35,5 +36,7 @@ for attempt in $(seq 1 60); do
 done
 NODE_EXTRA_CA_CERTS="$PWD/certs/tls/trust/ca.pem" API_BASE=https://localhost:8443/api \
   node scripts/integration-test.mjs 2>&1 | tee test-results/acceptance/https-api.log
+curl --fail --silent --show-error --max-time 15 --cacert certs/tls/trust/ca.pem \
+  https://localhost:8443/media | grep -Fq '<app-root'
 python3 scripts/ci/check-laptop-runtime.py | tee test-results/acceptance/laptop-https-resources.json
 echo 'PASS: production browser journeys and certificate-verified HTTPS API journeys.'

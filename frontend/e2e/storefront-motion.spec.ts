@@ -105,6 +105,7 @@ test('desktop scroll and pointer move the rendered collection, and route navigat
     .getByRole('link', { name: /View details/ })
     .click();
   await expect(page).toHaveURL(/products\/motion-fixture$/);
+  await expect(page.getByRole('heading', { level: 1, name: fixtureProduct.name })).toBeInViewport();
   expect(await page.evaluate(() => (window as any).ScrollCraft.instances.length)).toBe(0);
   expect(errors).toEqual([]);
 });

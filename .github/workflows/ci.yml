@@ -219,6 +219,7 @@ jobs:
             frontend/test-results-e2e/
             frontend/playwright-report/
             frontend/test-results/browser-*.png
+            frontend/test-results/redesign-*.png
       - name: Stop disposable application
         if: always()
         run: docker compose down

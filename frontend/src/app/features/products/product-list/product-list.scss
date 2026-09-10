@@ -706,9 +706,6 @@
   }
 }
 @media (max-width: 800px) {
-  .scene-window {
-    pointer-events: none;
-  }
   .hero-stage {
     min-height: 760px;
     height: auto;
@@ -747,6 +744,7 @@
   }
   .scene-window {
     top: 30%;
+    pointer-events: none;
     right: 4%;
     width: 66%;
   }

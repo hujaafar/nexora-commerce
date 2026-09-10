@@ -33,7 +33,7 @@ The visual review followed the intended curve: bold opening, useful choices, exp
 
 Three images were generated with the built-in image generation tool, inspected, and encoded as WebP. Their combined size is **623,358 bytes**. [Asset provenance and exact prompts](CAMPAIGN_ASSETS.md) distinguish campaign imagery from actual seller listings. Fonts and imagery are served locally; the storefront does not depend on a remote image service.
 
-The production initial bundle is approximately **532 KB raw / 108 KB estimated transferred**, within the existing 540 KB warning and 600 KB error budgets. No animation library or production dependency was added. The shared ScrollCraft source is unchanged.
+The production initial bundle is approximately **536 KB raw / 109 KB estimated transferred**, within the existing 540 KB warning and 600 KB error budgets. No animation library or production dependency was added. The shared ScrollCraft source is unchanged.
 
 Phones use ordinary document flow with short scroll-linked image transforms. The desktop engine is not mounted at 800px or below. Mobile updates run outside Angular and are coalesced into one animation frame per scroll event. Reduced-motion mode keeps the complete static composition, catalog and controls. Route changes release the engine, observers and event handlers.
 
@@ -49,6 +49,10 @@ Phones use ordinary document flow with short scroll-linked image transforms. The
 The first failed browser screenshots remain in the local work folder. The stock mobile harness timed out waiting for `html.sc-ready`; that failure was retained and resolved by waiting for the Angular storefront in the application-specific harness. The stock contrast checker sees no `data-sc-cue` elements here and does **not** certify contrast. Actual screenshots were reviewed, including intermediate images, populated forms, order tracking, the seller editor and moderation.
 
 These are desktop Chrome viewport checks, not tests on physical phones or Safari. The full-stack journeys are separate: [PR checks](https://github.com/hujaafar/nexora-commerce/pull/1/checks) run the live customer/seller browser journeys, HTTP/HTTPS API acceptance, quality gate, artifact verification and rollback drills on hosted runners. See [validation](VALIDATION.md) for earlier infrastructure evidence.
+
+A follow-up journey check reproduced retained scroll position when opening a product from the catalog. Router navigation now starts at the top, and the browser test requires the product heading to be in view. The first hosted analysis flagged one duplicate mobile CSS selector; its declarations were consolidated. Both failure reports were retained before the rerun.
+
+The new route sweep also exposed an existing Nginx collision: `/media` matched the emitted font directory and redirected away from the application port. HTTP and HTTPS configuration now resolve files before falling back to the SPA, and acceptance checks require `/media` to serve the app on both protocols. The original failure artifacts are retained.
 
 Docker stays stopped on the constrained local laptop. The static preview displays the new interface and honest service-unavailable states; it does not simulate authentication, checkout or backend availability. Populated review screenshots use synthetic data intercepted only inside test browser contexts. The animated preview shows campaign motion, not a completed purchase.
 
