@@ -32,7 +32,7 @@ export class MediaManager implements OnInit, OnDestroy {
   );
   protected readonly form = this.formBuilder.nonNullable.group({
     productId: [''],
-    purpose: ['PRODUCT_IMAGE' as MediaPurpose],
+    purpose: this.formBuilder.nonNullable.control<MediaPurpose>('PRODUCT_IMAGE'),
   });
 
   ngOnInit(): void {
@@ -81,7 +81,7 @@ export class MediaManager implements OnInit, OnDestroy {
   }
 
   protected delete(asset: MediaAsset): void {
-    if (!window.confirm(`Delete “${asset.originalFilename}”?`)) {
+    if (!globalThis.confirm(`Delete “${asset.originalFilename}”?`)) {
       return;
     }
     this.mediaService.delete(asset.id).subscribe(() => {

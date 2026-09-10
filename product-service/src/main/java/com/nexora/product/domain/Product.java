@@ -39,21 +39,18 @@ public class Product {
     }
 
     public Product(
-            String name,
-            String description,
-            String category,
+            ProductContent content,
             BigDecimal price,
             int quantity,
             String sellerId,
-            List<String> imageUrls,
             Instant now) {
-        this.name = name;
-        this.description = description;
-        this.category = category;
+        this.name = content.name();
+        this.description = content.description();
+        this.category = content.category();
         this.price = price;
         this.quantity = quantity;
         this.sellerId = sellerId;
-        this.imageUrls = new ArrayList<>(imageUrls);
+        this.imageUrls = new ArrayList<>(content.imageUrls());
         this.createdAt = now;
         this.updatedAt = now;
     }

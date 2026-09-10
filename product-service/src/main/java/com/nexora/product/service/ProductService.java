@@ -4,6 +4,7 @@
 package com.nexora.product.service;
 
 import com.nexora.product.domain.Product;
+import com.nexora.product.domain.ProductContent;
 import com.nexora.product.dto.ProductRequest;
 import com.nexora.product.dto.ProductResponse;
 import com.nexora.product.event.ProductEvent;
@@ -47,14 +48,9 @@ public class ProductService {
     public ProductResponse create(String sellerId, ProductRequest request) {
         Instant now = Instant.now();
         Product product = new Product(
-                request.name().trim(),
-                request.description().trim(),
-                request.category().trim(),
-                request.price(),
-                request.quantity(),
-                sellerId,
-                normalizedImages(request.imageUrls()),
-                now);
+                new ProductContent(request.name().trim(), request.description().trim(),
+                        request.category().trim(), normalizedImages(request.imageUrls())),
+                request.price(), request.quantity(), sellerId, now);
         Product saved = repository.save(product);
         eventPublisher.publish(ProductEvent.of(
                 ProductEvent.EventType.PRODUCT_CREATED,

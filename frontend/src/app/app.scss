@@ -157,7 +157,7 @@
 .app-toast.toast-error > span {
   background: var(--danger);
 }
-.app-toast p {
+.app-toast .toast-message {
   margin: 0;
   font-size: 0.8rem;
 }

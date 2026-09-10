@@ -122,13 +122,14 @@ public class RateLimitWebFilter implements WebFilter {
         try {
             return objectMapper.writeValueAsBytes(Map.of(
                     "status", HttpStatus.TOO_MANY_REQUESTS.value(),
-                    "error", HttpStatus.TOO_MANY_REQUESTS.getReasonPhrase(),
+                    "code", "RATE_LIMITED",
+                    "details", Map.of(),
                     "message", "Too many requests. Try again in "
                             + retryAfterSeconds
                             + " seconds.",
                     "path", exchange.getRequest().getPath().value()));
         } catch (Exception serializationFailure) {
-            return "{\"status\":429,\"error\":\"Too Many Requests\"}"
+            return "{\"status\":429,\"code\":\"RATE_LIMITED\",\"message\":\"Too Many Requests\",\"details\":{}}"
                     .getBytes(StandardCharsets.UTF_8);
         }
     }

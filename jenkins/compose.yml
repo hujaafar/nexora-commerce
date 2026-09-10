@@ -82,6 +82,9 @@ services:
       SMTP_USE_TLS: ${SMTP_USE_TLS:-false}
       SONAR_HOST_URL: ${SONAR_HOST_URL:-http://host.docker.internal:9000}
       SONAR_TOKEN: ${SONAR_TOKEN:?Start SonarQube first so its token can be imported}
+      NEXUS_PUBLISHER_USER: ${NEXUS_PUBLISHER_USER:?Start Nexus first}
+      NEXUS_PUBLISHER_PASSWORD: ${NEXUS_PUBLISHER_PASSWORD:?Start Nexus first}
+      NEXORA_GIT_BRANCH: ${NEXORA_GIT_BRANCH:-main}
       NEXORA_GIT_URL: ${NEXORA_GIT_URL:-https://github.com/hujaafar/nexora-commerce.git}
       NEXORA_GIT_USERNAME: ${NEXORA_GIT_USERNAME:-replace-with-git-username}
       NEXORA_GIT_PASSWORD: ${NEXORA_GIT_PASSWORD:-replace-with-git-password-or-token}

@@ -8,6 +8,8 @@ import com.nexora.order.client.ProductClient;
 import com.nexora.order.domain.Cart;
 import com.nexora.order.domain.CartLine;
 import com.nexora.order.domain.MarketplaceOrder;
+import com.nexora.order.domain.OrderPayment;
+import com.nexora.order.domain.OrderTotals;
 import com.nexora.order.domain.OrderLine;
 import com.nexora.order.domain.OrderStatus;
 import com.nexora.order.domain.PaymentMethod;
@@ -65,13 +67,13 @@ public class OrderService {
 
     public OrderPageResponse listCustomer(
             String customerId, String query, OrderStatus status, Instant from, Instant to, int page, int size) {
-        return page(repository.findAllByCustomerIdOrderByCreatedAtDesc(customerId), query, status, from, to,
+        return page(repository.findAllByCustomerIdOrderByCreatedAtDesc(customerId), new OrderFilters(query, status, from, to),
                 page, size, OrderResponse::forCustomer);
     }
 
     public OrderPageResponse listSeller(
             String sellerId, String query, OrderStatus status, Instant from, Instant to, int page, int size) {
-        return page(repository.findAllByItemsSellerIdOrderByCreatedAtDesc(sellerId), query, status, from, to,
+        return page(repository.findAllByItemsSellerIdOrderByCreatedAtDesc(sellerId), new OrderFilters(query, status, from, to),
                 page, size, order -> OrderResponse.forSeller(order, sellerId));
     }
 
@@ -156,8 +158,8 @@ public class OrderService {
                     ? PaymentStatus.DUE_ON_DELIVERY : PaymentStatus.AUTHORIZED;
             Instant now = Instant.now();
             MarketplaceOrder saved = repository.save(new MarketplaceOrder(
-                    newOrderNumber(now), customerId, orderLines, address, paymentMethod, paymentStatus,
-                    subtotal, deliveryFee, now));
+                    newOrderNumber(now), customerId, orderLines, address, new OrderPayment(paymentMethod, paymentStatus),
+                    new OrderTotals(subtotal, deliveryFee), now));
             eventPublisher.publish(OrderEvent.of("ORDER_CREATED", saved.getId(), customerId));
             return saved;
         } catch (RuntimeException exception) {
@@ -168,20 +170,17 @@ public class OrderService {
 
     private OrderPageResponse page(
             List<MarketplaceOrder> orders,
-            String query,
-            OrderStatus status,
-            Instant from,
-            Instant to,
+            OrderFilters filters,
             int requestedPage,
             int requestedSize,
             Function<MarketplaceOrder, OrderResponse> mapper) {
         int page = Math.max(0, requestedPage);
         int size = Math.min(50, Math.max(1, requestedSize));
-        String needle = query == null ? "" : query.trim().toLowerCase(Locale.ROOT);
+        String needle = filters.query() == null ? "" : filters.query().trim().toLowerCase(Locale.ROOT);
         List<MarketplaceOrder> filtered = orders.stream()
-                .filter(order -> status == null || order.getStatus() == status)
-                .filter(order -> from == null || !order.getCreatedAt().isBefore(from))
-                .filter(order -> to == null || !order.getCreatedAt().isAfter(to))
+                .filter(order -> filters.status() == null || order.getStatus() == filters.status())
+                .filter(order -> filters.from() == null || !order.getCreatedAt().isBefore(filters.from()))
+                .filter(order -> filters.to() == null || !order.getCreatedAt().isAfter(filters.to()))
                 .filter(order -> needle.isBlank()
                         || order.getOrderNumber().toLowerCase(Locale.ROOT).contains(needle)
                         || order.getItems().stream().anyMatch(item ->
@@ -194,6 +193,8 @@ public class OrderService {
         int totalPages = filtered.isEmpty() ? 0 : (int) Math.ceil((double) filtered.size() / size);
         return new OrderPageResponse(items, filtered.size(), page, size, totalPages);
     }
+
+    private record OrderFilters(String query, OrderStatus status, Instant from, Instant to) {}
 
     private MarketplaceOrder findOwned(String orderId, String customerId) {
         MarketplaceOrder order = find(orderId);

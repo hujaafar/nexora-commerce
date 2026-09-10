@@ -49,6 +49,7 @@ html {
 }
 
 body {
+  font-size: 1rem;
   min-height: 100vh;
   margin: 0;
   color: var(--ink);
@@ -221,7 +222,7 @@ select:focus-visible {
 .btn-soft:hover {
   border-color: rgba(168, 144, 255, 0.52);
   color: white;
-  background: rgba(139, 108, 255, 0.12);
+  background: #241f36;
 }
 
 .form-label {
@@ -342,9 +343,6 @@ select:focus-visible {
   }
 }
 
-body {
-  font-size: 1rem;
-}
 :focus-visible {
   outline: 3px solid #a6b6ff;
   outline-offset: 5px;

@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class InventoryService {
 
+    private static final String QUANTITY_FIELD = "quantity";
+
     private final MongoTemplate mongoTemplate;
 
     public InventoryService(MongoTemplate mongoTemplate) {
@@ -25,9 +27,9 @@ public class InventoryService {
     }
 
     public ProductResponse reserve(String productId, int quantity) {
-        Query query = Query.query(Criteria.where("id").is(productId).and("quantity").gte(quantity));
+        Query query = Query.query(Criteria.where("id").is(productId).and(QUANTITY_FIELD).gte(quantity));
         Update update = new Update()
-                .inc("quantity", -quantity)
+                .inc(QUANTITY_FIELD, -quantity)
                 .set("updatedAt", Instant.now());
         Product product = mongoTemplate.findAndModify(
                 query,
@@ -46,7 +48,7 @@ public class InventoryService {
     public ProductResponse release(String productId, int quantity) {
         Product product = mongoTemplate.findAndModify(
                 Query.query(Criteria.where("id").is(productId)),
-                new Update().inc("quantity", quantity).set("updatedAt", Instant.now()),
+                new Update().inc(QUANTITY_FIELD, quantity).set("updatedAt", Instant.now()),
                 FindAndModifyOptions.options().returnNew(true),
                 Product.class);
         if (product == null) {

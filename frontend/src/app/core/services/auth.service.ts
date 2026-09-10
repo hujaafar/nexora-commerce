@@ -95,7 +95,7 @@ export class AuthService {
       if (
         !session.accessToken ||
         !session.user ||
-        new Date(session.expiresAt).getTime() <= Date.now()
+        !(new Date(session.expiresAt).getTime() > Date.now())
       ) {
         localStorage.removeItem(SESSION_KEY);
         return null;

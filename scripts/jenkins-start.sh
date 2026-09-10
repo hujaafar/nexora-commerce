@@ -57,6 +57,15 @@ fi
 export SONAR_TOKEN SONAR_HOST_URL
 chmod 600 "${environment_file}"
 
+nexus_environment="${project_root}/nexus/.env"
+if [[ ! -f "${nexus_environment}" ]]; then
+  echo 'Run scripts/start-nexus.ps1 first so artifact publication is configured.' >&2
+  exit 1
+fi
+NEXUS_PUBLISHER_USER="$(sed -n 's/^NEXUS_PUBLISHER_USER=//p' "${nexus_environment}" | tr -d '\r')"
+NEXUS_PUBLISHER_PASSWORD="$(sed -n 's/^NEXUS_PUBLISHER_PASSWORD=//p' "${nexus_environment}" | tr -d '\r')"
+export NEXUS_PUBLISHER_USER NEXUS_PUBLISHER_PASSWORD
+
 # Public SCM requires no Git credentials.
 
 docker version >/dev/null
@@ -75,7 +84,7 @@ echo
 echo "Nexora Commerce is ready at ${jenkins_url}"
 echo "User: ${jenkins_user}"
 if [[ "${created_environment}" == "true" ]]; then
-  echo "Password: $(sed -n 's/^JENKINS_ADMIN_PASSWORD=//p' "${environment_file}")"
+  echo "Password: read JENKINS_ADMIN_PASSWORD from ignored jenkins/.env"
   echo "The generated password is stored only in ignored jenkins/.env."
 else
   echo "Password: read JENKINS_ADMIN_PASSWORD from ignored jenkins/.env"

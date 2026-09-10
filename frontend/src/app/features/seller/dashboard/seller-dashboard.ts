@@ -106,7 +106,7 @@ export class SellerDashboard implements OnInit, OnDestroy {
       price: product.price,
       quantity: product.quantity,
     });
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    globalThis.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   protected cancelEdit(): void {
@@ -142,7 +142,7 @@ export class SellerDashboard implements OnInit, OnDestroy {
   }
 
   protected delete(product: Product): void {
-    if (!window.confirm(`Delete “${product.name}”? This cannot be undone.`)) {
+    if (!globalThis.confirm(`Delete “${product.name}”? This cannot be undone.`)) {
       return;
     }
     this.productService.delete(product.id).subscribe(() => {

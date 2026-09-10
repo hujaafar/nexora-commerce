@@ -1,9 +1,10 @@
 name: CI
 on:
   push:
-    branches: [main]
   pull_request:
   workflow_dispatch:
+  schedule:
+    - cron: '17 3 * * 1'
 permissions:
   contents: read
 concurrency:
@@ -31,6 +32,16 @@ jobs:
         with:
           name: java-test-results
           path: '**/target/surefire-reports/*.xml'
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sonar-java-inputs
+          retention-days: 3
+          path: |
+            **/target/classes/**
+            **/target/test-classes/**
+            **/target/dependency/*.jar
+            **/target/site/jacoco/jacoco.xml
+            **/target/surefire-reports/*.xml
   frontend:
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -62,3 +73,53 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: bash scripts/ci/validate.sh
+  quality:
+    name: SonarQube quality gate
+    needs: [backend, frontend]
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      SONAR_HOST_URL: http://127.0.0.1:9000
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/download-artifact@v4
+        with:
+          name: sonar-java-inputs
+      - uses: actions/download-artifact@v4
+        with:
+          name: angular-test-results
+          path: frontend
+      - name: Start disposable SonarQube Community Build
+        run: |
+          sudo sysctl -w vm.max_map_count=1048576
+          docker run -d --name sonar-ci -p 127.0.0.1:9000:9000 \
+            sonarqube:26.6.0.123539-community@sha256:1ddbad7b16f754bc3985f336b8ef3ebe885c1655101bdb9cb4156c9560526f58
+          python3 scripts/ci/sonar-ci.py bootstrap
+      - name: Analyze the complete branch or pull-request snapshot
+        run: |
+          for report in frontend/coverage/lcov.info frontend/coverage/frontend/lcov.info; do
+            if [ -f "$report" ]; then
+              sed -i 's#^SF:src/#SF:frontend/src/#' "$report"
+            fi
+          done
+          chmod -R a+rwX .
+          docker run --rm --network host -e SONAR_TOKEN -e SONAR_HOST_URL \
+            -e SONAR_SCANNER_JAVA_OPTS=-Xmx1024m \
+            -v "$PWD:/usr/src" -w /usr/src \
+            sonarsource/sonar-scanner-cli:12.1.0.3233_8.0.1@sha256:23ca0f137965d9dff2198074043fd48d386280bc5d0ccac8c8349cea4cf096a9 \
+            -Dsonar.javascript.node.maxspace=1024 \
+            -Dsonar.projectVersion="$GITHUB_SHA"
+      - name: Export the gate, metrics, and findings
+        if: always()
+        run: python3 scripts/ci/sonar-ci.py report
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sonar-quality-evidence
+          path: test-results/sonar/
+      - name: Remove disposable analysis server
+        if: always()
+        run: docker rm -f sonar-ci

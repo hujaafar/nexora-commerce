@@ -22,6 +22,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class ProductSearchService {
 
+    private static final String PRICE_FIELD = "price";
+
+    private static final String CATEGORY_FIELD = "category";
+
     private static final int MAX_PAGE_SIZE = 48;
     private final MongoTemplate mongoTemplate;
 
@@ -46,17 +50,17 @@ public class ProductSearchService {
             filters.add(new Criteria().orOperator(
                     Criteria.where("name").regex(pattern),
                     Criteria.where("description").regex(pattern),
-                    Criteria.where("category").regex(pattern)));
+                    Criteria.where(CATEGORY_FIELD).regex(pattern)));
         }
         if (category != null && !category.isBlank()) {
-            filters.add(Criteria.where("category").regex(
+            filters.add(Criteria.where(CATEGORY_FIELD).regex(
                     Pattern.compile("^" + Pattern.quote(category.trim()) + "$", Pattern.CASE_INSENSITIVE)));
         }
         if (minimumPrice != null) {
-            filters.add(Criteria.where("price").gte(minimumPrice));
+            filters.add(Criteria.where(PRICE_FIELD).gte(minimumPrice));
         }
         if (maximumPrice != null) {
-            filters.add(Criteria.where("price").lte(maximumPrice));
+            filters.add(Criteria.where(PRICE_FIELD).lte(maximumPrice));
         }
 
         Criteria criteria = filters.isEmpty()
@@ -71,7 +75,7 @@ public class ProductSearchService {
                 .map(ProductResponse::from)
                 .toList();
         List<String> categories = mongoTemplate.query(Product.class)
-                .distinct("category")
+                .distinct(CATEGORY_FIELD)
                 .as(String.class)
                 .all().stream()
                 .filter(value -> value != null && !value.isBlank())
@@ -85,8 +89,8 @@ public class ProductSearchService {
     private Sort toSort(String requestedSort) {
         String value = requestedSort == null ? "newest" : requestedSort.toLowerCase(Locale.ROOT);
         return switch (value) {
-            case "price-asc" -> Sort.by(Sort.Direction.ASC, "price");
-            case "price-desc" -> Sort.by(Sort.Direction.DESC, "price");
+            case "price-asc" -> Sort.by(Sort.Direction.ASC, PRICE_FIELD);
+            case "price-desc" -> Sort.by(Sort.Direction.DESC, PRICE_FIELD);
             case "name" -> Sort.by(Sort.Direction.ASC, "name");
             default -> Sort.by(Sort.Direction.DESC, "createdAt");
         };

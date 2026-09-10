@@ -44,6 +44,7 @@ IMAGE_TAG=validation \
 # syntax check. The real scan still receives the masked `sonarqube-token`
 # credential only inside the quality-gate stage.
 SONAR_TOKEN=configuration-validation-only \
+  NEXUS_PUBLISHER_USER=validation-only NEXUS_PUBLISHER_PASSWORD=validation-only \
   docker compose -f jenkins/compose.yml config --quiet
 
 docker compose -f nexus/compose.yml config --quiet

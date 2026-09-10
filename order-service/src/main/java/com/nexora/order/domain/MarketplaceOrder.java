@@ -10,15 +10,12 @@ import java.util.ArrayList;
 import java.util.List;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
-import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "orders")
-@CompoundIndexes({
-        @CompoundIndex(name = "customer_created", def = "{'customerId': 1, 'createdAt': -1}"),
-        @CompoundIndex(name = "seller_created", def = "{'items.sellerId': 1, 'createdAt': -1}")
-})
+@CompoundIndex(name = "customer_created", def = "{'customerId': 1, 'createdAt': -1}")
+@CompoundIndex(name = "seller_created", def = "{'items.sellerId': 1, 'createdAt': -1}")
 public class MarketplaceOrder {
 
     @Id
@@ -48,21 +45,19 @@ public class MarketplaceOrder {
             String customerId,
             List<OrderLine> items,
             ShippingAddress shippingAddress,
-            PaymentMethod paymentMethod,
-            PaymentStatus paymentStatus,
-            BigDecimal subtotal,
-            BigDecimal deliveryFee,
+            OrderPayment payment,
+            OrderTotals totals,
             Instant now) {
         this.orderNumber = orderNumber;
         this.customerId = customerId;
         this.items = new ArrayList<>(items);
         this.shippingAddress = shippingAddress;
-        this.paymentMethod = paymentMethod;
-        this.paymentStatus = paymentStatus;
+        this.paymentMethod = payment.method();
+        this.paymentStatus = payment.status();
         this.status = OrderStatus.PLACED;
-        this.subtotal = subtotal;
-        this.deliveryFee = deliveryFee;
-        this.total = subtotal.add(deliveryFee);
+        this.subtotal = totals.subtotal();
+        this.deliveryFee = totals.deliveryFee();
+        this.total = totals.total();
         this.createdAt = now;
         this.updatedAt = now;
     }

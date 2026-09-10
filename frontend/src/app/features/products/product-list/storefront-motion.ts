@@ -30,22 +30,23 @@ export class StorefrontMotion implements AfterViewInit {
         engine?.destroy();
         engine = undefined;
         host.classList.remove('motion-ready');
-        if (disposed || reduced.matches || compact.matches || !window.ScrollCraft) return;
+        const runtime = (globalThis as typeof globalThis & Window).ScrollCraft;
+        if (disposed || reduced.matches || compact.matches || !runtime) return;
         try {
           host.classList.add('motion-ready');
-          engine = window.ScrollCraft.mount(host);
+          engine = runtime.mount(host);
         } catch {
           host.classList.remove('motion-ready');
         }
       };
       frame = requestAnimationFrame(sync);
-      window.addEventListener('load', sync, { once: true });
+      globalThis.addEventListener('load', sync, { once: true });
       reduced.addEventListener?.('change', sync);
       compact.addEventListener?.('change', sync);
       this.destroyRef.onDestroy(() => {
         disposed = true;
         cancelAnimationFrame(frame);
-        window.removeEventListener('load', sync);
+        globalThis.removeEventListener('load', sync);
         reduced.removeEventListener?.('change', sync);
         compact.removeEventListener?.('change', sync);
         engine?.destroy();

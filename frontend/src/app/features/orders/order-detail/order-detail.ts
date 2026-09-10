@@ -3,7 +3,7 @@ import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { finalize, map, switchMap } from 'rxjs';
+import { finalize, map, switchMap, tap } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
 import { CommerceService } from '../../../core/services/commerce.service';
 import { NotificationService } from '../../../core/services/notification.service';
@@ -48,8 +48,10 @@ export class OrderDetail {
     this.route.paramMap
       .pipe(
         map((params) => params.get('id') ?? ''),
-        switchMap((id) => this.commerce.order(id, this.sellerView())),
-        finalize(() => this.loading.set(false)),
+        tap(() => this.loading.set(true)),
+        switchMap((id) =>
+          this.commerce.order(id, this.sellerView()).pipe(finalize(() => this.loading.set(false))),
+        ),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((order) => this.order.set(order));
@@ -64,7 +66,7 @@ export class OrderDetail {
   protected cancel(): void {
     const order = this.order();
     if (!order || this.acting()) return;
-    if (!window.confirm('Cancel this order and return the reserved stock?')) return;
+    if (!globalThis.confirm('Cancel this order and return the reserved stock?')) return;
     this.run(this.commerce.cancelOrder(order.id), 'Order cancelled.');
   }
 

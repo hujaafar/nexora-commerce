@@ -83,7 +83,7 @@ describe('ProductList', () => {
       options: ScrollToOptions,
     ) => {
       currentScroll = options.top ?? currentScroll;
-    }) as typeof window.scrollTo);
+    }) as typeof globalThis.scrollTo);
 
     const header = page.querySelector<HTMLElement>('.landing-header');
     Object.defineProperty(header, 'offsetHeight', {

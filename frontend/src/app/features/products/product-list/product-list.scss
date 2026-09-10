@@ -106,9 +106,7 @@ nav,
   height: 100svh;
   min-height: 0;
 }
-.motion-ready .hero-copy {
-  padding-top: max(7rem, 13vh);
-}
+
 .hero-art {
   position: absolute;
   z-index: -3;
@@ -603,6 +601,7 @@ button:disabled {
   transform: scale(calc(1 + var(--sc-p) * 0.12)) translateY(calc(var(--sc-p) * -4%));
 }
 .motion-ready .hero-copy {
+  padding-top: max(7rem, 13vh);
   transform: translateY(calc(var(--sc-p) * -50px));
   opacity: calc(1 - var(--sc-p) * 0.65);
 }

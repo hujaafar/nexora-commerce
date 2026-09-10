@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 import com.nexora.order.domain.MarketplaceOrder;
+import com.nexora.order.domain.OrderPayment;
+import com.nexora.order.domain.OrderTotals;
 import com.nexora.order.domain.OrderLine;
 import com.nexora.order.domain.PaymentMethod;
 import com.nexora.order.domain.PaymentStatus;
@@ -20,6 +22,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class AnalyticsServiceTest {
+
+    private static final Instant TEST_TIME = Instant.parse("2026-01-15T12:00:00Z");
 
     @Mock private OrderRepository repository;
 
@@ -46,7 +50,7 @@ class AnalyticsServiceTest {
         return new MarketplaceOrder(
                 "BZ-TEST", "customer", List.of(line),
                 new ShippingAddress("Buyer", "+97333333333", "Road 1", "Manama", "Bahrain", ""),
-                PaymentMethod.PAY_ON_DELIVERY, PaymentStatus.DUE_ON_DELIVERY,
-                new BigDecimal("39.98"), new BigDecimal("4.90"), Instant.now());
+                new OrderPayment(PaymentMethod.PAY_ON_DELIVERY, PaymentStatus.DUE_ON_DELIVERY),
+                new OrderTotals(new BigDecimal("39.98"), new BigDecimal("4.90")), TEST_TIME);
     }
 }

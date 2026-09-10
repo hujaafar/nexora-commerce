@@ -34,7 +34,7 @@ export class AdminDashboard implements OnInit {
   protected deleteProduct(product: Product): void {
     if (
       this.deletingId() ||
-      !window.confirm(`Remove "${product.name}" from the public marketplace?`)
+      !globalThis.confirm(`Remove "${product.name}" from the public marketplace?`)
     ) {
       return;
     }
@@ -49,7 +49,10 @@ export class AdminDashboard implements OnInit {
   }
 
   protected deleteMedia(asset: MediaAsset): void {
-    if (this.deletingId() || !window.confirm(`Permanently remove "${asset.originalFilename}"?`)) {
+    if (
+      this.deletingId() ||
+      !globalThis.confirm(`Permanently remove "${asset.originalFilename}"?`)
+    ) {
       return;
     }
     this.deletingId.set(asset.id);

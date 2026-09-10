@@ -48,7 +48,7 @@ File purpose: Defines the accessible media feature template.
       <button class="drop-area" type="button" (click)="fileInput.click()">
         @if (previewUrl()) {
           <span class="preview-frame">
-            <img [src]="previewUrl()" alt="Selected image preview" />
+            <img [src]="previewUrl()" alt="Selected preview" />
             <i>READY</i>
           </span>
           <span class="selected-name">{{ selectedFile()?.name }}</span>

@@ -34,7 +34,7 @@ pipeline {
         )
         booleanParam(
             name: 'PUBLISH_ARTIFACTS',
-            defaultValue: false,
+            defaultValue: true,
             description: 'Use Nexus for Maven dependencies and publish versioned JARs/images after the quality gate. Requires nexus-publisher credentials.'
         )
         string(
@@ -113,6 +113,12 @@ pipeline {
                     env.SHORT_COMMIT = env.SOURCE_COMMIT.take(12)
                     env.IMAGE_TAG = "${env.SHORT_COMMIT}-${env.BUILD_NUMBER}"
                     env.ARTIFACT_VERSION = "1.0.${env.BUILD_NUMBER}-${env.SHORT_COMMIT}"
+                    // Nested build containers do not inherit Docker Desktop's
+                    // special host DNS entry. Resolve it on the outer agent.
+                    env.CI_HOST_IP = sh(
+                        script: "getent ahostsv4 host.docker.internal | awk 'NR == 1 {print \$1}'",
+                        returnStdout: true
+                    ).trim() ?: 'host-gateway'
                     currentBuild.displayName = "#${env.BUILD_NUMBER} ${env.SHORT_COMMIT}"
                     currentBuild.description = "${params.PIPELINE_ACTION} → ${params.DEPLOY_ENV}"
                 }
@@ -153,7 +159,7 @@ pipeline {
                     agent {
                         docker {
                             image 'maven:3.9.11-eclipse-temurin-17'
-                            args '-v nexora-commerce-maven-cache:/cache -v /nexora-commerce-certs:/usr/local/share/ca-certificates/nexora-commerce:ro'
+                            args "--add-host host.docker.internal:${env.CI_HOST_IP} -v nexora-commerce-maven-cache:/cache -v /nexora-commerce-certs:/usr/local/share/ca-certificates/nexora-commerce:ro"
                             reuseNode true
                         }
                     }
@@ -207,7 +213,7 @@ pipeline {
                     agent {
                         docker {
                             image 'node:24-bookworm-slim'
-                            args '-v nexora-commerce-npm-cache:/cache -v /nexora-commerce-certs:/usr/local/share/ca-certificates/nexora-commerce:ro'
+                            args "--add-host host.docker.internal:${env.CI_HOST_IP} -v nexora-commerce-npm-cache:/cache -v /nexora-commerce-certs:/usr/local/share/ca-certificates/nexora-commerce:ro"
                             reuseNode true
                         }
                     }
@@ -291,7 +297,7 @@ pipeline {
             agent {
                 docker {
                     image 'maven:3.9.11-eclipse-temurin-17'
-                    args '-v nexora-commerce-maven-cache:/cache'
+                    args "--add-host host.docker.internal:${env.CI_HOST_IP} -v nexora-commerce-maven-cache:/cache"
                     reuseNode true
                 }
             }

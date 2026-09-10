@@ -45,7 +45,7 @@ export class CheckoutPage implements OnInit {
     this.form.markAllAsTouched();
     if (this.form.invalid || !this.cart()?.items.length) return;
     this.step.set(2);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    globalThis.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   protected placeOrder(): void {
@@ -69,7 +69,7 @@ export class CheckoutPage implements OnInit {
         this.order.set(order);
         this.step.set(3);
         this.notifications.success('Your order is confirmed.');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        globalThis.scrollTo({ top: 0, behavior: 'smooth' });
       });
   }
 }

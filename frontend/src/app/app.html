@@ -47,20 +47,19 @@
 <main class="route-frame"><router-outlet /></main>
 
 @if (notifications.notification(); as notification) {
-  <aside
+  <output
     class="app-toast"
     [class.toast-success]="notification.kind === 'success'"
     [class.toast-error]="notification.kind === 'error'"
-    role="status"
   >
     <span>{{
       notification.kind === 'error' ? '!' : notification.kind === 'success' ? '✓' : 'i'
     }}</span>
-    <p>{{ notification.message }}</p>
+    <span class="toast-message">{{ notification.message }}</span>
     <button type="button" aria-label="Dismiss notification" (click)="notifications.dismiss()">
       ×
     </button>
-  </aside>
+  </output>
 }
 
 @if (!isLandingPage()) {

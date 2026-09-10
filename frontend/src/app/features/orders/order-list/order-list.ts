@@ -35,7 +35,7 @@ export class OrderList implements OnInit {
   ];
   protected readonly filters = this.formBuilder.nonNullable.group({
     q: [''],
-    status: ['' as OrderStatus | ''],
+    status: this.formBuilder.nonNullable.control<OrderStatus | ''>(''),
     from: [''],
     to: [''],
   });
