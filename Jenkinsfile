@@ -94,7 +94,7 @@ pipeline {
         // Dependency caches live in Docker volumes, not the disposable
         // workspace. This speeds later builds without hiding source changes.
         MAVEN_OPTS = '-Xms64m -Xmx384m -Dmaven.repo.local=/cache/repository'
-        NODE_OPTIONS = '--max-old-space-size=768'
+        NODE_OPTIONS = '--max-old-space-size=512'
         NPM_CONFIG_CACHE = '/cache'
         IMAGE_NAMESPACE = 'nexora-commerce'
     }

@@ -38,7 +38,7 @@ EOF
   chown -R 10001:10001 "$directory"
   chmod 750 "$directory"
 done
-chmod 755 certs/tls certs/tls/trust
+chmod 755 certs certs/tls certs/tls/trust
 chmod 644 certs/tls/trust/ca.pem certs/tls/trust/truststore.p12
 printf 'TLS_KEYSTORE_PASSWORD=%s\n' "$TLS_KEYSTORE_PASSWORD" > certs/tls/.env
 echo 'Generated local TLS identities. Trust only certs/tls/trust/ca.pem for local testing.'
