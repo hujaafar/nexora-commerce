@@ -103,9 +103,10 @@ final browser rerun.
 
 The initial hosted quality scan rejected three duplicate CSS selectors and a
 redundant word in an image's alternative text. The declarations were consolidated
-without changing the intended style values, and the alternative text now names
-the product and its selected view. The original failed Sonar report is retained
-in the local work folder and the GitHub run artifacts.
+without changing the intended style values. A follow-up scan still flagged the
+Angular alternative-text expression, so it was simplified to the product name;
+the separate gallery counter identifies the selected view. Both failed reports
+are retained in the local work folder and the GitHub run artifacts.
 
 The intended feeling sequence survives the final visual review: the opening
 has the greatest change, the catalog stays useful, all story panels are readable,

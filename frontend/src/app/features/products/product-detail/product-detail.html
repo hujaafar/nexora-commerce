@@ -84,7 +84,7 @@ File purpose: Defines the accessible products feature template.
             @for (image of galleryImages(); track image.url) {
               <img
                 [src]="image.url"
-                [alt]="item.name + ', view ' + (activeImageIndex() + 1)"
+                [alt]="item.name"
                 animate.enter="gallery-enter"
                 animate.leave="gallery-leave"
               />
