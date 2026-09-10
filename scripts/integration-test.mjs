@@ -18,7 +18,14 @@ async function api(method, path, token, data, expected = 200) {
   assert.equal(response.status, expected, `${method} ${path}: expected ${expected}, received ${response.status}`);
   checks++;
   if (response.status === 204) return null;
-  return response.headers.get('content-type')?.includes('json') ? response.json() : response.arrayBuffer();
+  if (!response.headers.get('content-type')?.includes('json')) return response.arrayBuffer();
+  const result = await response.json();
+  if (expected >= 400) {
+    assert.equal(typeof result.code, 'string', `${path}: error code is required`);
+    assert.equal(typeof result.message, 'string', `${path}: error message is required`);
+    assert.ok(result.details && typeof result.details === 'object', `${path}: error details are required`);
+  }
+  return result;
 }
 async function account(role, label) {
   return api('POST', '/auth/register', null, {
@@ -57,6 +64,9 @@ try {
   const forged = new FormData();
   forged.append('file', new Blob(['not an image'], { type: 'image/png' }), 'forged.png');
   await api('POST', '/media/images', seller.accessToken, forged, 400);
+  const oversized = new FormData();
+  oversized.append('file', new Blob([Buffer.alloc(2 * 1024 * 1024 + 1)], { type: 'image/png' }), 'oversized.png');
+  await api('POST', '/media/images', seller.accessToken, oversized, 400);
 
   let wishlist = await api('PUT', `/wishlist/${product.id}`, buyer.accessToken);
   assert.ok(wishlist.items.some((item) => item.id === product.id));

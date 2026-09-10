@@ -7,6 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
+    "test:e2e": "playwright test",
     "test:ci": "ng test --watch=false --coverage --coverage-reporters=text-summary --coverage-reporters=cobertura --coverage-reporters=lcov --reporters=junit --reporters=default --output-file=test-results/junit.xml",
     "format": "prettier --write src",
     "format:check": "prettier --check src"
