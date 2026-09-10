@@ -51,7 +51,7 @@ class ProductSearchServiceTest {
         assertThat(result.totalPages()).isZero();
         ArgumentCaptor<Query> query = ArgumentCaptor.forClass(Query.class);
         verify(mongo).find(query.capture(), eq(Product.class));
-        assertThat(query.getValue().getSortObject().get(field)).isEqualTo(direction);
+        assertThat(query.getValue().getSortObject()).containsEntry(field, direction);
         assertThat(query.getValue().getQueryObject()).isEmpty();
     }
 }

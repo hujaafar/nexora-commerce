@@ -169,16 +169,16 @@ File purpose: Defines the accessible seller feature template.
         <div class="preview-grid">
           @for (url of existingImageUrls(); track url; let index = $index) {
             <div class="image-preview">
-              <img [src]="url" [alt]="'Existing product image ' + (index + 1)" />
+              <img [src]="url" [alt]="'Product view ' + (index + 1)" />
               <span>{{ (index + 1).toString().padStart(2, '0') }}</span>
               <button type="button" aria-label="Remove image" (click)="removeExisting(url)">
                 ×
               </button>
             </div>
           }
-          @for (image of pendingImages(); track image.previewUrl; let index = $index) {
+          @for (pending of pendingImages(); track pending.previewUrl; let index = $index) {
             <div class="image-preview pending">
-              <img [src]="image.previewUrl" [alt]="image.file.name" />
+              <img [src]="pending.previewUrl" [alt]="pending.file.name" />
               <span>NEW</span>
               <button type="button" aria-label="Remove image" (click)="removePending(index)">
                 ×

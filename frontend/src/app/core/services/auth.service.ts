@@ -92,10 +92,12 @@ export class AuthService {
         return null;
       }
       const session = JSON.parse(raw) as StoredSession;
+      const expiresAt = new Date(session.expiresAt).getTime();
       if (
         !session.accessToken ||
         !session.user ||
-        !(new Date(session.expiresAt).getTime() > Date.now())
+        !Number.isFinite(expiresAt) ||
+        expiresAt <= Date.now()
       ) {
         localStorage.removeItem(SESSION_KEY);
         return null;

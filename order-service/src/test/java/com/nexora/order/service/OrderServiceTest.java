@@ -54,7 +54,8 @@ class OrderServiceTest {
         when(cartService.requireCart("customer")).thenReturn(cart);
         when(productClient.reserve("product", 2)).thenReturn(product());
         when(repository.save(any())).thenThrow(new IllegalStateException("database unavailable"));
-        assertThatThrownBy(() -> orderService.checkout("customer", checkoutRequest())).isInstanceOf(IllegalStateException.class);
+        CheckoutRequest request = checkoutRequest();
+        assertThatThrownBy(() -> orderService.checkout("customer", request)).isInstanceOf(IllegalStateException.class);
         verify(productClient).release("product", 2);
         verify(cartService, never()).clear("customer");
     }

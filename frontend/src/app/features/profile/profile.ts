@@ -86,9 +86,10 @@ export class Profile implements OnInit, OnDestroy {
       return;
     }
     this.saving.set(true);
-    const avatarUpload = this.selectedAvatar()
+    const selectedAvatar = this.selectedAvatar();
+    const avatarUpload = selectedAvatar
       ? this.mediaService
-          .upload(this.selectedAvatar()!, undefined, 'AVATAR')
+          .upload(selectedAvatar, undefined, 'AVATAR')
           .pipe(switchMap((asset) => of(asset.url)))
       : of(this.avatarUrl());
 
