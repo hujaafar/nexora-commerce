@@ -55,6 +55,10 @@ two visible processors and Serial GC. MongoDB's WiredTiger cache is 256 MiB.
 Kafka uses a small TCP health probe instead of starting another Java process
 every ten seconds; it checks listener readiness, while acceptance journeys
 exercise event-producing operations. Other probes run every thirty seconds.
+Kafka has a 256 MiB heap and a 32 MiB cleaner deduplication buffer; compaction
+stays enabled. Its [default cleaner buffer](https://kafka.apache.org/39/configuration/broker-configs/#logcleanerdedupebuffersize)
+alone reserves 128 MiB, which exhausted the initial 192 MiB heap during the
+first CI startup trial. The committed settings include that correction.
 Container swap is disabled to avoid exchanging an OOM for a long disk thrash.
 Each container keeps at most two 5 MB Docker log files.
 

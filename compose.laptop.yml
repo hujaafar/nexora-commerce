@@ -39,12 +39,15 @@ services:
     mem_limit: 512m
     memswap_limit: 512m
     environment:
-      KAFKA_HEAP_OPTS: -Xms64m -Xmx192m
+      KAFKA_HEAP_OPTS: -Xms64m -Xmx256m
       KAFKA_JVM_PERFORMANCE_OPTS: >-
         -server -XX:+UseSerialGC -XX:ActiveProcessorCount=2
         -XX:MaxDirectMemorySize=64m
       KAFKA_NUM_NETWORK_THREADS: 2
       KAFKA_NUM_IO_THREADS: 2
+      # The default 128 MiB cleaner map consumes too much of a small JVM heap.
+      # Keep compaction enabled, with a bounded 32 MiB deduplication buffer.
+      KAFKA_LOG_CLEANER_DEDUPE_BUFFER_SIZE: 33554432
     healthcheck:
       # Avoid launching a second Kafka JVM on every health probe. End-to-end
       # acceptance tests still verify operations that publish broker events.
