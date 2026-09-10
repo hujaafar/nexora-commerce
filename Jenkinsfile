@@ -254,6 +254,27 @@ pipeline {
             }
         }
 
+        stage('Java 11 Artifact Verifier') {
+            when { expression { params.PIPELINE_ACTION in ['build-test', 'build-test-deploy'] } }
+            agent {
+                docker {
+                    image 'maven:3.9.11-eclipse-temurin-11'
+                    args "--add-host host.docker.internal:${env.CI_HOST_IP} -v nexora-commerce-maven-cache:/cache"
+                    reuseNode true
+                }
+            }
+            steps {
+                script {
+                    if (params.PUBLISH_ARTIFACTS) {
+                        withCredentials([usernamePassword(credentialsId: 'nexus-publisher',
+                            usernameVariable: 'NEXUS_USERNAME', passwordVariable: 'NEXUS_PASSWORD')]) {
+                            sh 'bash scripts/ci/java11-verifier.sh verify'
+                        }
+                    } else { sh 'bash scripts/ci/java11-verifier.sh verify' }
+                }
+            }
+            post { always { junit testResults: 'tools/artifact-verifier/target/surefire-reports/*.xml', allowEmptyResults: true } }
+        }
         stage('Static Analysis and Quality Gate') {
             when {
                 expression {
@@ -310,6 +331,22 @@ pipeline {
             }
         }
 
+        stage('Publish Java 11 Verifier') {
+            when { expression { params.PUBLISH_ARTIFACTS && params.PIPELINE_ACTION in ['build-test', 'build-test-deploy'] } }
+            agent {
+                docker {
+                    image 'maven:3.9.11-eclipse-temurin-11'
+                    args "--add-host host.docker.internal:${env.CI_HOST_IP} -v nexora-commerce-maven-cache:/cache"
+                    reuseNode true
+                }
+            }
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'nexus-publisher',
+                    usernameVariable: 'NEXUS_USERNAME', passwordVariable: 'NEXUS_PASSWORD')]) {
+                    sh 'bash scripts/ci/java11-verifier.sh deploy'
+                }
+            }
+        }
         stage('Build Immutable Images') {
             when {
                 expression {

@@ -1,0 +1,28 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.nexora</groupId>
+  <artifactId>artifact-verifier</artifactId>
+  <version>${revision}</version>
+  <name>Nexora Java 11 Artifact Verifier</name>
+  <properties>
+    <revision>1.0.0-SNAPSHOT</revision>
+    <maven.compiler.release>11</maven.compiler.release>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+  <dependencies>
+    <dependency><groupId>org.junit.jupiter</groupId><artifactId>junit-jupiter</artifactId><version>5.13.4</version><scope>test</scope></dependency>
+  </dependencies>
+  <build><plugins>
+    <plugin><groupId>org.jacoco</groupId><artifactId>jacoco-maven-plugin</artifactId><version>0.8.13</version><executions><execution><goals><goal>prepare-agent</goal></goals></execution><execution><phase>verify</phase><goals><goal>report</goal></goals></execution></executions></plugin>
+    <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-dependency-plugin</artifactId><version>3.8.1</version><executions><execution><phase>test-compile</phase><goals><goal>copy-dependencies</goal></goals></execution></executions></plugin>
+    <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-compiler-plugin</artifactId><version>3.14.1</version></plugin>
+    <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-surefire-plugin</artifactId><version>3.5.6</version></plugin>
+    <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-jar-plugin</artifactId><version>3.4.2</version><configuration><archive><manifest><mainClass>com.nexora.artifacts.ArtifactVerifier</mainClass></manifest></archive></configuration></plugin>
+    <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-deploy-plugin</artifactId><version>3.1.4</version></plugin>
+    <plugin><groupId>org.codehaus.mojo</groupId><artifactId>flatten-maven-plugin</artifactId><version>1.7.3</version><configuration><updatePomFile>true</updatePomFile><flattenMode>resolveCiFriendliesOnly</flattenMode></configuration><executions><execution><phase>process-resources</phase><goals><goal>flatten</goal></goals></execution></executions></plugin>
+  </plugins></build>
+  <profiles><profile><id>nexus</id><distributionManagement>
+    <repository><id>nexus-releases</id><url>${env.NEXUS_MAVEN_RELEASES_URL}</url></repository>
+    <snapshotRepository><id>nexus-snapshots</id><url>${env.NEXUS_MAVEN_SNAPSHOTS_URL}</url></snapshotRepository>
+  </distributionManagement></profile></profiles>
+</project>
