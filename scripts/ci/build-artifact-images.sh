@@ -3,6 +3,10 @@ set -Eeuo pipefail
 : "${IMAGE_TAG:?IMAGE_TAG is required}"
 : "${ARTIFACT_VERSION:?ARTIFACT_VERSION is required}"
 namespace="${IMAGE_NAMESPACE:-nexora-commerce}"
+# Per-Dockerfile ignore rules require BuildKit. Fail clearly before any image
+# can accidentally use the broad source-build context.
+docker buildx version >/dev/null
+export DOCKER_BUILDKIT=1
 mkdir -p test-results/images
 : > test-results/images/manifest.txt
 for service in discovery-service gateway-service user-service product-service media-service order-service frontend; do

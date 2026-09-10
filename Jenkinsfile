@@ -54,7 +54,7 @@ pipeline {
         )
         choice(
             name: 'PIPELINE_ACTION',
-            choices: ['build-test-deploy', 'build-test', 'rollback'],
+            choices: ['build-test-deploy', 'build-test', 'rollback', 'rollback-drill'],
             description: 'Run the complete pipeline, CI only, or restore the previous healthy release.'
         )
         choice(
@@ -147,7 +147,7 @@ pipeline {
         stage('Build and Test') {
             when {
                 expression {
-                    params.PIPELINE_ACTION != 'rollback'
+                    params.PIPELINE_ACTION in ['build-test', 'build-test-deploy']
                 }
             }
             failFast true
@@ -257,7 +257,7 @@ pipeline {
         stage('Static Analysis and Quality Gate') {
             when {
                 expression {
-                    params.PIPELINE_ACTION != 'rollback'
+                    params.PIPELINE_ACTION in ['build-test', 'build-test-deploy']
                 }
             }
             steps {
@@ -292,7 +292,7 @@ pipeline {
 
         stage('Publish Maven Artifacts') {
             when {
-                expression { params.PUBLISH_ARTIFACTS && params.PIPELINE_ACTION != 'rollback' }
+                expression { params.PUBLISH_ARTIFACTS && params.PIPELINE_ACTION in ['build-test', 'build-test-deploy'] }
             }
             agent {
                 docker {
@@ -313,7 +313,7 @@ pipeline {
         stage('Build Immutable Images') {
             when {
                 expression {
-                    params.PIPELINE_ACTION != 'rollback' &&
+                    params.PIPELINE_ACTION in ['build-test', 'build-test-deploy'] &&
                         (params.BUILD_CONTAINER_IMAGES || params.PUBLISH_ARTIFACTS ||
                          params.PIPELINE_ACTION == 'build-test-deploy')
                 }
@@ -330,7 +330,7 @@ pipeline {
 
         stage('Publish Docker Artifacts') {
             when {
-                expression { params.PUBLISH_ARTIFACTS && params.PIPELINE_ACTION != 'rollback' }
+                expression { params.PUBLISH_ARTIFACTS && params.PIPELINE_ACTION in ['build-test', 'build-test-deploy'] }
             }
             steps {
                 withCredentials([usernamePassword(credentialsId: 'nexus-publisher',
@@ -425,6 +425,20 @@ pipeline {
             }
         }
 
+        stage('Staging Rollback Drill') {
+            when { expression { params.PIPELINE_ACTION == 'rollback-drill' } }
+            steps {
+                script {
+                    if (params.DEPLOY_ENV != 'staging') {
+                        error('Rollback drills are restricted to staging.')
+                    }
+                    int result = sh(script: 'bash scripts/ci/rollback-drill.sh', returnStatus: true)
+                    env.DEPLOYMENT_RESULT = 'FAULT_INJECTION'
+                    env.ROLLBACK_RESULT = result == 0 ? 'SUCCESS' : 'FAILED'
+                    if (result != 0) { error('Staging recovery drill failed.') }
+                }
+            }
+        }
         stage('Manual Rollback') {
             when {
                 expression {
