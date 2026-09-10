@@ -39,9 +39,8 @@ docker version >/dev/null
 docker compose --project-directory "${quality_dir}" --env-file "${env_file}" \
   -f "${compose_file}" up --detach --wait --wait-timeout 900
 
-basic_auth() { printf '%s:' "$1"; }
 if ! curl --fail --silent --user "admin:${SONAR_ADMIN_PASSWORD}" \
-  "${SONAR_HOST_URL}/api/authentication/validate" >/dev/null; then
+  "${SONAR_HOST_URL}/api/authentication/validate" | grep --quiet '"valid":true'; then
   curl --fail --silent --user 'admin:admin' --request POST \
     --data-urlencode login=admin \
     --data-urlencode previousPassword=admin \
@@ -78,6 +77,31 @@ if [[ -z "${SONAR_TOKEN:-}" ]] || ! curl --fail --silent --user "${SONAR_TOKEN}:
   [[ -n "${token}" ]] || { echo 'SonarQube returned no token.' >&2; exit 1; }
   set_env SONAR_TOKEN "${token}"
 fi
+
+gate='Nexora verified'
+# An existing name returns 400; the following authenticated GET must succeed.
+curl --silent --user "admin:${SONAR_ADMIN_PASSWORD}" --request POST \
+  --data-urlencode "name=${gate}" --data-urlencode 'sourceName=Sonar way' \
+  "${SONAR_HOST_URL}/api/qualitygates/copy" >/dev/null
+conditions="$(curl --fail --silent --user "admin:${SONAR_ADMIN_PASSWORD}" \
+  "${SONAR_HOST_URL}/api/qualitygates/show?name=Nexora%20verified")"
+while read -r metric operator threshold; do
+  if ! printf '%s' "$conditions" | grep --quiet "\"metric\"[[:space:]]*:[[:space:]]*\"${metric}\""; then
+    curl --fail --silent --user "admin:${SONAR_ADMIN_PASSWORD}" --request POST \
+      --data-urlencode "gateName=${gate}" --data-urlencode "metric=${metric}" \
+      --data-urlencode "op=${operator}" --data-urlencode "error=${threshold}" \
+      "${SONAR_HOST_URL}/api/qualitygates/create_condition" >/dev/null
+  fi
+done <<'CONDITIONS'
+coverage LT 60
+duplicated_lines_density GT 3
+code_smells GT 0
+software_quality_security_rating GT 1
+software_quality_reliability_rating GT 1
+CONDITIONS
+curl --fail --silent --user "admin:${SONAR_ADMIN_PASSWORD}" --request POST \
+  --data-urlencode "gateName=${gate}" --data-urlencode projectKey=nexora-commerce \
+  "${SONAR_HOST_URL}/api/qualitygates/select" >/dev/null
 
 echo "Nexora Commerce SonarQube is ready at ${SONAR_HOST_URL}."
 echo 'Credentials remain only in ignored quality/.env.'

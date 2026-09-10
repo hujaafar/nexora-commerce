@@ -36,16 +36,12 @@ describe('Profile and analytics', () => {
   }
   it('shows seller revenue, validates the name and saves a new avatar through the media API', () => {
     const fixture = page('SELLER');
-    http
-      .expectOne('/api/analytics/seller')
-      .flush({
-        revenue: 140,
-        orderCount: 2,
-        unitsSold: 4,
-        bestSellingProducts: [
-          { productId: 'product-1', name: 'Studio lamp', units: 4, amount: 140 },
-        ],
-      });
+    http.expectOne('/api/analytics/seller').flush({
+      revenue: 140,
+      orderCount: 2,
+      unitsSold: 4,
+      bestSellingProducts: [{ productId: 'product-1', name: 'Studio lamp', units: 4, amount: 140 }],
+    });
     fixture.detectChanges();
     expect(fixture.nativeElement.textContent).toContain('$140.00');
     expect(fixture.nativeElement.querySelector('.bar-list em').style.width).toBe('100%');
@@ -75,15 +71,13 @@ describe('Profile and analytics', () => {
   });
   it('shows customer spending, most-bought products and categories without seller upload controls', () => {
     const fixture = page('CLIENT');
-    http
-      .expectOne('/api/analytics/customer')
-      .flush({
-        totalSpent: 75,
-        completedOrders: 1,
-        purchasedUnits: 2,
-        mostBoughtProducts: [{ productId: 'product-1', name: 'Studio lamp', units: 2, amount: 70 }],
-        topCategories: [{ category: 'Home', units: 2, amount: 70 }],
-      });
+    http.expectOne('/api/analytics/customer').flush({
+      totalSpent: 75,
+      completedOrders: 1,
+      purchasedUnits: 2,
+      mostBoughtProducts: [{ productId: 'product-1', name: 'Studio lamp', units: 2, amount: 70 }],
+      topCategories: [{ category: 'Home', units: 2, amount: 70 }],
+    });
     fixture.detectChanges();
     expect(fixture.nativeElement.textContent).toContain('$75.00');
     expect(fixture.nativeElement.querySelector('.category-list').textContent).toContain('Home');

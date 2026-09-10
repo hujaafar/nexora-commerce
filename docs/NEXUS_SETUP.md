@@ -95,11 +95,11 @@ to work without a Nexus server. See the official
 
 ## Connect Jenkins
 
-1. Start/provision Nexus and the existing SonarQube/Jenkins stacks.
-2. In Jenkins, create a username/password credential with ID `nexus-publisher`,
-   using the generated publisher values from `nexus/.env`.
-3. Select `PUBLISH_ARTIFACTS=true` for the Nexora pipeline. The default is false,
-   so public GitHub CI and installations without Nexus keep working.
+1. Start/provision Nexus, then SonarQube, then Jenkins.
+2. The Jenkins start scripts import the restricted publisher credentials from
+   ignored `nexus/.env`; JCasC creates the `nexus-publisher` credential automatically.
+3. `PUBLISH_ARTIFACTS=true` is the Jenkins default. Public GitHub CI validates
+   builds and quality on hosted runners without connecting to private Nexus.
 4. On Docker Desktop, use `NEXUS_BASE_URL=http://host.docker.internal:18081`
    and `NEXUS_DOCKER_REGISTRY=host.docker.internal:18082`.
 

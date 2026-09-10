@@ -24,7 +24,8 @@ jobs:
           cache: maven
       - run: mvn -B -ntp -f tools/artifact-verifier/pom.xml verify
       - name: Verify Java 11 bytecode
-        run: javap -verbose tools/artifact-verifier/target/classes/com/nexora/artifacts/ArtifactVerifier.class | grep 'major version: 55'
+        run: |
+          javap -verbose tools/artifact-verifier/target/classes/com/nexora/artifacts/ArtifactVerifier.class | grep 'major version: 55'
       - uses: actions/upload-artifact@v4
         if: always()
         with:
