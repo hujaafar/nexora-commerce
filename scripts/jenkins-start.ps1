@@ -129,6 +129,7 @@ $env:NEXUS_PUBLISHER_PASSWORD = (Get-EnvironmentValue $nexusContent 'NEXUS_PUBLI
 
 # The public GitHub repository can be cloned without credentials.
 
+& (Join-Path $PSScriptRoot 'prepare-ci-trust.ps1')
 docker version | Out-Null
 if ($LASTEXITCODE -ne 0) {
     throw 'Docker Desktop is not available. Start Docker Desktop and try again.'
