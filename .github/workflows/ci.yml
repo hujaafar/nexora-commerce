@@ -218,3 +218,36 @@ jobs:
       - name: Stop disposable application
         if: always()
         run: docker compose down
+  recovery:
+    name: Deployment and rollback acceptance
+    needs: [backend, frontend]
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      ARTIFACT_VERSION: 1.0.0-ci.${{ github.run_number }}
+      IMAGE_TAG: recovery-${{ github.run_id }}-${{ github.run_attempt }}
+      SOURCE_COMMIT: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: runtime-jars
+      - uses: actions/download-artifact@v4
+        with:
+          name: runtime-frontend
+          path: frontend/dist
+      - name: Verify deployment and failure recovery
+        run: bash scripts/ci/recovery-acceptance.sh
+      - name: Capture service logs
+        if: always()
+        run: |
+          mkdir -p test-results/recovery
+          docker compose -p nexora-commerce-staging logs --no-color > test-results/recovery/services.log 2>&1 || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: recovery-acceptance-evidence
+          path: test-results/recovery/
+      - name: Stop disposable staging
+        if: always()
+        run: docker compose -p nexora-commerce-staging down

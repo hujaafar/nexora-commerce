@@ -141,7 +141,7 @@
   box-shadow: var(--shadow);
   animation: page-rise 0.35s var(--ease-out);
 }
-.app-toast > span {
+.app-toast > span:first-child {
   display: grid;
   width: 2rem;
   height: 2rem;
@@ -151,10 +151,10 @@
   background: var(--cyan);
   font-weight: 800;
 }
-.app-toast.toast-success > span {
+.app-toast.toast-success > span:first-child {
   background: var(--success);
 }
-.app-toast.toast-error > span {
+.app-toast.toast-error > span:first-child {
   background: var(--danger);
 }
 .app-toast .toast-message {

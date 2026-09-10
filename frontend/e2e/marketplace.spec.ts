@@ -49,6 +49,7 @@ test('customer buys through the wizard, tracks, cancels, reorders, and removes h
     await page.getByRole('button', { name: /Review order/ }).click();
     await expect(page.locator('.review-card')).toContainText('Pay on delivery');
     await expect(page.locator('.review-card')).toContainText('Nothing is charged now');
+    await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
     await page.screenshot({ path: 'test-results/browser-checkout.png', fullPage: true });
     await page.getByRole('button', { name: /Confirm order/ }).click();
     await expect(page.locator('.success-card')).toContainText('Order confirmed');
@@ -98,6 +99,10 @@ test('seller publishes, edits, and deletes through the responsive dashboard', as
   await page.getByLabel('Price / USD').fill('30');
   await page.getByRole('button', { name: /Save product changes/ }).click();
   await expect(inventory).toContainText('$30.00');
+  const message = page.locator('.toast-message');
+  await expect(message).toBeVisible();
+  expect((await message.boundingBox())?.width).toBeGreaterThan(120);
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
   await page.screenshot({ path: 'test-results/browser-seller-mobile.png', fullPage: true });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
   page.on('dialog', (dialog) => dialog.accept());

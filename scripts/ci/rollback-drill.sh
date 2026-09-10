@@ -23,7 +23,8 @@ printf 'FROM alpine:3.22\nCMD ["sh", "-c", "exit 1"]\n' |
 export IMAGE_TAG="$drill_tag"
 echo "Injecting an intentionally broken staging frontend: ${drill_tag}"
 if DEPLOY_TIMEOUT_SECONDS=30 bash scripts/ci/deploy.sh staging "$drill_tag"; then
-  echo 'The fault was unexpectedly accepted; inspect staging immediately.' >&2
+  echo 'The fault was unexpectedly accepted; restoring the previous release.' >&2
+  DEPLOY_TIMEOUT_SECONDS=360 bash scripts/ci/rollback.sh staging previous
   exit 1
 fi
 echo 'Candidate correctly rejected. Restoring the recorded healthy release.'

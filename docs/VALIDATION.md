@@ -4,7 +4,7 @@ Audit date: 10 September 2026. Configured features and executed checks are disti
 
 | Executed check | Observed result |
 |---|---|
-| Java 17 / Maven reactor | 52 tests passed across six services |
+| Java 17 / Maven reactor | 54 tests passed across six services, including allowed/denied browser CORS preflights |
 | Angular / Vitest | 30 tests passed across 12 suites; repeated after the order navigation fix |
 | Java 11 verifier | Seven tests passed on actual JDK 11 locally and on GitHub; class-file major version 55 verified in CI |
 | Production frontend | Angular build passed; production npm audit reported zero vulnerabilities |
@@ -14,16 +14,20 @@ Audit date: 10 September 2026. Configured features and executed checks are disti
 | Configuration | Compose/shell validation passed; updated Jenkinsfile accepted by Jenkins' Declarative validator |
 | Nexus baseline | Parent POM, six service JARs/POMs and seven images published as 1.0.0; 44 access/recovery checks passed |
 | Additional Nexus versions | Jenkins published Maven versions 1.0.4-6acc99f8a8cf and 1.0.5-97b1d83c9c78; standalone Java 11 verifier published as 1.0.1-audit |
+| Independent version retrieval | Java 11 verifier downloaded both versions from Nexus and matched SHA-256 against each producing Jenkins build's archived JAR; [record](evidence/artifact-versions.json) |
+| Fresh HTTP stack | 36 real API checks passed |
+| Real browser journeys | Customer checkout/tracking/cancel/reorder/removal and mobile seller create/edit/delete both passed |
+| End-to-end HTTPS | The same 36 API checks passed after switching every HTTP hop to certificate-verified TLS; [complete hosted run](https://github.com/hujaafar/nexora-commerce/actions/runs/34425304219) |
 | Jenkins negative-path evidence | Test failures and a failing Sonar gate blocked later stages. Failed first deployments stopped their candidates; local SMTP accepted failure notifications |
 | Branch protection | GitHub settings enabled and read back: independent approval, fresh review, five required checks, resolved conversations, protection applies to administrators |
 
-## Acceptance checks still being verified
+## Acceptance and recovery
 
 The original consolidated stack passed 35 real API checks. The expanded journey adds oversized-upload/error-contract checks, and is now required before Jenkins promotes a release. Hosted CI also builds the exact tested JAR/frontend artifacts into a fresh full stack, runs the API journey and two real browser journeys, then switches all HTTP hops to certificate-verified TLS and repeats the API journey.
 
-The first fresh hosted run revealed a service-discovery timing problem: the catalog was ready before Media Service reached the gateway's cached registry. The test now waits on bounded read-only media/cart probes before mutation. This record does not count the expanded browser/TLS journey as passed until a successful run is recorded.
+Fresh runs revealed and fixed service-discovery startup timing, missing loopback/PATCH CORS permissions, and TLS parent-directory traversal permissions. Run 34425304219 passed the expanded API, browser and TLS journeys. Readiness retries are restricted to read-only probes; failed mutations are not retried away.
 
-Jenkins' Kafka probe was corrected to use the internal listener instead of following the host-advertised port inside its container. Application/Kafka/controller/Maven heaps are now bounded. Local Docker experienced a stalled engine and restart/socket problems during the audit. Successful deployment, the staging fault-injection recovery drill, and manual rollback still need a completed result; configuration alone is not evidence.
+Jenkins' Kafka probe was corrected to use the internal listener instead of following the host-advertised port inside its container. Application/Kafka/controller/Maven/test heaps are now bounded. The local C: drive became full during Docker execution; engine and restart/socket failures interrupted local builds. A full local Jenkins deployment is still unverified. Hosted CI now exercises the same deployment scripts, including a broken-candidate recovery drill and manual rollback; its completed result must be recorded separately.
 
 ## Scope and evidence limits
 
