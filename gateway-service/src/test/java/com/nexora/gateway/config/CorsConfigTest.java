@@ -6,7 +6,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 class CorsConfigTest {
     private final WebTestClient client = WebTestClient.bindToWebHandler(exchange -> exchange.getResponse().setComplete())
             .webFilter(new CorsConfig().corsWebFilter("http://localhost:4200,http://127.0.0.1:4200"))
-            .build();
+            .configureClient().baseUrl("http://gateway.test").build();
 
     @Test void permitsTheConfiguredBrowserToUpdateOrderStatus() {
         client.options().uri("/orders/order-1/status")
