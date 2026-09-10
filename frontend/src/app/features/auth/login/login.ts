@@ -41,13 +41,8 @@ export class Login {
         const requestedUrl = this.route.snapshot.queryParamMap.get('returnUrl');
         const safeReturnUrl =
           requestedUrl?.startsWith('/') && !requestedUrl.startsWith('//') ? requestedUrl : null;
-        const destination =
-          safeReturnUrl ||
-          (response.user.role === 'SELLER'
-            ? '/seller'
-            : response.user.role === 'ADMIN'
-              ? '/admin'
-              : '/products');
+        const roleDestinations = { SELLER: '/seller', ADMIN: '/admin', CLIENT: '/products' };
+        const destination = safeReturnUrl || roleDestinations[response.user.role];
         void this.router.navigateByUrl(destination);
       });
   }

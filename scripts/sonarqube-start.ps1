@@ -163,6 +163,33 @@ Invoke-SonarApi 'POST' '/api/projects/update_visibility' $adminAuthorization @{
 } | Out-Null
 
 $tokenIsValid = $false
+# Enforce existing-code quality as well as Sonar way's new-code conditions.
+# Reapplying configuration does not change analysis history or review results.
+$gateName = 'Nexora verified'
+try {
+    Invoke-SonarApi 'POST' '/api/qualitygates/copy' $adminAuthorization @{
+        name = $gateName
+        sourceName = 'Sonar way'
+    } | Out-Null
+} catch {
+    if ($_.Exception.Response.StatusCode.value__ -ne 400) { throw }
+}
+$gate = Invoke-SonarApi 'GET' "/api/qualitygates/show?name=$([uri]::EscapeDataString($gateName))" $adminAuthorization
+foreach ($condition in @(
+    @{metric='coverage'; op='LT'; error='60'},
+    @{metric='duplicated_lines_density'; op='GT'; error='3'},
+    @{metric='code_smells'; op='GT'; error='0'},
+    @{metric='software_quality_security_rating'; op='GT'; error='1'},
+    @{metric='software_quality_reliability_rating'; op='GT'; error='1'}
+)) {
+    if ($condition.metric -notin $gate.conditions.metric) {
+        Invoke-SonarApi 'POST' '/api/qualitygates/create_condition' $adminAuthorization (@{gateName=$gateName} + $condition) | Out-Null
+    }
+}
+Invoke-SonarApi 'POST' '/api/qualitygates/select' $adminAuthorization @{
+    gateName = $gateName
+    projectKey = 'nexora-commerce'
+} | Out-Null
 if (-not [string]::IsNullOrWhiteSpace($settings.SONAR_TOKEN)) {
     try {
         $tokenAuthorization = New-BasicAuthorization $settings.SONAR_TOKEN ''

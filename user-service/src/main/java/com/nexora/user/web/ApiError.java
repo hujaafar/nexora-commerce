@@ -3,16 +3,17 @@
  */
 package com.nexora.user.web;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.Instant;
 import java.util.Map;
 
 public record ApiError(
         Instant timestamp,
         int status,
-        String error,
+        @JsonProperty("code") String error,
         String message,
         String path,
-        Map<String, String> validationErrors) {
+        @JsonProperty("details") Map<String, String> validationErrors) {
 
     public static ApiError of(
             int status,

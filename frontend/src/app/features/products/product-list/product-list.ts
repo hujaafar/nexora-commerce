@@ -51,7 +51,9 @@ export class ProductList implements OnInit, OnDestroy {
     category: [''],
     minPrice: [null as number | null],
     maxPrice: [null as number | null],
-    sort: ['newest' as 'newest' | 'price-asc' | 'price-desc' | 'name'],
+    sort: this.formBuilder.nonNullable.control<'newest' | 'price-asc' | 'price-desc' | 'name'>(
+      'newest',
+    ),
   });
   protected readonly totalUnits = computed(() =>
     this.products().reduce((total, item) => total + item.quantity, 0),
@@ -118,12 +120,26 @@ export class ProductList implements OnInit, OnDestroy {
     document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' });
   }
 
+  protected selectCategory(category: string, event: Event): void {
+    this.filters.controls.category.setValue(category);
+    this.scrollToSection(event, 'products');
+  }
+
+  protected categoryImage(category: string): string {
+    const name = category.toLowerCase();
+    if (/home|furniture|decor|kitchen/.test(name)) return '/assets/editorial-room.webp';
+    if (/shoe|fashion|cloth|shirt|sport/.test(name)) return '/assets/editorial-sneaker.webp';
+    return '/assets/editorial-headphones.webp';
+  }
+
   protected clearFilters(): void {
     this.filters.reset({ q: '', category: '', minPrice: null, maxPrice: null, sort: 'newest' });
   }
 
   @HostListener('window:wheel')
   @HostListener('window:touchstart')
+  @HostListener('window:keydown')
+  @HostListener('focusin')
   protected interruptAnimatedScroll(): void {
     this.cancelAnimatedScroll();
   }
@@ -134,19 +150,15 @@ export class ProductList implements OnInit, OnDestroy {
     if (!section) return;
     this.cancelAnimatedScroll();
     history.replaceState(null, '', `#${sectionId}`);
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      section.scrollIntoView({ behavior: 'auto', block: 'start' });
-      return;
-    }
-    const start = window.scrollY;
-    const headerHeight = document.querySelector<HTMLElement>('.landing-header')?.offsetHeight ?? 0;
+    const start = globalThis.scrollY;
+    const headerHeight = document.querySelector<HTMLElement>('.site-header')?.offsetHeight ?? 0;
     const destination =
       sectionId === 'top'
         ? 0
         : Math.max(0, start + section.getBoundingClientRect().top - headerHeight - 16);
     const distance = destination - start;
     if (Math.abs(distance) < 2) return;
-    const duration = Math.min(8000, Math.max(2200, Math.abs(distance) / 0.42));
+    const duration = Math.min(1000, Math.max(500, Math.abs(distance) / 4));
     const startedAt = performance.now();
     const root = document.documentElement;
     this.previousScrollBehavior = root.style.scrollBehavior;
@@ -155,14 +167,14 @@ export class ProductList implements OnInit, OnDestroy {
     const animate = (now: number): void => {
       const progress = Math.min((now - startedAt) / duration, 1);
       const eased = (1 - Math.cos(Math.PI * progress)) / 2;
-      window.scrollTo({ top: start + distance * eased, left: 0, behavior: 'auto' });
-      if (progress < 1) this.scrollFrame = window.requestAnimationFrame(animate);
+      globalThis.scrollTo({ top: start + distance * eased, left: 0, behavior: 'auto' });
+      if (progress < 1) this.scrollFrame = globalThis.requestAnimationFrame(animate);
       else {
         this.scrollFrame = null;
         this.restoreScrollBehavior();
       }
     };
-    this.scrollFrame = window.requestAnimationFrame(animate);
+    this.scrollFrame = globalThis.requestAnimationFrame(animate);
   }
 
   private load(): void {
@@ -207,7 +219,7 @@ export class ProductList implements OnInit, OnDestroy {
 
   private cancelAnimatedScroll(): void {
     if (this.scrollFrame !== null) {
-      window.cancelAnimationFrame(this.scrollFrame);
+      globalThis.cancelAnimationFrame(this.scrollFrame);
       this.scrollFrame = null;
     }
     this.restoreScrollBehavior();

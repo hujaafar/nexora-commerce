@@ -10,6 +10,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.nexora.product.domain.Product;
+import com.nexora.product.domain.ProductContent;
 import com.nexora.product.dto.ProductRequest;
 import com.nexora.product.event.ProductEventPublisher;
 import com.nexora.product.exception.ProductNotFoundException;
@@ -27,6 +28,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 // Learning annotation: @ExtendWith connects JUnit 5 to the named extension; MockitoExtension creates and injects mocks.
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
+
+    private static final Instant TEST_TIME = Instant.parse("2026-01-15T12:00:00Z");
 
     // Learning annotation: @Mock creates a Mockito test double so the unit test can isolate one class.
     @Mock
@@ -104,13 +107,8 @@ class ProductServiceTest {
 
     private Product productOwnedBy(String sellerId) {
         return new Product(
-                "Mechanical Keyboard",
-                "Hot-swappable compact keyboard",
-                "Electronics",
-                new BigDecimal("49.90"),
-                5,
-                sellerId,
-                List.of(),
-                Instant.now());
+                new ProductContent("Mechanical Keyboard", "Hot-swappable compact keyboard",
+                        "Electronics", List.of()),
+                new BigDecimal("49.90"), 5, sellerId, TEST_TIME);
     }
 }

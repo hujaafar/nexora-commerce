@@ -1,107 +1,93 @@
-<!-- File purpose: Defines the Nexora Commerce navigation, routed content, notifications, and polished footer. -->
-@if (!isLandingPage()) {
-  <header class="site-header">
-    <nav class="nav-shell" aria-label="Primary navigation">
-      <a class="brand" routerLink="/products"
-        ><span class="brand-mark">02</span
-        ><span><strong>NEXORA</strong><small>Good finds, simply</small></span></a
+<a class="skip-link" href="#page-content">Skip to content</a>
+<header class="site-header">
+  <nav class="nav-shell" aria-label="Primary navigation">
+    <a class="brand" routerLink="/products" aria-label="Nexora home"
+      >nexora<span aria-hidden="true">✳</span></a
+    >
+    <div class="nav-links" [class.menu-open]="menuOpen()" id="main-navigation">
+      <a
+        routerLink="/products"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        >The collection</a
       >
-      <div class="nav-links">
-        <a routerLink="/products" routerLinkActive="active">Shop</a>
-        @if (authService.isClient()) {
-          <a routerLink="/wishlist" routerLinkActive="active">Saved</a
-          ><a routerLink="/orders" routerLinkActive="active">Orders</a>
-        }
-        @if (authService.isSeller()) {
-          <a routerLink="/seller" routerLinkActive="active">My shop</a
-          ><a routerLink="/orders" routerLinkActive="active">Orders</a
-          ><a routerLink="/media" routerLinkActive="active">Images</a>
-        }
-        @if (authService.isAdmin()) {
-          <a routerLink="/admin" routerLinkActive="active">Moderate</a>
-        }
-      </div>
-      <div class="nav-actions">
-        @if (authService.isClient()) {
-          <a class="bag-link" routerLink="/cart">Bag</a>
-        }
-        @if (authService.isAuthenticated()) {
-          <a class="profile-link" routerLink="/profile">
-            @if (authService.currentUser()?.avatarUrl) {
-              <img [src]="authService.currentUser()?.avatarUrl" alt="" />
-            } @else {
-              <span>{{ initials() }}</span>
-            }
-            <b>{{ authService.currentUser()?.name }}</b></a
-          >
-          <button class="signout" type="button" (click)="logout()">Sign out</button>
-        } @else {
-          <a class="signin" routerLink="/login">Sign in</a
-          ><a class="join" routerLink="/register">Join</a>
-        }
-      </div>
-    </nav>
-  </header>
-}
-
-<main class="route-frame"><router-outlet /></main>
-
+      @if (authService.isClient()) {
+        <a routerLink="/wishlist" routerLinkActive="active">Saved finds</a
+        ><a routerLink="/orders" routerLinkActive="active">Orders</a>
+      }
+      @if (authService.isSeller()) {
+        <a routerLink="/seller" routerLinkActive="active">My shop</a
+        ><a routerLink="/orders" routerLinkActive="active">Orders</a
+        ><a routerLink="/media" routerLinkActive="active">Image library</a>
+      }
+      @if (authService.isAdmin()) {
+        <a routerLink="/admin" routerLinkActive="active">Moderation</a>
+      }
+      @if (!authService.isAuthenticated()) {
+        <a routerLink="/register">Become a seller</a>
+      }
+      @if (authService.isAuthenticated()) {
+        <button class="menu-signout" type="button" (click)="logout()">Sign out</button>
+      }
+    </div>
+    <div class="nav-actions">
+      @if (authService.isClient()) {
+        <a class="bag-link" routerLink="/cart">Bag <span aria-hidden="true">↗</span></a>
+      }
+      @if (authService.isAuthenticated()) {
+        <a class="profile-link" routerLink="/profile" aria-label="My profile"
+          ><span>{{ initials() }}</span></a
+        >
+        <button class="signout" type="button" (click)="logout()">Sign out</button>
+      } @else {
+        <a class="signin" routerLink="/login">Sign in <span aria-hidden="true">↗</span></a>
+      }
+      <button
+        class="menu-toggle"
+        type="button"
+        aria-controls="main-navigation"
+        [attr.aria-expanded]="menuOpen()"
+        (click)="menuOpen.set(!menuOpen())"
+      >
+        {{ menuOpen() ? 'Close' : 'Menu' }}
+        <span aria-hidden="true">{{ menuOpen() ? '×' : '☰' }}</span>
+      </button>
+    </div>
+  </nav>
+</header>
+<main class="route-frame" id="page-content" tabindex="-1"><router-outlet /></main>
 @if (notifications.notification(); as notification) {
-  <aside
+  <output
     class="app-toast"
     [class.toast-success]="notification.kind === 'success'"
     [class.toast-error]="notification.kind === 'error'"
-    role="status"
   >
     <span>{{
       notification.kind === 'error' ? '!' : notification.kind === 'success' ? '✓' : 'i'
     }}</span>
-    <p>{{ notification.message }}</p>
+    <span class="toast-message">{{ notification.message }}</span>
     <button type="button" aria-label="Dismiss notification" (click)="notifications.dismiss()">
       ×
     </button>
-  </aside>
+  </output>
 }
-
-@if (!isLandingPage()) {
+@if (!isAuthPage()) {
   <footer class="site-footer">
-    <section class="footer-main">
-      <div class="footer-lead">
-        <a routerLink="/products"><span>N</span>NEXORA</a>
-        <h2>Find something<br />worth keeping.</h2>
-        <p>
-          A marketplace shaped around clear choices, independent shops, and an easy path from
-          discovery to delivery.
-        </p>
-      </div>
-      <nav aria-label="Footer shop navigation">
-        <strong>Explore</strong><a routerLink="/products">All products</a>
-        @if (authService.isClient()) {
-          <a routerLink="/wishlist">Saved products</a><a routerLink="/cart">Shopping cart</a
-          ><a routerLink="/orders">Order history</a>
-        }
-        @if (authService.isSeller()) {
-          <a routerLink="/seller">Seller workspace</a><a routerLink="/orders">Customer orders</a>
-        }
+    <div class="footer-top">
+      <h2>A little more<br />you.</h2>
+      <p>Independent finds.<br />Everyday favorites.<br />All in one place.</p>
+      <nav aria-label="Footer navigation">
+        <a routerLink="/products">Explore the collection ↗</a
+        ><a routerLink="/register">Open your own shop ↗</a
+        ><a routerLink="/profile">Your account ↗</a>
       </nav>
-      <nav aria-label="Footer account navigation">
-        <strong>Account</strong>
-        @if (authService.isAuthenticated()) {
-          <a routerLink="/profile">My profile</a
-          ><button type="button" (click)="logout()">Sign out</button>
-        } @else {
-          <a routerLink="/login">Sign in</a><a routerLink="/register">Create account</a>
-        }
-      </nav>
-      <div class="footer-action">
-        <p>Ready for another look?</p>
-        <a routerLink="/products"><span>Return to the collection</span><i>→</i></a>
-      </div>
-    </section>
-    <div class="footer-bottom">
-      <span>© {{ currentYear }} NEXORA</span><span>Independent products. Personal service.</span
-      ><a routerLink="/products">Back to shop ↑</a>
     </div>
-    <div class="footer-word" aria-hidden="true">NEXORA</div>
+    <a class="footer-word" routerLink="/products" aria-label="Return to Nexora collection"
+      >nexora<span aria-hidden="true">✳</span></a
+    >
+    <div class="footer-bottom">
+      <span>© {{ currentYear }} Nexora Commerce</span><span>Make room for good things.</span
+      ><a routerLink="/products">Back to the collection ↑</a>
+    </div>
   </footer>
 }

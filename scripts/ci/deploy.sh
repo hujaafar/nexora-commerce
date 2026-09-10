@@ -97,7 +97,7 @@ MONGO_ROOT_USERNAME=${MONGO_ROOT_USERNAME}
 MONGO_ROOT_PASSWORD=${MONGO_ROOT_PASSWORD}
 MINIO_ROOT_USER=${MINIO_ROOT_USER}
 MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
-ALLOWED_ORIGINS=http://localhost:${frontend_port}
+ALLOWED_ORIGINS=http://localhost:${frontend_port},http://127.0.0.1:${frontend_port}
 MEDIA_PUBLIC_BASE_URL=http://localhost:${frontend_port}/api/media/images
 FRONTEND_HOST_PORT=${frontend_port}
 GATEWAY_HOST_PORT=${gateway_port}
@@ -137,6 +137,17 @@ fi
 if ! bash scripts/ci/health-check.sh "${health_url}" "${timeout_seconds}" \
   2>&1 | tee -a "${log_file}"; then
   echo "HTTP verification failed." | tee -a "${log_file}" >&2
+  exit 1
+fi
+
+# Exercise real account, media, cart, stock and order flows before promoting
+# candidate.env. The nested Docker daemon's host network exposes the same port.
+if ! docker run --rm --network host \
+  --volume "${WORKSPACE:-$(pwd)}:/workspace:ro" \
+  --env "API_BASE=http://127.0.0.1:${frontend_port}/api" \
+  node:24-bookworm-slim node /workspace/scripts/integration-test.mjs \
+  2>&1 | tee -a "${log_file}"; then
+  echo 'API acceptance failed; the candidate will not be promoted.' | tee -a "${log_file}" >&2
   exit 1
 fi
 

@@ -24,6 +24,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class CartServiceTest {
 
+    private static final Instant TEST_TIME = Instant.parse("2026-01-15T12:00:00Z");
+
     @Mock private CartRepository repository;
     @Mock private ProductClient productClient;
     private CartService cartService;
@@ -36,7 +38,7 @@ class CartServiceTest {
     @Test
     void addsTrustedCatalogSnapshotAndCalculatesSubtotal() {
         when(repository.save(any(Cart.class))).thenAnswer(invocation -> invocation.getArgument(0));
-        when(repository.findByCustomerId("customer")).thenReturn(Optional.of(new Cart("customer", Instant.now())));
+        when(repository.findByCustomerId("customer")).thenReturn(Optional.of(new Cart("customer", TEST_TIME)));
         when(productClient.get("product")).thenReturn(product(5));
 
         var response = cartService.put("customer", "product", 2);
@@ -59,6 +61,6 @@ class CartServiceTest {
     private CatalogProduct product(int quantity) {
         return new CatalogProduct(
                 "product", "Desk lamp", "Warm light", "Home", new BigDecimal("19.99"),
-                quantity, "seller", List.of("https://example.test/lamp.jpg"), Instant.now(), Instant.now());
+                quantity, "seller", List.of("https://example.test/lamp.jpg"), TEST_TIME, TEST_TIME);
     }
 }

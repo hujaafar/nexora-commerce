@@ -34,7 +34,7 @@ flowchart LR
 | Continuous Integration (CI) | Every change is automatically compiled and tested. | Git changes trigger checkout, validation, backend tests, frontend tests, and reports. |
 | Continuous Deployment (CD) | A tested version is automatically released in the same repeatable way. | Jenkins builds images, deploys Compose, verifies HTTP routes, and promotes the release. |
 | Jenkins controller | The Jenkins process that stores configuration and schedules work. | The custom controller is created by `jenkins/compose.yml`. |
-| Agent | A machine or container that executes Pipeline steps. | Two dedicated Docker agents execute builds; the controller has zero executors. |
+| Agent | A machine or container that executes Pipeline steps. | One dedicated Docker agent executes builds by default; a second is enabled with the distributed profile. Each has one executor; the controller has zero. |
 | WebSocket agent | A worker connected through Jenkins' normal HTTP path instead of a separate inbound TCP port. | The Compose agent connects automatically without exposing port 50000. |
 | Least privilege | Give an identity only the permissions needed for its one job. | The agent bootstrap user can read Jenkins and connect the node, but cannot administer Jenkins or modify jobs. |
 | Mailpit | A local SMTP inbox that captures email instead of sending it to real people. | Success and failure messages can be proved at `localhost:8025`. |

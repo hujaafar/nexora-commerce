@@ -37,6 +37,14 @@ try {
             ./mvnw -B -ntp clean verify
         if ($LASTEXITCODE -ne 0) { throw 'Maven tests failed; analysis stopped.' }
 
+        docker run --rm `
+            --volume "${projectRoot}:/workspace" `
+            --volume 'nexora-commerce-local-maven-cache:/root/.m2' `
+            --workdir /workspace `
+            maven:3.9.11-eclipse-temurin-11 `
+            mvn -B -ntp -f tools/artifact-verifier/pom.xml clean verify
+        if ($LASTEXITCODE -ne 0) { throw 'Java 11 verifier tests failed; analysis stopped.' }
+
         docker volume create nexora-commerce-local-node-modules | Out-Null
         docker volume create nexora-commerce-local-npm-cache | Out-Null
         docker run --rm `
@@ -45,7 +53,7 @@ try {
             --volume 'nexora-commerce-local-npm-cache:/cache' `
             --env NPM_CONFIG_CACHE=/cache `
             --workdir /workspace `
-            node:22-bookworm-slim `
+            node:24-bookworm-slim `
             sh -c 'npm ci && npm audit --omit=dev --audit-level=high && npm run test:ci && npm run build'
         if ($LASTEXITCODE -ne 0) { throw 'Angular test, audit, or build failed.' }
     }

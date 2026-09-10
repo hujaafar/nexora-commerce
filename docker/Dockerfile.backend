@@ -1,6 +1,9 @@
 # File purpose: Builds any selected Spring module into a minimal runtime image.
 FROM maven:3.9.11-eclipse-temurin-17 AS build
 
+# Bound compilation separately from runtime container limits.
+ENV MAVEN_OPTS="-Xms64m -Xmx512m -XX:ActiveProcessorCount=2 -XX:+UseSerialGC"
+
 WORKDIR /workspace
 
 COPY pom.xml ./

@@ -264,6 +264,7 @@ function Set-Role {
 }
 
 $readPrivileges = @(
+    'nx-search-read',
     "nx-repository-view-docker-$($settings.NEXUS_DOCKER_REPOSITORY)-browse",
     "nx-repository-view-docker-$($settings.NEXUS_DOCKER_REPOSITORY)-read"
 )

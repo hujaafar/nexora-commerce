@@ -4,7 +4,7 @@ A complete marketplace built with **Angular, Java 17, Spring Boot, MongoDB,
 Kafka, and S3-compatible storage**. One repository takes the application from
 product discovery to checkout, order fulfilment, automated testing, and deployment.
 
-![Nexora's cinematic storefront](frontend/public/assets/nexora-hero.png)
+![Nexora's editorial storefront](docs/evidence/redesign-desktop.png)
 
 ## Run locally
 
@@ -26,9 +26,15 @@ bash scripts/start.sh
 ```
 
 Open **[localhost:4200](http://localhost:4200)**. The startup script generates
-random local secrets, builds the services, waits for health checks, and adds the
+random local secrets, builds missing images, waits for health checks, and adds the
 sample catalog without replacing existing products. The initial build downloads
 dependencies and takes several minutes.
+
+Startup uses [laptop mode](docs/DOCKER_LAPTOP.md) by default: bounded CPU/RAM,
+smaller JVM heaps, rotating logs, and sequential builds. Existing images are reused;
+after source changes run `./scripts/start.ps1 -Build` or `bash scripts/start.sh --build`.
+Allow at least 3 GB free host RAM and 5 GB free disk (4 GB RAM / 10 GB disk for builds).
+Keep Jenkins, SonarQube, and Nexus stopped while using the storefront on a laptop.
 
 | Demo role | Email | Password |
 |---|---|---|
@@ -55,9 +61,11 @@ The demo does not charge real cards or connect to a courier.
 
 ## Included
 
-- Responsive storefront with the ScrollCraft engine used in Neo4flix: pinned
-  sections, scroll-driven depth, a spreading card composition, and entry reveals.
-- Reduced-motion and compact-screen layouts, keyboard navigation, real loading
+- Editorial storefront with layered product photography, an expanding room reveal,
+  scroll-driven image motion, and a complete paper-and-ink design across all routes.
+- Product galleries with directional image transitions, synchronized thumbnails
+  and counters, previous/next controls, and arrow-key navigation.
+- Always-on scroll effects, compact-screen layouts, keyboard navigation, real loading
   and error states, and motion cleanup when routes change.
 - JWT authentication, BCrypt passwords, role and ownership checks, gateway rate
   limits, validated uploads, seller media library, and profile avatars.
@@ -69,6 +77,14 @@ The demo does not charge real cards or connect to a courier.
   gate configuration, JaCoCo and Angular coverage, and API integration tests.
 - Nexus artifact management: dependency caching, versioned service JARs and Docker
   images, immutable releases, publisher/read-only roles, and recovery tooling.
+
+See the [five-brief requirements matrix](docs/REQUIREMENTS_CHECKLIST.md) for
+coverage and the [verification record](docs/VALIDATION.md) for measured results.
+The [motion design and browser review](docs/MOTION_DESIGN.md) explains the animation
+reference, responsive composition, and visual verification.
+The standalone Nexus artifact verifier builds on Java 11; the marketplace uses
+Java 17. A strict Java 11 requirement for the entire storefront remains a platform
+migration decision.
 
 ## Architecture
 
@@ -132,6 +148,8 @@ With the full application running:
 
 ```bash
 node scripts/integration-test.mjs
+cd frontend
+npm run test:e2e
 ```
 
 The test creates identifiable accounts/products and verifies real API behavior:
@@ -148,6 +166,8 @@ is needed for the default CI workflow.
 For the optional local SonarQube and Jenkins stack:
 
 ```powershell
+.\scripts\start-nexus.ps1
+.\scripts\provision-nexus.ps1
 .\scripts\sonarqube-start.ps1
 .\scripts\jenkins-start.ps1
 ```
@@ -157,7 +177,11 @@ Jenkins on 8088, and the local Mailpit inbox on 8025. Generated credentials stay
 in ignored `.env` files. Local notifications go to Mailpit; external email is
 an explicit operator configuration.
 
-The optional GitHub Sonar workflow is manually triggered and requires a
+Default CI scans every push and PR with disposable Docker SonarQube and runs a
+weekly scan. Its blocking gate evaluates the complete candidate snapshot. Main
+requires independent review and all five CI checks; see [review policy](docs/REVIEW_POLICY.md).
+
+The separate optional GitHub Sonar workflow is manually triggered and requires a
 runner-reachable `SONAR_HOST_URL` repository variable and `SONAR_TOKEN` secret.
 A developer's localhost is not reachable from GitHub-hosted runners.
 

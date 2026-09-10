@@ -117,16 +117,18 @@ public class GatewaySecurityConfig {
                     status.value(),
                     status.getReasonPhrase(),
                     message,
-                    exchange.getRequest().getPath().value()));
+                    exchange.getRequest().getPath().value(), java.util.Map.of()));
             exchange.getResponse().setStatusCode(status);
             exchange.getResponse().getHeaders().setContentType(MediaType.APPLICATION_JSON);
             DataBuffer buffer = exchange.getResponse().bufferFactory().wrap(body);
             return exchange.getResponse().writeWith(Mono.just(buffer));
         } catch (Exception serializationFailure) {
+            exchange.getResponse().setStatusCode(status);
             return exchange.getResponse().setComplete();
         }
     }
 
-    private record GatewayError(int status, String error, String message, String path) {
+    private record GatewayError(int status, String code, String message, String path,
+            java.util.Map<String, String> details) {
     }
 }

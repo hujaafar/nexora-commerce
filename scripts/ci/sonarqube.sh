@@ -20,10 +20,12 @@ scanner_host_argument=(--add-host host.docker.internal:host-gateway)
 # Angular writes LCOV paths relative to `frontend`, while this multi-service
 # scan starts at the repository root. Prefixing those paths lets SonarQube map
 # template and TypeScript coverage to the real files instead of dropping it.
-lcov_report="frontend/coverage/frontend/lcov.info"
-if [[ -f "${lcov_report}" ]]; then
-  sed -i 's#^SF:src/#SF:frontend/src/#' "${lcov_report}"
-fi
+for lcov_report in frontend/coverage/lcov.info frontend/coverage/frontend/lcov.info; do
+  if [[ -f "${lcov_report}" ]]; then
+    sed -i -e 's#^SF:src/#SF:frontend/src/#' \
+      -e 's#^SF:/workspace/frontend/src/#SF:frontend/src/#' "${lcov_report}"
+  fi
+done
 
 # Jenkins talks to a nested Docker daemon. Resolve Docker Desktop's host name
 # from the agent, then pass that physical-host address into the scanner child.
@@ -46,10 +48,12 @@ docker run --rm \
   "${scanner_host_argument[@]}" \
   --env SONAR_HOST_URL \
   --env SONAR_TOKEN \
+  --env SONAR_SCANNER_JAVA_OPTS=-Xmx768m \
   --volume "${workspace}:/usr/src" \
   --volume "${cache_volume}:/opt/sonar-scanner/.sonar/cache" \
   --workdir /usr/src \
   "${scanner_image}" \
+  -Dsonar.javascript.node.maxspace=512 \
   -Dsonar.working.directory=/usr/src/.scannerwork \
   "-Dsonar.projectVersion=${project_version}" \
   "-Dsonar.scm.revision=${SOURCE_COMMIT:-${GIT_COMMIT:-}}"

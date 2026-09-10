@@ -11,7 +11,7 @@ name: nexora-commerce-quality
 services:
   sonar-db:
     image: postgres:17.5-alpine3.22@sha256:6567bca8d7bc8c82c5922425a0baee57be8402df92bae5eacad5f01ae9544daa
-    restart: unless-stopped
+    restart: "no"
     environment:
       POSTGRES_DB: ${SONAR_DB_NAME:-sonarqube}
       POSTGRES_USER: ${SONAR_DB_USER:-sonarqube}
@@ -33,7 +33,7 @@ services:
 
   sonarqube:
     image: sonarqube:26.6.0.123539-community@sha256:1ddbad7b16f754bc3985f336b8ef3ebe885c1655101bdb9cb4156c9560526f58
-    restart: unless-stopped
+    restart: "no"
     depends_on:
       sonar-db:
         condition: service_healthy

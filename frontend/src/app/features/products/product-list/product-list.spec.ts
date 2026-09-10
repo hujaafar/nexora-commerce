@@ -56,7 +56,7 @@ describe('ProductList', () => {
     return fixture.nativeElement as HTMLElement;
   }
 
-  it('animates every section link over multiple slow frames', async () => {
+  it('takes section links to their destinations within one second', async () => {
     const page = await createPage();
     const sectionLinks = Array.from(page.querySelectorAll<HTMLAnchorElement>('a[href^="#"]'));
     const frameQueue: FrameRequestCallback[] = [];
@@ -83,15 +83,9 @@ describe('ProductList', () => {
       options: ScrollToOptions,
     ) => {
       currentScroll = options.top ?? currentScroll;
-    }) as typeof window.scrollTo);
+    }) as typeof globalThis.scrollTo);
 
-    const header = page.querySelector<HTMLElement>('.landing-header');
-    Object.defineProperty(header, 'offsetHeight', {
-      configurable: true,
-      value: 88,
-    });
-
-    expect(sectionLinks.length).toBeGreaterThanOrEqual(9);
+    expect(sectionLinks.length).toBeGreaterThanOrEqual(3);
 
     for (const link of sectionLinks) {
       currentScroll = 400;
@@ -116,8 +110,10 @@ describe('ProductList', () => {
         renderedFrames += 1;
       }
 
-      expect(renderedFrames).toBeGreaterThanOrEqual(9);
-      expect(scrollTo.mock.calls.length).toBeGreaterThanOrEqual(8);
+      expect(renderedFrames).toBeGreaterThanOrEqual(2);
+      expect(timestamp).toBeLessThanOrEqual(1000);
+      expect(currentScroll).toBe(targetId === 'top' ? 0 : 1384);
+      expect(document.documentElement.style.scrollBehavior).not.toBe('auto');
       expect(location.hash).toBe(`#${targetId}`);
     }
   });

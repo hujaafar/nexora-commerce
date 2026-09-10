@@ -1,0 +1,105 @@
+# Everyday development: retain every application feature while bounding resources.
+# Use after compose.yml. scripts/start.ps1 and start.sh select this by default.
+x-local: &local
+  restart: "no"
+  cpus: 1.0
+  pids_limit: 256
+  logging:
+    driver: json-file
+    options:
+      max-size: "5m"
+      max-file: "2"
+
+x-java: &java
+  <<: *local
+  mem_limit: 448m
+  memswap_limit: 448m
+  healthcheck:
+    interval: 30s
+    timeout: 5s
+    start_period: 30s
+    retries: 12
+
+x-java-options: &java-options >-
+  -Xms32m -Xmx192m -Xss512k -XX:+UseSerialGC
+  -XX:ActiveProcessorCount=2 -XX:ReservedCodeCacheSize=48m
+  -XX:MaxDirectMemorySize=32m
+
+services:
+  mongo:
+    <<: *local
+    mem_limit: 512m
+    memswap_limit: 512m
+    command: [mongod, --wiredTigerCacheSizeGB, "0.25"]
+    healthcheck:
+      interval: 30s
+      timeout: 10s
+  kafka:
+    <<: *local
+    mem_limit: 512m
+    memswap_limit: 512m
+    environment:
+      KAFKA_HEAP_OPTS: -Xms64m -Xmx256m
+      KAFKA_JVM_PERFORMANCE_OPTS: >-
+        -server -XX:+UseSerialGC -XX:ActiveProcessorCount=2
+        -XX:MaxDirectMemorySize=64m
+      KAFKA_NUM_NETWORK_THREADS: 2
+      KAFKA_NUM_IO_THREADS: 2
+      # The default 128 MiB cleaner map consumes too much of a small JVM heap.
+      # Keep compaction enabled, with a bounded 32 MiB deduplication buffer.
+      KAFKA_LOG_CLEANER_DEDUPE_BUFFER_SIZE: 33554432
+    healthcheck:
+      # Avoid launching a second Kafka JVM on every health probe. End-to-end
+      # acceptance tests still verify operations that publish broker events.
+      test: [CMD, bash, -c, ': >/dev/tcp/127.0.0.1/29092']
+      interval: 30s
+      timeout: 5s
+      start_period: 30s
+  minio:
+    <<: *local
+    mem_limit: 320m
+    memswap_limit: 320m
+    environment:
+      GOMEMLIMIT: 256MiB
+      GOMAXPROCS: "2"
+    healthcheck:
+      interval: 30s
+  discovery-service:
+    <<: *java
+    mem_limit: 320m
+    memswap_limit: 320m
+    environment:
+      JAVA_TOOL_OPTIONS: >-
+        -Xms32m -Xmx128m -Xss512k -XX:+UseSerialGC
+        -XX:ActiveProcessorCount=2 -XX:ReservedCodeCacheSize=32m
+        -XX:MaxDirectMemorySize=16m
+  user-service:
+    <<: *java
+    environment:
+      JAVA_TOOL_OPTIONS: *java-options
+  product-service:
+    <<: *java
+    environment:
+      JAVA_TOOL_OPTIONS: *java-options
+  media-service:
+    <<: *java
+    environment:
+      JAVA_TOOL_OPTIONS: *java-options
+  order-service:
+    <<: *java
+    environment:
+      JAVA_TOOL_OPTIONS: *java-options
+  gateway-service:
+    <<: *java
+    environment:
+      JAVA_TOOL_OPTIONS: *java-options
+  frontend:
+    <<: *local
+    cpus: 0.5
+    mem_limit: 64m
+    memswap_limit: 64m
+  demo-seed:
+    <<: *local
+    cpus: 0.5
+    mem_limit: 128m
+    memswap_limit: 128m

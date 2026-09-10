@@ -117,8 +117,19 @@ if ([string]::IsNullOrWhiteSpace($sonarToken)) {
 $env:SONAR_TOKEN = $sonarToken
 $env:SONAR_HOST_URL = $sonarDockerUrl
 
+# Nexus publication is part of the complete pipeline. Import only its limited
+# publisher account, never its administrator password.
+$nexusEnvironment = Join-Path $projectRoot 'nexus/.env'
+if (-not (Test-Path -LiteralPath $nexusEnvironment)) {
+    throw 'Run scripts/start-nexus.ps1 first so artifact publication is configured.'
+}
+$nexusContent = Get-Content -LiteralPath $nexusEnvironment -Raw
+$env:NEXUS_PUBLISHER_USER = (Get-EnvironmentValue $nexusContent 'NEXUS_PUBLISHER_USER').Trim()
+$env:NEXUS_PUBLISHER_PASSWORD = (Get-EnvironmentValue $nexusContent 'NEXUS_PUBLISHER_PASSWORD').Trim()
+
 # The public GitHub repository can be cloned without credentials.
 
+& (Join-Path $PSScriptRoot 'prepare-ci-trust.ps1')
 docker version | Out-Null
 if ($LASTEXITCODE -ne 0) {
     throw 'Docker Desktop is not available. Start Docker Desktop and try again.'
@@ -151,7 +162,7 @@ Write-Host 'Nexora Commerce is ready.' -ForegroundColor Green
 Write-Host "Jenkins: $($settings.JENKINS_URL)"
 Write-Host "User:    $($settings.JENKINS_ADMIN_ID)"
 if ($createdEnvironment) {
-    Write-Host "Password: $($settings.JENKINS_ADMIN_PASSWORD)"
+    Write-Host 'Password: read JENKINS_ADMIN_PASSWORD from ignored jenkins/.env'
     Write-Host 'The generated password is stored only in ignored jenkins/.env.' -ForegroundColor Yellow
 } else {
     Write-Host 'Password: read JENKINS_ADMIN_PASSWORD from ignored jenkins/.env'

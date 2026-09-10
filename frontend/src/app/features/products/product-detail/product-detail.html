@@ -65,7 +65,12 @@ File purpose: Defines the accessible products feature template.
     </div>
 
     <div class="detail-grid">
-      <div class="gallery">
+      <section
+        class="gallery"
+        aria-label="Product gallery"
+        (keydown.arrowleft)="moveImage(-1, $event)"
+        (keydown.arrowright)="moveImage(1, $event)"
+      >
         <div class="gallery-label">
           <span>PRODUCT / {{ item.id.slice(-6).toUpperCase() }}</span>
           <span
@@ -73,10 +78,17 @@ File purpose: Defines the accessible products feature template.
             {{ item.imageUrls.length === 1 ? 'VIEW' : 'VIEWS' }}</span
           >
         </div>
-        <div class="main-image">
+        <div class="main-image" [class.gallery-backwards]="imageDirection() < 0">
           <div class="image-orbit" aria-hidden="true"></div>
           @if (activeImage()) {
-            <img [src]="activeImage()" [alt]="item.name" />
+            @for (image of galleryImages(); track image.url) {
+              <img
+                [src]="image.url"
+                [alt]="item.name"
+                animate.enter="gallery-enter"
+                animate.leave="gallery-leave"
+              />
+            }
           } @else {
             <div class="detail-placeholder">
               <i></i>
@@ -89,8 +101,19 @@ File purpose: Defines the accessible products feature template.
             {{ activeImage() ? 'Product photo' : 'Product preview' }}
           </div>
           <span class="image-index">
-            01 / {{ (item.imageUrls.length || 1).toString().padStart(2, '0') }}
+            {{ (activeImageIndex() + 1).toString().padStart(2, '0') }} /
+            {{ (item.imageUrls.length || 1).toString().padStart(2, '0') }}
           </span>
+          @if (item.imageUrls.length > 1) {
+            <div class="gallery-controls">
+              <button type="button" aria-label="Previous product image" (click)="moveImage(-1)">
+                ←
+              </button>
+              <button type="button" aria-label="Next product image" (click)="moveImage(1)">
+                →
+              </button>
+            </div>
+          }
           <span class="image-corner corner-one"></span>
           <span class="image-corner corner-two"></span>
         </div>
@@ -100,7 +123,8 @@ File purpose: Defines the accessible products feature template.
               <button
                 type="button"
                 [class.active]="image === activeImage()"
-                (click)="activeImage.set(image)"
+                [attr.aria-pressed]="image === activeImage()"
+                (click)="selectImage(index)"
                 [attr.aria-label]="'Show image ' + (index + 1)"
               >
                 <img [src]="image" alt="" />
@@ -109,7 +133,7 @@ File purpose: Defines the accessible products feature template.
             }
           </div>
         }
-      </div>
+      </section>
 
       <article class="detail-copy surface-card">
         <div class="listing-status">

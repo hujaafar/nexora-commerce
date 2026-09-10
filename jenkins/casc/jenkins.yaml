@@ -77,7 +77,7 @@ jenkins:
     - permanent:
         name: docker-agent
         remoteFS: /home/jenkins/agent
-        numExecutors: 2
+        numExecutors: 1
         labelString: docker-agent docker-agent-1 docker linux
         mode: EXCLUSIVE
         retentionStrategy: always
@@ -90,7 +90,7 @@ jenkins:
     - permanent:
         name: docker-agent-2
         remoteFS: /home/jenkins/agent-2
-        numExecutors: 2
+        numExecutors: 1
         labelString: docker-agent docker-agent-2 docker linux
         mode: EXCLUSIVE
         retentionStrategy: always
@@ -171,6 +171,12 @@ credentials:
               scope: GLOBAL
               username: "${DEPLOY_MINIO_USERNAME}"
               password: "${DEPLOY_MINIO_PASSWORD}"
+          - usernamePassword:
+              id: nexus-publisher
+              description: Artifact publisher; no Nexus administration or deletion privileges
+              scope: GLOBAL
+              username: "${NEXUS_PUBLISHER_USER}"
+              password: "${NEXUS_PUBLISHER_PASSWORD}"
           - string:
               id: sonarqube-token
               description: SonarQube token limited to submitting code analysis
@@ -193,6 +199,9 @@ jobs:
         // keeps the same definitions synchronized after each Jenkinsfile run.
         parameters {
           stringParam('BUILD_AGENT_LABEL', 'docker-agent', 'Docker-capable Jenkins node label used to execute the Pipeline.')
+          booleanParam('PUBLISH_ARTIFACTS', true, 'Publish tested artifacts to Nexus after the quality gate.')
+          stringParam('NEXUS_BASE_URL', 'http://host.docker.internal:18081', 'Nexus URL reachable by build containers.')
+          stringParam('NEXUS_DOCKER_REGISTRY', 'host.docker.internal:18082', 'Nexus registry reachable by the Docker daemon.')
           booleanParam('BUILD_CONTAINER_IMAGES', true, 'Build immutable Docker images after all tests pass.')
           choiceParam('PIPELINE_ACTION', ['build-test-deploy', 'build-test', 'rollback'], 'Run the complete Pipeline, CI only, or restore the previous healthy release.')
           choiceParam('DEPLOY_ENV', ['staging', 'production'], 'Target environment used by deployment and rollback.')
@@ -208,7 +217,7 @@ jobs:
                 remote {
                   url('${NEXORA_GIT_URL}')
                 }
-                branch('*/main')
+                branch('*/${NEXORA_GIT_BRANCH}')
                 extensions {
                   cloneOptions {
                     shallow(false)

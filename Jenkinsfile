@@ -34,7 +34,7 @@ pipeline {
         )
         booleanParam(
             name: 'PUBLISH_ARTIFACTS',
-            defaultValue: false,
+            defaultValue: true,
             description: 'Use Nexus for Maven dependencies and publish versioned JARs/images after the quality gate. Requires nexus-publisher credentials.'
         )
         string(
@@ -54,7 +54,7 @@ pipeline {
         )
         choice(
             name: 'PIPELINE_ACTION',
-            choices: ['build-test-deploy', 'build-test', 'rollback'],
+            choices: ['build-test-deploy', 'build-test', 'rollback', 'rollback-drill'],
             description: 'Run the complete pipeline, CI only, or restore the previous healthy release.'
         )
         choice(
@@ -93,7 +93,8 @@ pipeline {
     environment {
         // Dependency caches live in Docker volumes, not the disposable
         // workspace. This speeds later builds without hiding source changes.
-        MAVEN_OPTS = '-Dmaven.repo.local=/cache/repository'
+        MAVEN_OPTS = '-Xms64m -Xmx384m -Dmaven.repo.local=/cache/repository'
+        NODE_OPTIONS = '--max-old-space-size=512'
         NPM_CONFIG_CACHE = '/cache'
         IMAGE_NAMESPACE = 'nexora-commerce'
     }
@@ -113,6 +114,12 @@ pipeline {
                     env.SHORT_COMMIT = env.SOURCE_COMMIT.take(12)
                     env.IMAGE_TAG = "${env.SHORT_COMMIT}-${env.BUILD_NUMBER}"
                     env.ARTIFACT_VERSION = "1.0.${env.BUILD_NUMBER}-${env.SHORT_COMMIT}"
+                    // Nested build containers do not inherit Docker Desktop's
+                    // special host DNS entry. Resolve it on the outer agent.
+                    env.CI_HOST_IP = sh(
+                        script: "getent ahostsv4 host.docker.internal | awk 'NR == 1 {print \$1}'",
+                        returnStdout: true
+                    ).trim() ?: 'host-gateway'
                     currentBuild.displayName = "#${env.BUILD_NUMBER} ${env.SHORT_COMMIT}"
                     currentBuild.description = "${params.PIPELINE_ACTION} → ${params.DEPLOY_ENV}"
                 }
@@ -141,7 +148,7 @@ pipeline {
         stage('Build and Test') {
             when {
                 expression {
-                    params.PIPELINE_ACTION != 'rollback'
+                    params.PIPELINE_ACTION in ['build-test', 'build-test-deploy']
                 }
             }
             failFast true
@@ -153,7 +160,7 @@ pipeline {
                     agent {
                         docker {
                             image 'maven:3.9.11-eclipse-temurin-17'
-                            args '-v nexora-commerce-maven-cache:/cache -v /nexora-commerce-certs:/usr/local/share/ca-certificates/nexora-commerce:ro'
+                            args "--add-host host.docker.internal:${env.CI_HOST_IP} -v nexora-commerce-maven-cache:/cache -v /nexora-commerce-certs:/usr/local/share/ca-certificates/nexora-commerce:ro"
                             reuseNode true
                         }
                     }
@@ -207,7 +214,7 @@ pipeline {
                     agent {
                         docker {
                             image 'node:24-bookworm-slim'
-                            args '-v nexora-commerce-npm-cache:/cache -v /nexora-commerce-certs:/usr/local/share/ca-certificates/nexora-commerce:ro'
+                            args "--add-host host.docker.internal:${env.CI_HOST_IP} -v nexora-commerce-npm-cache:/cache -v /nexora-commerce-certs:/usr/local/share/ca-certificates/nexora-commerce:ro"
                             reuseNode true
                         }
                     }
@@ -248,10 +255,31 @@ pipeline {
             }
         }
 
+        stage('Java 11 Artifact Verifier') {
+            when { expression { params.PIPELINE_ACTION in ['build-test', 'build-test-deploy'] } }
+            agent {
+                docker {
+                    image 'maven:3.9.11-eclipse-temurin-11'
+                    args "--add-host host.docker.internal:${env.CI_HOST_IP} -v nexora-commerce-maven-cache:/cache"
+                    reuseNode true
+                }
+            }
+            steps {
+                script {
+                    if (params.PUBLISH_ARTIFACTS) {
+                        withCredentials([usernamePassword(credentialsId: 'nexus-publisher',
+                            usernameVariable: 'NEXUS_USERNAME', passwordVariable: 'NEXUS_PASSWORD')]) {
+                            sh 'bash scripts/ci/java11-verifier.sh verify'
+                        }
+                    } else { sh 'bash scripts/ci/java11-verifier.sh verify' }
+                }
+            }
+            post { always { junit testResults: 'tools/artifact-verifier/target/surefire-reports/*.xml', allowEmptyResults: true } }
+        }
         stage('Static Analysis and Quality Gate') {
             when {
                 expression {
-                    params.PIPELINE_ACTION != 'rollback'
+                    params.PIPELINE_ACTION in ['build-test', 'build-test-deploy']
                 }
             }
             steps {
@@ -286,12 +314,12 @@ pipeline {
 
         stage('Publish Maven Artifacts') {
             when {
-                expression { params.PUBLISH_ARTIFACTS && params.PIPELINE_ACTION != 'rollback' }
+                expression { params.PUBLISH_ARTIFACTS && params.PIPELINE_ACTION in ['build-test', 'build-test-deploy'] }
             }
             agent {
                 docker {
                     image 'maven:3.9.11-eclipse-temurin-17'
-                    args '-v nexora-commerce-maven-cache:/cache'
+                    args "--add-host host.docker.internal:${env.CI_HOST_IP} -v nexora-commerce-maven-cache:/cache"
                     reuseNode true
                 }
             }
@@ -304,10 +332,26 @@ pipeline {
             }
         }
 
+        stage('Publish Java 11 Verifier') {
+            when { expression { params.PUBLISH_ARTIFACTS && params.PIPELINE_ACTION in ['build-test', 'build-test-deploy'] } }
+            agent {
+                docker {
+                    image 'maven:3.9.11-eclipse-temurin-11'
+                    args "--add-host host.docker.internal:${env.CI_HOST_IP} -v nexora-commerce-maven-cache:/cache"
+                    reuseNode true
+                }
+            }
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'nexus-publisher',
+                    usernameVariable: 'NEXUS_USERNAME', passwordVariable: 'NEXUS_PASSWORD')]) {
+                    sh 'bash scripts/ci/java11-verifier.sh deploy'
+                }
+            }
+        }
         stage('Build Immutable Images') {
             when {
                 expression {
-                    params.PIPELINE_ACTION != 'rollback' &&
+                    params.PIPELINE_ACTION in ['build-test', 'build-test-deploy'] &&
                         (params.BUILD_CONTAINER_IMAGES || params.PUBLISH_ARTIFACTS ||
                          params.PIPELINE_ACTION == 'build-test-deploy')
                 }
@@ -324,7 +368,7 @@ pipeline {
 
         stage('Publish Docker Artifacts') {
             when {
-                expression { params.PUBLISH_ARTIFACTS && params.PIPELINE_ACTION != 'rollback' }
+                expression { params.PUBLISH_ARTIFACTS && params.PIPELINE_ACTION in ['build-test', 'build-test-deploy'] }
             }
             steps {
                 withCredentials([usernamePassword(credentialsId: 'nexus-publisher',
@@ -419,6 +463,20 @@ pipeline {
             }
         }
 
+        stage('Staging Rollback Drill') {
+            when { expression { params.PIPELINE_ACTION == 'rollback-drill' } }
+            steps {
+                script {
+                    if (params.DEPLOY_ENV != 'staging') {
+                        error('Rollback drills are restricted to staging.')
+                    }
+                    int result = sh(script: 'bash scripts/ci/rollback-drill.sh', returnStatus: true)
+                    env.DEPLOYMENT_RESULT = 'FAULT_INJECTION'
+                    env.ROLLBACK_RESULT = result == 0 ? 'SUCCESS' : 'FAILED'
+                    if (result != 0) { error('Staging recovery drill failed.') }
+                }
+            }
+        }
         stage('Manual Rollback') {
             when {
                 expression {

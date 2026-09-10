@@ -1,9 +1,12 @@
 # Nexus artifact management
 
 Nexus stores the actual Nexora Commerce build: the parent Maven POM, six Java 17
-service JARs and their POMs, and seven Docker images including the Angular frontend.
-It also proxies Maven Central. The old standalone Java 11 demo is replaced by
-the marketplace services in this integrated repository.
+service JARs and their POMs, seven Docker images including the Angular frontend,
+and a separate Java 11 artifact verifier. It also proxies Maven Central.
+The verifier retrieves a versioned artifact and checks its SHA-256 against the
+producing build. It is a useful JDK 11 component; the six Spring Boot 3 marketplace
+services still require Java 17. A requirement to run buy-02 itself on Java 11 is
+not satisfied by this split.
 
 ```mermaid
 flowchart LR
@@ -95,11 +98,11 @@ to work without a Nexus server. See the official
 
 ## Connect Jenkins
 
-1. Start/provision Nexus and the existing SonarQube/Jenkins stacks.
-2. In Jenkins, create a username/password credential with ID `nexus-publisher`,
-   using the generated publisher values from `nexus/.env`.
-3. Select `PUBLISH_ARTIFACTS=true` for the Nexora pipeline. The default is false,
-   so public GitHub CI and installations without Nexus keep working.
+1. Start/provision Nexus, then SonarQube, then Jenkins.
+2. The Jenkins start scripts import the restricted publisher credentials from
+   ignored `nexus/.env`; JCasC creates the `nexus-publisher` credential automatically.
+3. `PUBLISH_ARTIFACTS=true` is the Jenkins default. Public GitHub CI validates
+   builds and quality on hosted runners without connecting to private Nexus.
 4. On Docker Desktop, use `NEXUS_BASE_URL=http://host.docker.internal:18081`
    and `NEXUS_DOCKER_REGISTRY=host.docker.internal:18082`.
 
@@ -146,6 +149,21 @@ This retrieves and tags all seven images under the local names expected by
 `compose.jenkins.yml`. Use the existing deployment/rollback scripts with that
 tag and the appropriate environment credentials. Copying artifacts does not
 restore databases or roll back database migrations.
+
+### Verify multiple Maven versions with Java 11
+
+The standalone [artifact verifier](../tools/artifact-verifier/README.md) builds
+and runs on JDK 11. Its seven tests cover valid retrieval, mismatched bytes,
+HTTP failures, redirects, and invalid coordinates. Jenkins builds and publishes
+it alongside the services after the quality gate; the local service-only
+`publish-nexus.ps1` command above does not publish this separate tool.
+
+Two discovery-service releases were independently retrieved from Nexus and
+matched against the SHA-256 of each producing Jenkins build's archived JAR:
+`1.0.4-6acc99f8a8cf` and `1.0.5-97b1d83c9c78`. The
+[verification record](evidence/artifact-versions.json) identifies both versions
+and hashes. The [repository screenshot](evidence/nexus-browser.png) shows the
+configured hosted, proxy, and group repositories.
 
 Stop Nexus without deleting artifacts:
 

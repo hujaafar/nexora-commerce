@@ -2,7 +2,7 @@
  * File purpose: Implements the products feature behavior.
  */
 import { CurrencyPipe } from '@angular/common';
-import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { catchError, finalize, map, of, switchMap, tap } from 'rxjs';
@@ -28,6 +28,14 @@ export class ProductDetail {
 
   protected readonly product = signal<Product | null>(null);
   protected readonly activeImage = signal<string | null>(null);
+  protected readonly galleryImages = computed(() => {
+    const url = this.activeImage();
+    return url ? [{ url }] : [];
+  });
+  protected readonly activeImageIndex = computed(() =>
+    Math.max(0, this.product()?.imageUrls.indexOf(this.activeImage() ?? '') ?? 0),
+  );
+  protected readonly imageDirection = signal(1);
   protected readonly loading = signal(true);
   protected readonly loadError = signal(false);
   protected readonly quantity = signal(1);
@@ -69,6 +77,19 @@ export class ProductDetail {
             );
         }
       });
+  }
+
+  protected selectImage(index: number): void {
+    const images = this.product()?.imageUrls ?? [];
+    if (!images.length) return;
+    const next = ((index % images.length) + images.length) % images.length;
+    this.imageDirection.set(index < this.activeImageIndex() ? -1 : 1);
+    this.activeImage.set(images[next]);
+  }
+
+  protected moveImage(direction: number, event?: Event): void {
+    event?.preventDefault();
+    this.selectImage(this.activeImageIndex() + direction);
   }
 
   protected changeQuantity(value: number): void {

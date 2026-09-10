@@ -146,6 +146,7 @@ File purpose: Configures the multi-module Maven build.
                     <artifactId>maven-surefire-plugin</artifactId>
                     <configuration>
                         <useModulePath>false</useModulePath>
+                        <argLine>@{argLine} -Xms64m -Xmx256m</argLine>
                     </configuration>
                 </plugin>
             </plugins>

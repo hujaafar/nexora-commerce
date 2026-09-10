@@ -12,19 +12,21 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class GatewayRoutesConfig {
 
+    private static final String USER_SERVICE_URI = "lb://user-service";
+
     // Learning annotation: @Bean registers the returned object in Spring’s IoC container so other classes can inject it.
     @Bean
     RouteLocator marketplaceRoutes(RouteLocatorBuilder builder) {
         return builder.routes()
                 .route("user-auth", route -> route
                         .path("/auth/**")
-                        .uri("lb://user-service"))
+                        .uri(USER_SERVICE_URI))
                 .route("user-profile", route -> route
                         .path("/me", "/me/**")
-                        .uri("lb://user-service"))
+                        .uri(USER_SERVICE_URI))
                 .route("user-admin", route -> route
                         .path("/admin/users", "/admin/users/**")
-                        .uri("lb://user-service"))
+                        .uri(USER_SERVICE_URI))
                 .route("products", route -> route
                         .path("/products", "/products/**")
                         .uri("lb://product-service"))

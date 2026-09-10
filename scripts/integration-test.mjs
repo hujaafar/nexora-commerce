@@ -1,9 +1,24 @@
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
+import { setTimeout as delay } from 'node:timers/promises';
 
 const base = (process.env.API_BASE || 'http://127.0.0.1:4200/api').replace(/\/$/, '');
 const run = randomUUID().slice(0, 8);
 let checks = 0;
+// Eureka's first registry snapshot can precede the last service registration.
+// Wait only on read-only probes; mutation/test failures are never retried.
+async function waitForRoute(path, token) {
+  for (let attempt = 0; attempt < 60; attempt++) {
+    const response = await fetch(`${base}${path}`, {
+      headers: { Authorization: `Bearer ${token}` }, signal: AbortSignal.timeout(10000),
+    });
+    await response.arrayBuffer();
+    if (response.status === 200) return;
+    assert.ok([502, 503].includes(response.status), `Readiness ${path}: unexpected HTTP ${response.status}`);
+    await delay(2000);
+  }
+  throw new Error(`Service discovery did not make ${path} ready within 120 seconds`);
+}
 async function api(method, path, token, data, expected = 200) {
   const isForm = data instanceof FormData;
   const response = await fetch(`${base}${path}`, {
@@ -18,7 +33,14 @@ async function api(method, path, token, data, expected = 200) {
   assert.equal(response.status, expected, `${method} ${path}: expected ${expected}, received ${response.status}`);
   checks++;
   if (response.status === 204) return null;
-  return response.headers.get('content-type')?.includes('json') ? response.json() : response.arrayBuffer();
+  if (!response.headers.get('content-type')?.includes('json')) return response.arrayBuffer();
+  const result = await response.json();
+  if (expected >= 400) {
+    assert.equal(typeof result.code, 'string', `${path}: error code is required`);
+    assert.equal(typeof result.message, 'string', `${path}: error message is required`);
+    assert.ok(result.details && typeof result.details === 'object', `${path}: error details are required`);
+  }
+  return result;
 }
 async function account(role, label) {
   return api('POST', '/auth/register', null, {
@@ -36,6 +58,8 @@ try {
   seller = await account('SELLER', 'seller');
   buyer = await account('CLIENT', 'customer');
   outsider = await account('CLIENT', 'outsider');
+  await waitForRoute('/media/images/mine', seller.accessToken);
+  await waitForRoute('/cart', buyer.accessToken);
   await api('POST', '/auth/register', null, { name: 'Denied Admin', email: `denied-${run}@example.test`, password: 'DeniedPass123!', role: 'ADMIN' }, 400);
   await api('GET', '/admin/users', buyer.accessToken, undefined, 403);
   await api('GET', '/me', seller.accessToken);
@@ -57,6 +81,9 @@ try {
   const forged = new FormData();
   forged.append('file', new Blob(['not an image'], { type: 'image/png' }), 'forged.png');
   await api('POST', '/media/images', seller.accessToken, forged, 400);
+  const oversized = new FormData();
+  oversized.append('file', new Blob([Buffer.alloc(2 * 1024 * 1024 + 1)], { type: 'image/png' }), 'oversized.png');
+  await api('POST', '/media/images', seller.accessToken, oversized, 400);
 
   let wishlist = await api('PUT', `/wishlist/${product.id}`, buyer.accessToken);
   assert.ok(wishlist.items.some((item) => item.id === product.id));

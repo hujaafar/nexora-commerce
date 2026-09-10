@@ -1,0 +1,20 @@
+[
+  {
+    "artifact": "com.nexora:discovery-service",
+    "version": "1.0.4-6acc99f8a8cf",
+    "sha256": "16ad28c69007e07041de3388ec8e18c472a9e74af39b8a8ca8de471f453b6fd5",
+    "expectedSource": "Jenkins build 4 archived JAR",
+    "retrievedFrom": "Nexus Maven releases",
+    "runtime": "Java 11",
+    "result": "PASS"
+  },
+  {
+    "artifact": "com.nexora:discovery-service",
+    "version": "1.0.5-97b1d83c9c78",
+    "sha256": "fe07574438b8deb743bb128d4648b576c0b69155e8dad7e4f9af357864b689ed",
+    "expectedSource": "Jenkins build 5 archived JAR",
+    "retrievedFrom": "Nexus Maven releases",
+    "runtime": "Java 11",
+    "result": "PASS"
+  }
+]

@@ -3,6 +3,8 @@
 Start Docker Desktop with Linux containers, then run:
 
 ```powershell
+.\scripts\start-nexus.ps1
+.\scripts\provision-nexus.ps1
 .\scripts\sonarqube-start.ps1
 .\scripts\jenkins-start.ps1
 ```
@@ -13,11 +15,13 @@ Mailpit captures local notifications at localhost:8025. The startup script
 creates random credentials in ignored `jenkins/.env`. Never commit this file.
 
 JCasC creates the `nexora-commerce` job, a controller with no build executors,
-two Docker agents, and deployment credentials. The public source URL defaults
+two Docker agent definitions, and deployment credentials. One worker with one
+executor starts by default. The second worker is optional via the `distributed`
+Compose profile; see [laptop operation](DOCKER_LAPTOP.md). The public source URL defaults
 to https://github.com/hujaafar/nexora-commerce.git. No personal Git password is
 required. The controller polls main; it does not execute arbitrary fork PRs.
 
-The pipeline offers `build-test`, `build-test-deploy`, and `rollback` actions.
+The pipeline offers `build-test`, `build-test-deploy`, `rollback`, and `rollback-drill` actions.
 It validates source and Compose, builds and tests Java and Angular, checks the
 configured Sonar gate, packages immutable images, and deploys to staging or
 production. Failed HTTP verification can trigger rollback to the last healthy
@@ -40,4 +44,20 @@ external notifications. `scripts/configure-gmail.ps1` is an optional helper.
 ## Versioned artifact storage
 
 See [Nexus setup](NEXUS_SETUP.md) for Maven caching, JAR/image publication,
-read-only recovery, and the optional `PUBLISH_ARTIFACTS` Jenkins parameter.
+read-only recovery, and the `PUBLISH_ARTIFACTS` Jenkins parameter (default true).
+Nexus bootstrap requires operator license acceptance on first installation.
+
+The Java 11 artifact verifier is tested and published alongside the six Java 17
+services. Deployment must pass the real API acceptance journey before a candidate
+is promoted to current. The staging-only recovery drill uses a disposable broken
+frontend image and verifies restoration of the recorded healthy release.
+
+The same deployment and rollback scripts run in the required hosted
+`Deployment and rollback acceptance` job, independently of local Jenkins.
+The [validation record](VALIDATION.md) distinguishes that successful recovery
+test from the local Jenkins run interrupted by insufficient disk space.
+
+JVM heaps are bounded for local use. A laptop may still need to stop its ordinary
+development stack while running all CI infrastructure plus staging. Named volumes
+retain data and release history. `NEXORA_GIT_BRANCH` can select a trusted audit
+branch; it defaults to main and does not enable arbitrary fork execution.

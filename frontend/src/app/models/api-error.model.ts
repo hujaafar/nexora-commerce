@@ -4,10 +4,10 @@
 export interface ApiError {
   timestamp: string;
   status: number;
-  error: string;
+  error?: string;
   message: string;
   path: string;
   validationErrors?: Record<string, string>;
   details?: Record<string, string>;
-  code?: string;
+  code: string;
 }

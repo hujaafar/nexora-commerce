@@ -3,47 +3,25 @@ File purpose: Defines the accessible auth feature template.
 -->
 <section class="auth-page">
   <div class="auth-story">
-    <p class="eyebrow">Good to see you again</p>
-    <h1>Back to your next big move.</h1>
-    <p>Sign in to continue browsing new finds, updating your profile, or managing your shop.</p>
-
-    <div class="story-visual" aria-hidden="true">
-      <div class="story-topline">
-        <span>Nexora Commerce / MEMBER AREA</span>
-        <span class="story-status">Ready</span>
-      </div>
-      <div class="story-metrics">
-        <div class="story-metric">
-          <strong>Shop</strong>
-          <span>browse new finds</span>
-        </div>
-        <div class="story-metric">
-          <strong>Sell</strong>
-          <span>manage products</span>
-        </div>
-        <div class="story-metric">
-          <strong>Profile</strong>
-          <span>make it yours</span>
-        </div>
-      </div>
+    <img
+      class="auth-photo"
+      src="/assets/editorial-room.webp"
+      alt="Sunlit room with a sculptural orange chair and ceramic vase"
+      fetchpriority="high"
+    />
+    <div class="auth-photo-copy">
+      <span>THE EVERYDAY EDIT</span>
+      <h1>Good things.<br />Your way.</h1>
+      <p>A space for your next favorite.</p>
     </div>
-
-    <div class="security-note">
-      <span>✓</span>
-      One account for browsing, selling, and keeping your profile current.
-    </div>
+    <a class="auth-explore" routerLink="/products">Explore the collection <span>↗</span></a>
   </div>
 
   <form class="auth-card surface-card" [formGroup]="form" (ngSubmit)="submit()">
-    <div class="auth-brandline">
-      <span class="auth-mark"><i>01</i> Nexora Commerce MARKET</span>
-      <span class="auth-encryption">Welcome back</span>
-    </div>
-
-    <p class="eyebrow">Sign in</p>
+    <a class="auth-back" routerLink="/products">← Back to the collection</a>
+    <p class="eyebrow">YOUR NEXORA ACCOUNT</p>
     <h2>Welcome back.</h2>
-    <p>Continue where you left off.</p>
-
+    <p>Your favorites are right where you left them.</p>
     <div class="mb-3">
       <label class="form-label" for="email">Email address</label>
       <input

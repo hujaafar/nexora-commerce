@@ -37,7 +37,7 @@
         <div class="section-title">
           <div>
             <p class="eyebrow">Items</p>
-            <h2>{{ item.items.length }} product lines</h2>
+            <h2>{{ item.items.length }} {{ item.items.length === 1 ? 'product' : 'products' }}</h2>
           </div>
         </div>
         @for (product of item.items; track product.productId) {

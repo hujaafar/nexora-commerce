@@ -21,7 +21,7 @@ export class NotificationService {
   show(message: string, kind: NotificationKind = 'info'): void {
     const notification = { id: this.nextId++, kind, message };
     this.notificationSignal.set(notification);
-    window.setTimeout(() => {
+    globalThis.setTimeout(() => {
       if (this.notificationSignal()?.id === notification.id) {
         this.dismiss();
       }

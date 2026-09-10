@@ -32,6 +32,7 @@ data/
 uploads/
 certs/*.p12
 certs/*.pem
+certs/tls/
 !certs/README.md
 
 # Logs

@@ -108,7 +108,8 @@ public class ApiSecurityConfig {
         objectMapper.writeValue(response.getOutputStream(), Map.of(
                 "timestamp", Instant.now().toString(),
                 "status", status,
-                "error", error,
+                "code", error,
+                "details", Map.of(),
                 "message", message,
                 "path", path));
     }

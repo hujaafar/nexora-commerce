@@ -25,6 +25,7 @@ services:
     image: apache/kafka:3.9.1
     environment:
       KAFKA_NODE_ID: 1
+      KAFKA_HEAP_OPTS: -Xms128m -Xmx256m
       KAFKA_PROCESS_ROLES: broker,controller
       KAFKA_LISTENERS: PLAINTEXT://:29092,CONTROLLER://:29093,PLAINTEXT_HOST://:9092
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:${KAFKA_HOST_PORT:-9092}
@@ -44,7 +45,7 @@ services:
       test:
         [
           "CMD-SHELL",
-          "/opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list >/dev/null 2>&1"
+          "/opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:29092 --list >/dev/null 2>&1"
         ]
       interval: 10s
       timeout: 8s
@@ -81,6 +82,7 @@ services:
         SERVICE: discovery-service
     environment:
       PORT: 8761
+      JAVA_TOOL_OPTIONS: ${SERVICE_JAVA_OPTS:--Xms64m -Xmx256m}
       EUREKA_HOSTNAME: discovery-service
     ports:
       - "${BIND_ADDRESS:-127.0.0.1}:${DISCOVERY_HOST_PORT:-8761}:8761"
@@ -102,6 +104,7 @@ services:
         SERVICE: user-service
     environment:
       PORT: 8081
+      JAVA_TOOL_OPTIONS: ${SERVICE_JAVA_OPTS:--Xms64m -Xmx256m}
       EUREKA_URL: http://discovery-service:8761/eureka/
       MONGODB_URI: mongodb://${MONGO_ROOT_USERNAME:-marketplace}:${MONGO_ROOT_PASSWORD:-marketplace-dev-password}@mongo:27017/nexora_users?authSource=admin
       JWT_SECRET: ${JWT_SECRET:-change-this-development-secret-to-at-least-32-characters}
@@ -131,6 +134,7 @@ services:
         SERVICE: product-service
     environment:
       PORT: 8082
+      JAVA_TOOL_OPTIONS: ${SERVICE_JAVA_OPTS:--Xms64m -Xmx256m}
       EUREKA_URL: http://discovery-service:8761/eureka/
       MONGODB_URI: mongodb://${MONGO_ROOT_USERNAME:-marketplace}:${MONGO_ROOT_PASSWORD:-marketplace-dev-password}@mongo:27017/nexora_products?authSource=admin
       KAFKA_BOOTSTRAP_SERVERS: kafka:29092
@@ -163,6 +167,7 @@ services:
         SERVICE: media-service
     environment:
       PORT: 8083
+      JAVA_TOOL_OPTIONS: ${SERVICE_JAVA_OPTS:--Xms64m -Xmx256m}
       EUREKA_URL: http://discovery-service:8761/eureka/
       MONGODB_URI: mongodb://${MONGO_ROOT_USERNAME:-marketplace}:${MONGO_ROOT_PASSWORD:-marketplace-dev-password}@mongo:27017/nexora_media?authSource=admin
       KAFKA_BOOTSTRAP_SERVERS: kafka:29092
@@ -200,6 +205,7 @@ services:
         SERVICE: order-service
     environment:
       PORT: 8084
+      JAVA_TOOL_OPTIONS: ${SERVICE_JAVA_OPTS:--Xms64m -Xmx256m}
       EUREKA_URL: http://discovery-service:8761/eureka/
       MONGODB_URI: mongodb://${MONGO_ROOT_USERNAME:-marketplace}:${MONGO_ROOT_PASSWORD:-marketplace-dev-password}@mongo:27017/nexora_orders?authSource=admin
       KAFKA_BOOTSTRAP_SERVERS: kafka:29092
@@ -235,6 +241,7 @@ services:
         SERVICE: gateway-service
     environment:
       PORT: 8080
+      JAVA_TOOL_OPTIONS: ${SERVICE_JAVA_OPTS:--Xms64m -Xmx256m}
       EUREKA_URL: http://discovery-service:8761/eureka/
       JWT_SECRET: ${JWT_SECRET:-change-this-development-secret-to-at-least-32-characters}
       RATE_LIMIT_ENABLED: ${RATE_LIMIT_ENABLED:-true}
@@ -242,7 +249,7 @@ services:
       AUTH_RATE_LIMIT_WINDOW: ${AUTH_RATE_LIMIT_WINDOW:-60s}
       MEDIA_RATE_LIMIT_REQUESTS: ${MEDIA_RATE_LIMIT_REQUESTS:-60}
       MEDIA_RATE_LIMIT_WINDOW: ${MEDIA_RATE_LIMIT_WINDOW:-60s}
-      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:4200,http://localhost}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:4200,http://127.0.0.1:4200,http://localhost}
     ports:
       - "${BIND_ADDRESS:-127.0.0.1}:${GATEWAY_HOST_PORT:-8080}:8080"
     depends_on:
