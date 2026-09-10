@@ -53,7 +53,7 @@
             <input type="radio" formControlName="paymentMethod" value="CARD_SIMULATED" />
             <span
               ><strong>Card simulation</strong
-              ><small>Demo authorization—no real card details</small></span
+              ><small>Demo authorization. No real card details</small></span
             ><i>Bonus</i>
           </label>
         </div>
@@ -130,7 +130,7 @@
   <ng-template #summary>
     <aside class="checkout-summary surface-card">
       <p class="eyebrow">Your order</p>
-      <h2>{{ cart()?.itemCount || 0 }} items</h2>
+      <h2>{{ cart()?.itemCount || 0 }} {{ cart()?.itemCount === 1 ? 'item' : 'items' }}</h2>
       <dl>
         <div>
           <dt>Subtotal</dt>

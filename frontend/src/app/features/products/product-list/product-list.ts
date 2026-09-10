@@ -120,6 +120,18 @@ export class ProductList implements OnInit, OnDestroy {
     document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' });
   }
 
+  protected selectCategory(category: string, event: Event): void {
+    this.filters.controls.category.setValue(category);
+    this.scrollToSection(event, 'products');
+  }
+
+  protected categoryImage(category: string): string {
+    const name = category.toLowerCase();
+    if (/home|furniture|decor|kitchen/.test(name)) return '/assets/editorial-room.webp';
+    if (/shoe|fashion|cloth|shirt|sport/.test(name)) return '/assets/editorial-sneaker.webp';
+    return '/assets/editorial-headphones.webp';
+  }
+
   protected clearFilters(): void {
     this.filters.reset({ q: '', category: '', minPrice: null, maxPrice: null, sort: 'newest' });
   }
@@ -143,14 +155,14 @@ export class ProductList implements OnInit, OnDestroy {
       return;
     }
     const start = globalThis.scrollY;
-    const headerHeight = document.querySelector<HTMLElement>('.landing-header')?.offsetHeight ?? 0;
+    const headerHeight = document.querySelector<HTMLElement>('.site-header')?.offsetHeight ?? 0;
     const destination =
       sectionId === 'top'
         ? 0
         : Math.max(0, start + section.getBoundingClientRect().top - headerHeight - 16);
     const distance = destination - start;
     if (Math.abs(distance) < 2) return;
-    const duration = Math.min(8000, Math.max(2200, Math.abs(distance) / 0.42));
+    const duration = Math.min(1000, Math.max(500, Math.abs(distance) / 4));
     const startedAt = performance.now();
     const root = document.documentElement;
     this.previousScrollBehavior = root.style.scrollBehavior;

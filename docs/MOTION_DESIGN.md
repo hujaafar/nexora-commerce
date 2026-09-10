@@ -1,136 +1,66 @@
-# Storefront motion
+# Editorial storefront and motion
 
-Nexora's collection now sits in a floating frame that settles toward the viewer
-as the page scrolls. A rear outline, photographic frame, and foreground label
-move independently. The existing dark/cobalt identity and catalog remain the
-center of the experience.
+Nexora uses warm paper, off-black type, burnt orange, olive accents, and photographic campaign imagery throughout the application. The redesign includes discovery, product details, sign-in, registration, cart, checkout, saved products, orders, profile analytics, the seller workspace, image management, and moderation.
 
-![Opening in the production build](evidence/motion-desktop.png)
+![New storefront opening](evidence/redesign-desktop.png)
 
-## Reference and brief
+## Creative direction
 
-The supplied Estates interaction video showed tilted application panels, image
-zooms, and sliding detail views. Its movement informed this enhancement; the
-reference video and its real-estate interface are not included in this repository.
-The workflow follows [ScrollCraft](https://github.com/nateherkai/scroll-craft),
-using the existing shared runtime without modifying its source in this change.
-The existing Nexora hero image is reused. No assets were generated or purchased.
+The user requested a whole redesign with image animation and scroll effects like the earlier Neo4flix project. The [authored brief](REDESIGN_BRIEF.md) records that request separately from implementation decisions. Neo4flix's moving reel and camera entrance informed the spatial movement; Nexora uses independent photographic layers and an expanding room image. It does not render a 3D scene or play a scrub video.
 
-This brief reuses the established project and the user's motion reference.
-The following design decisions are authored assumptions, not interview answers:
+The custom retail lookbook moves from a product-and-type opening through useful category shortcuts, an immersive photographic spread, the searchable catalog, and a shop/join invitation. The eight stock ScrollCraft grammars were considered in the brief. Their main tradeoffs were delaying direct shopping, reducing the requested imagery, or repeating the earlier gallery structure. Navigation, hero, sequence, ending, signature, and grammar differ from the previous Nexora refinement: **6 of 6 fingerprint dimensions**. The previous registry row remains intact.
 
-- Dimensional, composed, tactile movement within Nexora's current visual identity.
-- Keep the hero, working catalog, marketplace story, order steps, and shopping close.
-- Concentrate motion in the opening; keep browsing and the finish calmer.
-- Give shoppers a feeling of curiosity, control, connection, clarity, then readiness.
-- Make the collection frame, rear outline, and label settle at different depths.
-- Retain the dark/cobalt palette, Kanit typography, and existing photography.
-- Use separate scenes with direct catalog navigation and ordinary scrolling.
-- Use the supplied video as a behavior reference and the existing image as the asset.
+## Journey and motion score
 
-The page follows the existing commerce gallery structure. Filmic, worldflight,
-and cutlist structures would delay browsing; a live surface would discard the
-established hero. Editorial chapters, poster, and split-stage structures would
-replace the established shopping sequence without a need. The first local
-ScrollCraft registry was empty, so no prior registered build needed a fingerprint
-comparison. This enhancement is not claimed as an original new brand or site.
-
-## Journey and motion
-
-| Beat | Motion | Intended response |
+| Beat | Device and pace | Intended response |
 |---|---|---|
-| Opening | Desktop pin, independent depth, fine-pointer tilt | Curiosity: the collection feels like a floating object |
-| Catalog | Natural flow and brief entrance | Control: search, sort, and filter immediately |
-| Story | Three separated panels gradually align | Connection: understand discovery, saving, and orders |
-| Order steps | Short staggered entrances | Clarity: see what happens next |
-| Close | Stable shopping link after a brief entrance | Readiness: return to the catalog |
-| Product detail | Directional cross-slide between real image URLs | Confidence: selection, image, and counter agree |
+| Opening | 1.7-screen desktop pin; headphones, shoe, photo and type move independently; fine-pointer tilt | Curiosity |
+| Categories | Natural flow; image hover/focus; buttons set the real catalog category | Agency |
+| Campaign peak | 2.2-screen desktop pin; photo aperture opens while the near object moves past | Delight |
+| Catalog | Natural flow; short entry and alternate listing-image transition | Confidence |
+| Membership | Stable split composition, brief shoe hover and working shopping/registration links | Belonging |
+| Product detail | Cross-slide, thumbnails, counters and arrow-key navigation | Confidence in the selection |
+| Account pages | One finite photographic entrance; calm forms and workspaces | Focus |
 
-The opening is the principal motion moment: “The collection floats into place as
-I move into the shop.” It receives 2.15 viewport heights, compared with 1.65 for
-the story. There are no intentionally empty pinned intervals. The memorable
-experience is a floating collection becoming a straightforward shop.
+Signature: **a small picture opens into a room as the foreground product passes the viewer.** The room reveal has the largest visual change and longest scroll span. The ending remains visible and useful.
 
-At widths of 800px or below, the text and collection frame stack in normal flow
-and the engine is not mounted. Reduced motion also avoids pinning and entrance
-animations. Keyboard focus, wheel input, and touch interrupt a section-link scroll;
-moving to another control cannot be pulled back by an unfinished animation.
+The visual review followed the intended curve: bold opening, useful choices, expanding room, clear catalog, inviting close. The first pass instead felt obstructed on phones because stretched image dimensions covered text and controls. Explicit image aspect handling, static reveal fallbacks, and non-interactive mobile artwork resolved that difference. Paper behind the campaign heading keeps the type readable as the image expands.
 
-![Story panels during the production scroll review](evidence/motion-story.png)
+![Photographic campaign reveal](evidence/redesign-campaign.png)
+![Redesigned sign-in](evidence/redesign-login.png)
 
-## Verification
+## Assets and performance
 
-Local Chrome checks on Windows cover desktop 1440×900, phones at 390×844 and
-360×640, and reduced motion. Native pointer lock/capture is disabled in automated
-contexts. The final motion browser suite passes five tests:
+Three images were generated with the built-in image generation tool, inspected, and encoded as WebP. Their combined size is **623,358 bytes**. [Asset provenance and exact prompts](CAMPAIGN_ASSETS.md) distinguish campaign imagery from actual seller listings. Fonts and imagery are served locally; the storefront does not depend on a remote image service.
 
-1. Multiple hero positions, actual pointer-state pixel differences, catalog
-   filtering/reset, product navigation, and engine teardown without page errors.
-2. Phone content, overflow, shopping link, and focus visibility through every story panel.
-3. The same checks on a compact phone viewport.
-4. Reduced motion with accessible content and no running hero animations.
-5. Gallery transitions, thumbnail selection, image count, arrow keys, and removal
-   of the outgoing image after its transition.
+The production initial bundle is approximately **532 KB raw / 108 KB estimated transferred**, within the existing 540 KB warning and 600 KB error budgets. No animation library or production dependency was added. The shared ScrollCraft source is unchanged.
 
-These tests intercept product requests with a deterministic fixture. They check
-UI behavior and do not replace the real commerce journeys in `marketplace.spec.ts`.
-Both suites run against the production artifacts in hosted browser acceptance.
+Phones use ordinary document flow with short scroll-linked image transforms. The desktop engine is not mounted at 800px or below. Mobile updates run outside Angular and are coalesced into one animation frame per scroll event. Reduced-motion mode keeps the complete static composition, catalog and controls. Route changes release the engine, observers and event handlers.
 
-All 32 Angular tests and the three-cycle ScrollCraft lifecycle check passed
-locally. The production build passed its error budgets; it retains warnings for
-an initial bundle of about 542kB versus the 540kB warning threshold and the Windows
-critical-CSS resolver's lookup of the separately served motion stylesheet. The
-actual production package review checks the stylesheet, script, image and fonts
-through HTTP. The asset-only review returns an explicit 503 for API requests.
+## Executed verification
 
-The stock ScrollCraft harness captured 13 desktop samples across both pinned
-sections, including six positions in each. Its contact sheet was inspected.
-Two dead-scroll flags span the unannotated catalog and closing flow sections;
-the harness skips those sections and does not measure the page's custom depth
-transforms. These are detector limitations, not a claimed clean automated report.
-The separate browser tests compare computed transforms and actual painted pixels.
-The stock cue/contrast pass sees no `data-sc-cue` elements, so it does not certify
-this page's contrast. Text readability was reviewed in the actual screenshots.
+- Production Angular build passed with the existing size budgets. Its existing Windows critical-CSS warning for the separately served `motion/scrollcraft.css` remains; browser checks confirm that stylesheet loads.
+- All 32 Angular unit tests passed, including service-state behavior and motion disposal.
+- Eight fixture-isolated browser tests passed: desktop painted movement and pointer tilt, two phone widths, reduced motion, gallery navigation, and 13 route/role combinations at each of 1440, 390 and 360 pixels.
+- Browser checks exercised search/reset, direct catalog navigation, gallery controls, invalid login/checkout forms, menu open/Escape, mobile sign-out availability, horizontal overflow and image loading.
+- A 1366 × 768 laptop check confirmed the initial shop action remains inside the viewport.
+- Desktop ScrollCraft contact sheets sampled both pinned acts at intermediate positions and reported no dead scroll. The phone and reduced-motion harness uses an application-readiness selector because the app intentionally does not mount the desktop engine in those modes. This changes harness startup only, not the runtime or measurements.
 
-The review initially found clipped mobile story content, focus fighting the
-slow anchor scroll, a search icon contaminating its accessible label, and a
-decorative gallery corner intercepting the next button. Each was fixed and the
-affected browser checks rerun. Visual inspection also caught a stretched image
-badge; its positioning was corrected. The second failed browser run is retained
-in the local work folder; the first run's screenshots were overwritten by a rerun,
-so only its failure output remains. No earlier green result substitutes for the
-final browser rerun.
+The first failed browser screenshots remain in the local work folder. The stock mobile harness timed out waiting for `html.sc-ready`; that failure was retained and resolved by waiting for the Angular storefront in the application-specific harness. The stock contrast checker sees no `data-sc-cue` elements here and does **not** certify contrast. Actual screenshots were reviewed, including intermediate images, populated forms, order tracking, the seller editor and moderation.
 
-The initial hosted quality scan rejected three duplicate CSS selectors and a
-redundant word in an image's alternative text. The declarations were consolidated
-without changing the intended style values. A follow-up scan still flagged the
-Angular alternative-text expression, so it was simplified to the product name;
-the separate gallery counter identifies the selected view. Both failed reports
-are retained in the local work folder and the GitHub run artifacts.
+These are desktop Chrome viewport checks, not tests on physical phones or Safari. The full-stack journeys are separate: [PR checks](https://github.com/hujaafar/nexora-commerce/pull/1/checks) run the live customer/seller browser journeys, HTTP/HTTPS API acceptance, quality gate, artifact verification and rollback drills on hosted runners. See [validation](VALIDATION.md) for earlier infrastructure evidence.
 
-The intended feeling sequence survives the final visual review: the opening
-has the greatest change, the catalog stays useful, all story panels are readable,
-and the close holds. The original overlapping story composition was changed to
-separated panels because overlap weakened readability.
+Docker stays stopped on the constrained local laptop. The static preview displays the new interface and honest service-unavailable states; it does not simulate authentication, checkout or backend availability. Populated review screenshots use synthetic data intercepted only inside test browser contexts. The animated preview shows campaign motion, not a completed purchase.
 
-![Phone opening in the production build](evidence/motion-mobile.png)
+## Reproduce
 
-## Limits and reproduction
-
-Phone checks use desktop Chrome viewport emulation, not a physical phone or
-Safari. This change uses no scrub video or WebGL. Local backend verification is
-limited while Docker is stopped for disk capacity; source repositories, containers,
-and persistent volumes are retained. The animation preview demonstrates motion,
-not a completed checkout or a running local backend.
-
-Start the application using the root README, then run:
+Start the application using the root README, then:
 
 ```bash
 cd frontend
-npm run test:ci
 npm run build
-npx playwright test e2e/storefront-motion.spec.ts
+npm run test:ci
+npx playwright test e2e/storefront-motion.spec.ts e2e/redesign-routes.spec.ts
 ```
 
-Use `http://localhost:4200/products` for the local storefront. See the PR checks
-and [validation record](VALIDATION.md) for the separate full-stack CI evidence.
+Open `http://localhost:4200/products`. Run the complete Playwright suite against the full stack to include the real API journeys.

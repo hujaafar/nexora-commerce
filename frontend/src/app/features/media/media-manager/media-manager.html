@@ -19,7 +19,7 @@ File purpose: Defines the accessible media feature template.
     <article>
       <span>Storage used</span>
       <strong>{{ sizeLabel(totalBytes()) }}</strong>
-      <i style="--progress: 18%"></i>
+      <small>across saved images</small>
     </article>
     <article>
       <span>Product imagery</span>
@@ -37,7 +37,7 @@ File purpose: Defines the accessible media feature template.
     <form class="uploader surface-card" [formGroup]="form" (ngSubmit)="upload()">
       <div class="upload-topline">
         <span><i></i> Upload ready</span>
-        <span>IMAGES / 01</span>
+        <span>Image library</span>
       </div>
       <p class="eyebrow">New image</p>
       <h2>Upload an image</h2>
@@ -112,7 +112,7 @@ File purpose: Defines the accessible media feature template.
       @if (loading()) {
         <div class="library-loading">
           <i></i>
-          <span>Decrypting your library…</span>
+          <span>Loading your images…</span>
         </div>
       } @else if (assets().length === 0) {
         <div class="empty-state">

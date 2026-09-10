@@ -11,40 +11,20 @@ File purpose: Defines the accessible profile feature template.
     </p>
 
     <div class="identity-map" aria-hidden="true">
-      <div class="identity-radar">
-        <span class="radar-ring ring-one"></span>
-        <span class="radar-ring ring-two"></span>
-        <span class="radar-core">
-          {{ authService.currentUser()?.name?.charAt(0)?.toUpperCase() }}
-        </span>
-      </div>
+      <span class="identity-initial">{{
+        authService.currentUser()?.name?.charAt(0)?.toUpperCase()
+      }}</span>
       <div class="map-copy">
         <span>Account type</span>
         <strong>{{ authService.currentUser()?.role }}</strong>
         <small>Profile active</small>
-      </div>
-      <span class="map-signal"></span>
-    </div>
-
-    <div class="profile-facts">
-      <div>
-        <span>01</span>
-        <p>Display name</p>
-      </div>
-      <div>
-        <span>02</span>
-        <p>Account role</p>
-      </div>
-      <div>
-        <span>03</span>
-        <p>Seller avatar</p>
       </div>
     </div>
   </div>
 
   <form class="profile-card surface-card" [formGroup]="form" (ngSubmit)="submit()">
     <div class="card-topline">
-      <span>ACCOUNT / 01</span>
+      <span>Account settings</span>
       <span class="verified-pill"><i></i> Profile ready</span>
     </div>
 

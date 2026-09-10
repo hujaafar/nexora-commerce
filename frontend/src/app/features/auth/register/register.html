@@ -3,50 +3,25 @@ File purpose: Defines the accessible auth feature template.
 -->
 <section class="auth-page">
   <div class="auth-story">
-    <p class="eyebrow">Your new marketplace profile</p>
-    <h1>Browse bold. Sell smarter.</h1>
-    <p>
-      Choose how you enter Nexora Commerce. Browse the catalog as a client, or open your own shop
-      with a dashboard for products, stock, and photos.
-    </p>
-
-    <div class="story-visual" aria-hidden="true">
-      <div class="story-topline">
-        <span>Account setup</span>
-        <span class="story-status">Ready</span>
-      </div>
-      <div class="story-metrics">
-        <div class="story-metric">
-          <strong>01</strong>
-          <span>create a profile</span>
-        </div>
-        <div class="story-metric">
-          <strong>02</strong>
-          <span>choose your path</span>
-        </div>
-        <div class="story-metric">
-          <strong>∞</strong>
-          <span>possibilities</span>
-        </div>
-      </div>
+    <img
+      class="auth-photo"
+      src="/assets/editorial-room.webp"
+      alt="Sunlit room with a sculptural orange chair and ceramic vase"
+      fetchpriority="high"
+    />
+    <div class="auth-photo-copy">
+      <span>THE EVERYDAY EDIT</span>
+      <h1>A new kind<br />of everyday.</h1>
+      <p>A space for your next favorite.</p>
     </div>
-
-    <div class="security-note">
-      <span>✓</span>
-      Choose a client profile to browse or a seller profile to start your shop.
-    </div>
+    <a class="auth-explore" routerLink="/products">Explore the collection <span>↗</span></a>
   </div>
 
   <form class="auth-card surface-card" [formGroup]="form" (ngSubmit)="submit()">
-    <div class="auth-brandline">
-      <span class="auth-mark"><i>01</i> Nexora Commerce MARKET</span>
-      <span class="auth-encryption">Join Nexora Commerce</span>
-    </div>
-
-    <p class="eyebrow">Create account</p>
-    <h2>Choose your path.</h2>
-    <p>You can start exploring in less than a minute.</p>
-
+    <a class="auth-back" routerLink="/products">← Back to the collection</a>
+    <p class="eyebrow">MAKE YOURSELF AT HOME</p>
+    <h2>Find your place.</h2>
+    <p>Come for a good find. Stay for something yours.</p>
     <div class="role-picker" role="radiogroup" aria-label="Account role">
       <label>
         <input type="radio" formControlName="role" value="CLIENT" />

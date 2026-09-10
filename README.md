@@ -4,7 +4,7 @@ A complete marketplace built with **Angular, Java 17, Spring Boot, MongoDB,
 Kafka, and S3-compatible storage**. One repository takes the application from
 product discovery to checkout, order fulfilment, automated testing, and deployment.
 
-![Nexora's dimensional storefront](docs/evidence/motion-desktop.png)
+![Nexora's editorial storefront](docs/evidence/redesign-desktop.png)
 
 ## Run locally
 
@@ -61,8 +61,8 @@ The demo does not charge real cards or connect to a courier.
 
 ## Included
 
-- Responsive storefront with the ScrollCraft engine used in Neo4flix: a floating
-  collection frame, scroll-driven depth, readable sliding panels, and entry reveals.
+- Editorial storefront with layered product photography, an expanding room reveal,
+  scroll-driven image motion, and a complete paper-and-ink design across all routes.
 - Product galleries with directional image transitions, synchronized thumbnails
   and counters, previous/next controls, and arrow-key navigation.
 - Reduced-motion and compact-screen layouts, keyboard navigation, real loading

@@ -13,7 +13,7 @@ const fixtureProduct = {
   sellerId: 'motion-seller',
   createdAt: '2026-09-10T00:00:00Z',
   updatedAt: '2026-09-10T00:00:00Z',
-  imageUrls: ['/assets/nexora-hero.png', '/assets/nexora-hero.png?view=second'],
+  imageUrls: ['/assets/editorial-headphones.webp', '/assets/editorial-headphones.webp?view=second'],
 };
 
 test.beforeEach(async ({ page }) => {
@@ -65,24 +65,36 @@ test('desktop scroll and pointer move the rendered collection, and route navigat
   await expect(page.locator('.product-card')).toHaveCount(1);
   await page.evaluate(() => document.fonts.ready);
   await sampleAct(page, '#top', 0);
-  const start = await page.locator('.hero-scene').evaluate((el) => getComputedStyle(el).transform);
+  const start = await page
+    .locator('.scene-window')
+    .evaluate((el) => getComputedStyle(el).translate);
   await page.screenshot({ path: 'test-results/browser-motion-opening.png' });
   await sampleAct(page, '#top', 0.55);
-  const middle = await page.locator('.hero-scene').evaluate((el) => getComputedStyle(el).transform);
+  const middle = await page
+    .locator('.scene-window')
+    .evaluate((el) => getComputedStyle(el).translate);
   expect(middle).not.toBe(start);
   await page.screenshot({ path: 'test-results/browser-motion-middle.png' });
   await sampleAct(page, '#top', 1);
   await page.screenshot({ path: 'test-results/browser-motion-settled.png' });
   await sampleAct(page, '#top', 0.35);
-  await page.mouse.move(890, 260);
+  const box = (await page.locator('.scene-window').boundingBox())!;
+  await page.mouse.move(box.x + box.width * 0.25, box.y + box.height * 0.25);
   await page.waitForTimeout(300);
   const pointerA = await page.locator('.scene-window').screenshot();
-  await page.mouse.move(1290, 650);
+  await page.mouse.move(box.x + box.width * 0.65, box.y + box.height * 0.65);
   await page.waitForTimeout(300);
   const pointerB = await page.locator('.scene-window').screenshot();
   expect(pointerA.equals(pointerB)).toBe(false);
   await page.screenshot({ path: 'test-results/browser-motion-pointer.png' });
-  await sampleAct(page, '#about', 0.5);
+  await sampleAct(page, '#about', 0);
+  const apertureStart = await page
+    .locator('.campaign-image')
+    .evaluate((el) => getComputedStyle(el).clipPath);
+  await sampleAct(page, '#about', 0.65);
+  expect(
+    await page.locator('.campaign-image').evaluate((el) => getComputedStyle(el).clipPath),
+  ).not.toBe(apertureStart);
   await page.screenshot({ path: 'test-results/browser-motion-story.png' });
   await page.getByLabel('Search products', { exact: true }).fill('missing');
   await expect(page.getByRole('heading', { name: 'No products match yet.' })).toBeVisible();
@@ -121,11 +133,13 @@ for (const mode of [
     );
     await page.screenshot({ path: `test-results/browser-motion-${mode.name}.png`, fullPage: true });
     await page
-      .locator('.hero-actions')
+      .locator('.hero-caption')
       .getByRole('link', { name: /Shop the collection/ })
       .click();
     await expect(page.getByLabel('Search products', { exact: true })).toBeInViewport();
-    for (const link of await page.locator('.story-card a').all()) {
+    const links = page.locator('.membership-section a');
+    expect(await links.count()).toBe(2);
+    for (const link of await links.all()) {
       await link.focus();
       await expect(link).toBeFocused();
       await expect(link).toBeInViewport();
