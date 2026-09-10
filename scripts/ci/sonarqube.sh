@@ -48,10 +48,12 @@ docker run --rm \
   "${scanner_host_argument[@]}" \
   --env SONAR_HOST_URL \
   --env SONAR_TOKEN \
+  --env SONAR_SCANNER_JAVA_OPTS=-Xmx768m \
   --volume "${workspace}:/usr/src" \
   --volume "${cache_volume}:/opt/sonar-scanner/.sonar/cache" \
   --workdir /usr/src \
   "${scanner_image}" \
+  -Dsonar.javascript.node.maxspace=512 \
   -Dsonar.working.directory=/usr/src/.scannerwork \
   "-Dsonar.projectVersion=${project_version}" \
   "-Dsonar.scm.revision=${SOURCE_COMMIT:-${GIT_COMMIT:-}}"
