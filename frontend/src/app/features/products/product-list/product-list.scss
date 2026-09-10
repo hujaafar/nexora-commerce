@@ -539,8 +539,8 @@ button:disabled {
   display: grid;
   grid-template-columns: 1fr 1fr;
   align-items: center;
-  gap: 4rem;
-  padding: 5rem 8%;
+  gap: 3rem;
+  padding: 3rem 7%;
   overflow: hidden;
 }
 .about-copy p:not(.section-kicker) {
@@ -550,6 +550,7 @@ button:disabled {
   line-height: 1.75;
 }
 .story-cards {
+  min-width: 0;
   display: grid;
   gap: 1rem;
   perspective: 1200px;
@@ -933,13 +934,6 @@ button:disabled {
 .hero-copy .section-kicker {
   font-size: 0.75rem;
   letter-spacing: 0.04em;
-}
-.story-stage {
-  gap: 3rem;
-  padding: 3rem 7%;
-}
-.story-cards {
-  min-width: 0;
 }
 .storefront:not(.motion-ready) .story-stage {
   height: auto;

@@ -101,6 +101,12 @@ in the local work folder; the first run's screenshots were overwritten by a reru
 so only its failure output remains. No earlier green result substitutes for the
 final browser rerun.
 
+The initial hosted quality scan rejected three duplicate CSS selectors and a
+redundant word in an image's alternative text. The declarations were consolidated
+without changing the intended style values, and the alternative text now names
+the product and its selected view. The original failed Sonar report is retained
+in the local work folder and the GitHub run artifacts.
+
 The intended feeling sequence survives the final visual review: the opening
 has the greatest change, the catalog stays useful, all story panels are readable,
 and the close holds. The original overlapping story composition was changed to

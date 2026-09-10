@@ -206,6 +206,7 @@
 }
 
 .main-image {
+  --gallery-slide: 48px;
   position: relative;
   display: grid;
   overflow: hidden;
@@ -252,9 +253,6 @@
   inset: 0;
 }
 
-.main-image {
-  --gallery-slide: 48px;
-}
 .main-image.gallery-backwards {
   --gallery-slide: -48px;
 }
