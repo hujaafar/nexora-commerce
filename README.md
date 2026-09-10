@@ -4,7 +4,35 @@ A complete marketplace built with **Angular, Java 17, Spring Boot, MongoDB,
 Kafka, and S3-compatible storage**. One repository takes the application from
 product discovery to checkout, order fulfilment, automated testing, and deployment.
 
-![Nexora's editorial storefront](docs/evidence/redesign-desktop.png)
+![Nexora desktop storefront with oversized typography, headphones, and a sneaker](docs/screenshots/storefront-desktop.jpg)
+
+## Website preview
+
+The latest storefront pairs warm product photography with always-on scroll effects
+and layouts for desktop and mobile. These screenshots show the local frontend
+preview; running the complete stack enables accounts, live products, and checkout.
+
+### Scroll-driven campaign
+
+The room photograph expands as you scroll through the “Make room for good” scene.
+
+![Nexora campaign section during the expanding room reveal](docs/screenshots/scroll-campaign.jpg)
+
+### Sign in
+
+![Nexora sign-in page with a sunlit room and the account form](docs/screenshots/sign-in.jpg)
+
+<details>
+<summary><strong>See the mobile storefront</strong></summary>
+
+<p align="center">
+  <img src="docs/screenshots/storefront-mobile.jpg" alt="Nexora mobile storefront with a compact menu and layered product images" width="390" />
+</p>
+
+</details>
+
+Read about the image motion and responsive behavior in the
+[motion design notes](docs/MOTION_DESIGN.md).
 
 ## Run locally
 
