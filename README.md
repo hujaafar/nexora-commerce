@@ -70,6 +70,12 @@ The demo does not charge real cards or connect to a courier.
 - Nexus artifact management: dependency caching, versioned service JARs and Docker
   images, immutable releases, publisher/read-only roles, and recovery tooling.
 
+See the [five-brief requirements matrix](docs/REQUIREMENTS_CHECKLIST.md) for
+coverage and the [verification record](docs/VALIDATION.md) for measured results.
+The standalone Nexus artifact verifier builds on Java 11; the marketplace uses
+Java 17. A strict Java 11 requirement for the entire storefront remains a platform
+migration decision.
+
 ## Architecture
 
 ```mermaid
@@ -132,6 +138,8 @@ With the full application running:
 
 ```bash
 node scripts/integration-test.mjs
+cd frontend
+npm run test:e2e
 ```
 
 The test creates identifiable accounts/products and verifies real API behavior:
@@ -148,6 +156,8 @@ is needed for the default CI workflow.
 For the optional local SonarQube and Jenkins stack:
 
 ```powershell
+.\scripts\start-nexus.ps1
+.\scripts\provision-nexus.ps1
 .\scripts\sonarqube-start.ps1
 .\scripts\jenkins-start.ps1
 ```
@@ -157,7 +167,11 @@ Jenkins on 8088, and the local Mailpit inbox on 8025. Generated credentials stay
 in ignored `.env` files. Local notifications go to Mailpit; external email is
 an explicit operator configuration.
 
-The optional GitHub Sonar workflow is manually triggered and requires a
+Default CI scans every push and PR with disposable Docker SonarQube and runs a
+weekly scan. Its blocking gate evaluates the complete candidate snapshot. Main
+requires independent review and all five CI checks; see [review policy](docs/REVIEW_POLICY.md).
+
+The separate optional GitHub Sonar workflow is manually triggered and requires a
 runner-reachable `SONAR_HOST_URL` repository variable and `SONAR_TOKEN` secret.
 A developer's localhost is not reachable from GitHub-hosted runners.
 

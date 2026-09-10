@@ -106,7 +106,11 @@ export class OrderDetail {
   private run(request: ReturnType<CommerceService['cancelOrder']>, message: string): void {
     this.acting.set(true);
     request.pipe(finalize(() => this.acting.set(false))).subscribe((order) => {
+      const previousId = this.order()?.id;
       this.order.set(order);
+      if (previousId && previousId !== order.id) {
+        void this.router.navigate(['/orders', order.id]);
+      }
       this.notifications.success(message);
     });
   }

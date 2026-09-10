@@ -64,12 +64,14 @@ describe('Order tracking workflow', () => {
   });
   it('places a fresh order when the customer chooses order again', () => {
     const fixture = page();
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
     click(fixture, 'Order again');
     const redo = http.expectOne('/api/orders/order-1/redo');
     expect(redo.request.method).toBe('POST');
     redo.flush({ ...order, id: 'order-2', orderNumber: 'NX-1002' });
     fixture.detectChanges();
     expect(fixture.nativeElement.textContent).toContain('NX-1002');
+    expect(navigate).toHaveBeenCalledWith(['/orders', 'order-2']);
   });
   it('offers sellers only the next allowed fulfilment transition', () => {
     sellerView = true;

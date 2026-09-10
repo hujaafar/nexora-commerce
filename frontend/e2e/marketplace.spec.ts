@@ -49,6 +49,7 @@ test('customer buys through the wizard, tracks, cancels, reorders, and removes h
     await page.getByRole('button', { name: /Review order/ }).click();
     await expect(page.locator('.review-card')).toContainText('Pay on delivery');
     await expect(page.locator('.review-card')).toContainText('Nothing is charged now');
+    await page.screenshot({ path: 'test-results/browser-checkout.png', fullPage: true });
     await page.getByRole('button', { name: /Confirm order/ }).click();
     await expect(page.locator('.success-card')).toContainText('Order confirmed');
     await page.getByRole('link', { name: 'Track this order' }).click();
@@ -57,7 +58,9 @@ test('customer buys through the wizard, tracks, cancels, reorders, and removes h
     page.on('dialog', (dialog) => dialog.accept());
     await page.getByRole('button', { name: 'Cancel order', exact: true }).click();
     await expect(page.locator('.cancelled-banner')).toBeVisible();
+    const originalUrl = page.url();
     await page.getByRole('button', { name: 'Order again', exact: true }).click();
+    await expect(page).not.toHaveURL(originalUrl);
     await expect(page.locator('.timeline')).toBeVisible();
     await page.getByRole('button', { name: 'Cancel order', exact: true }).click();
     await expect(page.locator('.cancelled-banner')).toBeVisible();
@@ -95,6 +98,7 @@ test('seller publishes, edits, and deletes through the responsive dashboard', as
   await page.getByLabel('Price / USD').fill('30');
   await page.getByRole('button', { name: /Save product changes/ }).click();
   await expect(inventory).toContainText('$30.00');
+  await page.screenshot({ path: 'test-results/browser-seller-mobile.png', fullPage: true });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
   page.on('dialog', (dialog) => dialog.accept());
   await inventory.getByRole('button', { name: 'Delete', exact: true }).click();

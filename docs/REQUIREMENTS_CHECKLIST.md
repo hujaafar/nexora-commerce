@@ -1,79 +1,80 @@
-> Retained educational reference from the component projects. For current commands, architecture, and verification, use the root README and VALIDATION.md.
+# Coverage of the five project briefs
 
-<!--
-File purpose: Documents the project requirements checklist.
--->
-# Nexora Commerce requirements checklist
+This matrix covers the supplied buy-01, buy-02, Jenkins, SonarQube, and Nexus briefs. **Implemented** describes code/configuration; **verified** requires an observed test or runtime result. Exact measured runs and remaining verification are in [VALIDATION.md](VALIDATION.md). This is not a blanket claim of 100% compliance.
 
-## Backend and architecture
+## Marketplace foundations (buy-01)
 
-- [x] Separate User, Product, and Media Spring Boot microservices
-- [x] API Gateway and Eureka discovery service
-- [x] Independently buildable/runnable service JARs and Docker images
-- [x] MongoDB persistence with separate databases per service
-- [x] Images in S3-compatible object storage rather than MongoDB
-- [x] Kafka product and media lifecycle events
-- [x] `/actuator/health` on every Spring application
+| Requirement | Implementation and evidence |
+|---|---|
+| User, Product, Media microservices | Independent Spring apps, Maven modules, images, databases and health endpoints; gateway and Eureka discovery |
+| MongoDB and object storage | Separate service databases; image bytes in MinIO, metadata in MongoDB |
+| JWT, BCrypt, roles, ownership | User service, gateway and downstream token filters; tests reject escalation and non-owner changes |
+| Catalog and seller CRUD | Product API and Angular dashboard; search/ownership and Angular component tests |
+| Media upload and retrieval | Library, product images, avatar; MIME/signature validation, safe names, 2 MB maximum, cache headers and cleanup tests |
+| Profiles, guards, forms, feedback | Customer/seller profiles, auth/seller/admin guards, reactive forms, toasts, loading/error states, session expiry tests |
+| Kafka bonus | Product, media and order event publishers plus local broker |
+| HTTPS between HTTP components | Certificate-verified compose.tls.yml, distinct identities and shared public CA; [HTTPS.md](HTTPS.md) and validation record |
+| Extra controls | Admin moderation, rate limits, request IDs and owner-only media deletion |
 
-## Authentication and authorization
+## Complete commerce experience (buy-02)
 
-- [x] `POST /auth/register` with CLIENT or SELLER
-- [x] `POST /auth/login` returning a signed JWT
-- [x] BCrypt password hashing; password never returned
-- [x] Gateway token checks plus downstream token verification
-- [x] Role checks for seller APIs
-- [x] Product and media ownership from JWT subject
-- [x] Non-owner mutation returns 404
-- [x] `GET /me` and `PUT /me`
-- [x] Seller avatar delegated to Media Service
-- [x] ADMIN cannot be selected during public registration
-- [x] ADMIN-only account, product, and media moderation
+| Requirement | Implementation and evidence |
+|---|---|
+| Search, filters, sorting, pagination | Catalog API/UI; query escaping, facets, paging bounds and sorting tested |
+| Cart quantities, removal and totals | Persistent customer cart; server-side current pricing and stock checks |
+| Checkout wizard and COD | Address, payment, review; server totals and inventory reservation with failure compensation |
+| Order management | Timeline, customer/seller views, date/status filtering, cancel, reorder and eligible removal |
+| Profile analytics/charts | Seller revenue/products and customer spending/products/categories; rendered-chart assertions |
+| Wishlist and card bonus | Persistent wishlist with ownership; labelled simulation, no real card processing |
+| Consistent errors | code/message/details contract across services and gateway; JSON and real API assertions |
+| Unit/integration/end-to-end tests | JUnit/Mockito, Angular Vitest/component/HTTP tests, real API journey and Playwright customer/mobile seller journeys |
+| Responsive motion | Neo4flix ScrollCraft, pinned/reveal/depth effects, reduced motion and route cleanup regression tests |
+| Branches, PRs, protected main | Audit branch and PR #1; actual repository settings and independent-review status in [REVIEW_POLICY.md](REVIEW_POLICY.md) |
 
-## Product and media APIs
+## Jenkins CI/CD (mr-jenk)
 
-- [x] Public product list and detail
-- [x] Seller create, update, delete, and private inventory list
-- [x] Product `imageUrls[]` association
-- [x] Multipart media upload and public download
-- [x] Private media list and owner-only delete
-- [x] 2 MB server and UI file limit
-- [x] MIME allowlist, content-signature sniffing, and safe filenames
-- [x] Cache-Control, ETag, content type, and inline disposition on downloads
-- [x] ADMIN product/media inventory and delete endpoints
+| Requirement | Implementation and evidence |
+|---|---|
+| Install and agents | Docker/JCasC controller with zero executors and two Docker agents |
+| Git fetch and trigger | Public SCM, polling every two minutes, exact commit and unique artifact/image versions |
+| Build, test, deploy | Parallel Java/Angular, Java 11 tool, quality gate, Maven/image publication, immutable staging deployment |
+| Stop on failure | Fail-fast tests and enforced gate; observed failed runs blocked later stages |
+| Deployment and rollback | Candidate/current/previous release records; health plus full API acceptance before promotion; automatic/manual recovery |
+| Recovery drill | Staging-only broken frontend tests rejection and restoration; runtime result in validation record |
+| Notifications | Real Mailpit emails include build/deployment/rollback/gate and logs; optional external SMTP/Slack configuration |
+| Parameterized/distributed bonus | Environment/action/publication/approval parameters, two agents and parallel testing |
+| Jasmine/Karma hint | Frontend uses the supported Vitest runner; Jasmine/Karma specifically is not used |
 
-## Angular
+## SonarQube quality (safe-zone)
 
-- [x] Responsive standalone Angular SPA with Bootstrap
-- [x] Sign-in and role-selecting sign-up
-- [x] Public product grid and detail
-- [x] Seller product dashboard with create/edit/delete
-- [x] Product image previews and removal
-- [x] Dedicated media management view
-- [x] Seller profile/avatar flow
-- [x] AuthGuard and seller role guard
-- [x] AdminGuard and responsive moderation dashboard
-- [x] Token and error HTTP interceptors
-- [x] Reactive Forms with inline validation
-- [x] Global user feedback for API/upload failures
+| Requirement | Implementation and evidence |
+|---|---|
+| Docker and dashboard | Pinned Community Build, PostgreSQL and persistent local project on port 9000 |
+| Multi-service analysis | Six services, Angular and Java 11 tool; binaries/libraries, JaCoCo and LCOV |
+| Every push and PR | Disposable Sonar scans each candidate's complete snapshot on hosted CI; no private token exposed to forks |
+| Jenkins gate | Persistent project/token, waiting scanner gate; failure blocks publication/deployment |
+| Thresholds | Sonar Way new-code rules plus overall coverage >=60%, duplication <=3%, zero code smells and security/reliability A |
+| Monitoring | Weekly scheduled GitHub scans, SCM-triggered Jenkins and persistent dashboard history |
+| Resolve or justify issues | Initial smells fixed; four bearer-auth CSRF hotspots technically reviewed in [QUALITY_AUDIT.md](QUALITY_AUDIT.md) |
+| Mandatory review | Independent PR approval is separate from assistant technical hotspot review |
+| Edition limit | Full-snapshot CI covers branch/PR candidates; native branch history and inline PR decoration require a suitable licensed edition/service |
 
-## Reliability and operations
+## Nexus artifact management
 
-- [x] Global exception handling and meaningful 400/401/403/404/409/503 bodies
-- [x] Central gateway CORS
-- [x] Request correlation IDs
-- [x] Per-client rate limiting for authentication and media writes
-- [x] Docker Compose for all applications and infrastructure
-- [x] PowerShell and shell start/stop scripts
-- [x] Backend and frontend automated tests
-- [x] Reproducible Maven and Node container toolchains
-- [x] HTTPS/Let's Encrypt-capable Caddy deployment override
-- [x] Comprehensive README, API examples, diagrams, and security notes
+| Requirement | Implementation and evidence |
+|---|---|
+| Dedicated non-root user | Pinned Sonatype image, isolated volume and verified non-root runtime |
+| Hosted/proxy/group repositories | Immutable Maven releases, snapshots, Central proxy and authenticated group |
+| Docker registry | Authenticated hosted registry; push, reader pull and retrieved-image health verification |
+| Settings and credentials | Environment-backed settings.xml, generated ignored credentials, scoped publisher/reader roles |
+| Dependency proxy/cache | Maven mirror routes dependencies through Nexus; live build/publication verified |
+| Versioned artifacts | CI-friendly revision, flattened POMs, commit/build image tags and multiple stored releases |
+| Automatic publication | Jenkins publishes after tests/gate; default enabled after Nexus bootstrap |
+| Retrieval/traceability | verify-nexus.ps1, image manifests and Java 11 SHA-256 verifier; rejects altered bytes, HTTP errors and redirects |
+| RBAC bonus | Reader writes and immutable release replacement denied; publisher lacks administration/deletion |
+| Docs/screenshots | [NEXUS_SETUP.md](NEXUS_SETUP.md), commands, repository screenshot and validation record |
+| **Strict Java 11 constraint** | **Partial:** the artifact verifier is a JDK 11 Maven component; all six Spring Boot 3 services require Java 17. A rubric requiring buy-02 itself to run on Java 11 is not satisfied by adding this tool |
 
-## Optional scope
+## Human decisions
 
-- [x] Kafka lifecycle events for product and image changes
-- [x] Owner-only media deletion
-- [x] ADMIN moderation for users, products, and media
-- [x] Gateway rate limiting for authentication and media writes
-
-Every required and optional item in the assignment brief is implemented.
+The strict Java 11 interpretation requires choosing between accepting the separate Java 11 artifact component and migrating the complete marketplace. Independent PR approval requires another reviewer. Neither is silently counted as complete.

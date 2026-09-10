@@ -3,6 +3,8 @@
 Start Docker Desktop with Linux containers, then run:
 
 ```powershell
+.\scripts\start-nexus.ps1
+.\scripts\provision-nexus.ps1
 .\scripts\sonarqube-start.ps1
 .\scripts\jenkins-start.ps1
 ```
@@ -17,7 +19,7 @@ two Docker agents, and deployment credentials. The public source URL defaults
 to https://github.com/hujaafar/nexora-commerce.git. No personal Git password is
 required. The controller polls main; it does not execute arbitrary fork PRs.
 
-The pipeline offers `build-test`, `build-test-deploy`, and `rollback` actions.
+The pipeline offers `build-test`, `build-test-deploy`, `rollback`, and `rollback-drill` actions.
 It validates source and Compose, builds and tests Java and Angular, checks the
 configured Sonar gate, packages immutable images, and deploys to staging or
 production. Failed HTTP verification can trigger rollback to the last healthy
@@ -40,4 +42,15 @@ external notifications. `scripts/configure-gmail.ps1` is an optional helper.
 ## Versioned artifact storage
 
 See [Nexus setup](NEXUS_SETUP.md) for Maven caching, JAR/image publication,
-read-only recovery, and the optional `PUBLISH_ARTIFACTS` Jenkins parameter.
+read-only recovery, and the `PUBLISH_ARTIFACTS` Jenkins parameter (default true).
+Nexus bootstrap requires operator license acceptance on first installation.
+
+The Java 11 artifact verifier is tested and published alongside the six Java 17
+services. Deployment must pass the real API acceptance journey before a candidate
+is promoted to current. The staging-only recovery drill uses a disposable broken
+frontend image and verifies restoration of the recorded healthy release.
+
+JVM heaps are bounded for local use. A laptop may still need to stop its ordinary
+development stack while running all CI infrastructure plus staging. Named volumes
+retain data and release history. `NEXORA_GIT_BRANCH` can select a trusted audit
+branch; it defaults to main and does not enable arbitrary fork execution.
