@@ -249,8 +249,95 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  animation: image-reveal 800ms var(--ease-out) both;
   inset: 0;
+}
+
+.main-image {
+  --gallery-slide: 48px;
+}
+.main-image.gallery-backwards {
+  --gallery-slide: -48px;
+}
+.main-image > .gallery-enter {
+  z-index: 1;
+  animation: gallery-in 420ms var(--ease-out) both;
+}
+.main-image > .gallery-leave {
+  animation: gallery-out 350ms var(--ease-out) both;
+  pointer-events: none;
+}
+.gallery-controls {
+  position: absolute;
+  right: 1.1rem;
+  bottom: 1.1rem;
+  z-index: 4;
+  display: flex;
+  gap: 0.5rem;
+}
+.gallery-controls button {
+  display: grid;
+  place-items: center;
+  width: 2.8rem;
+  height: 2.8rem;
+  color: #16213b;
+  background: #e4ebf8;
+  border: 1px solid #ffffff90;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  transition:
+    transform 160ms var(--ease-out),
+    background 160ms;
+}
+.gallery-controls button:hover {
+  background: white;
+}
+.gallery-controls button:active {
+  transform: scale(0.96);
+}
+.gallery-controls button:focus-visible,
+.thumbnail-row button:focus-visible {
+  outline: 2px solid #abc0ff;
+  outline-offset: 4px;
+}
+@keyframes gallery-in {
+  from {
+    opacity: 0;
+    transform: translateX(var(--gallery-slide)) scale(1.035);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes gallery-out {
+  to {
+    opacity: 0;
+    transform: translateX(calc(var(--gallery-slide) * -0.5)) scale(0.985);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .detail-grid:not(.loading-detail) > .gallery {
+    animation: detail-arrive 500ms var(--ease-out) both;
+  }
+  .detail-copy {
+    animation: detail-arrive 500ms 100ms var(--ease-out) both;
+  }
+}
+@keyframes detail-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .main-image > .gallery-enter,
+  .main-image > .gallery-leave {
+    animation: none;
+  }
 }
 
 .image-orbit {
@@ -340,6 +427,8 @@
 }
 
 .image-index {
+  top: 1.25rem;
+  bottom: auto;
   right: 1.25rem;
   color: rgba(255, 255, 255, 0.74);
   font-family: 'Cascadia Code', Consolas, monospace;
@@ -348,6 +437,7 @@
 }
 
 .image-corner {
+  pointer-events: none;
   position: absolute;
   z-index: 4;
   width: 2.2rem;

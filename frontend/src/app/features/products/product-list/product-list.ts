@@ -126,6 +126,8 @@ export class ProductList implements OnInit, OnDestroy {
 
   @HostListener('window:wheel')
   @HostListener('window:touchstart')
+  @HostListener('window:keydown')
+  @HostListener('focusin')
   protected interruptAnimatedScroll(): void {
     this.cancelAnimatedScroll();
   }

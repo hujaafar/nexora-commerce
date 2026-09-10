@@ -84,4 +84,31 @@ describe('ScrollCraft route lifecycle', () => {
     expect(state.host.textContent).toContain('Storefront');
     expect(state.host.classList.contains('motion-ready')).toBe(false);
   });
+
+  it('re-measures a scene when asynchronous catalog content changes its height', () => {
+    let resized = () => undefined;
+    const disconnect = vi.fn();
+    vi.stubGlobal(
+      'ResizeObserver',
+      class {
+        constructor(callback: () => undefined) {
+          resized = callback;
+        }
+        observe() {}
+        disconnect = disconnect;
+      },
+    );
+    const state = setup();
+    vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => {
+      callback(0);
+      return 8;
+    });
+    resized();
+    expect(state.engine.layout).toHaveBeenCalledTimes(1);
+    expect(state.mount).toHaveBeenCalledTimes(1);
+    state.fixture.destroy();
+    resized();
+    expect(state.engine.layout).toHaveBeenCalledTimes(1);
+    expect(disconnect).toHaveBeenCalledOnce();
+  });
 });

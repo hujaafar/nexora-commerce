@@ -39,20 +39,35 @@
   </header>
 
   <main>
-    <section class="market-hero" id="top" data-sc-act="pin" data-sc-span="1.7">
+    <section class="market-hero" id="top" data-sc-act="pin" data-sc-span="2.15">
       <div class="sc-stage hero-stage">
-        <img
-          class="hero-art"
-          src="/assets/nexora-hero.png"
-          alt="A collection of headphones, a camera, a sneaker and fabric in a sculptural studio"
-          fetchpriority="high"
-        />
-        <div class="hero-shade"></div>
+        <div class="hero-outline" aria-hidden="true"></div>
+        <div class="hero-scene">
+          <figure class="scene-window" data-sc-tilt="4">
+            <img
+              class="hero-art"
+              src="/assets/nexora-hero.png"
+              alt="Headphones, a camera, a sneaker and fabric arranged in a sculptural studio"
+              fetchpriority="high"
+              width="1672"
+              height="941"
+            />
+            <figcaption><span>The everyday edit</span><span>Curated by NEXORA</span></figcaption>
+          </figure>
+          <div class="scene-note" aria-hidden="true">
+            <span>N</span>
+            <div>Good finds.<br /><strong>Your point of view.</strong></div>
+          </div>
+        </div>
         <div class="hero-copy">
           <p class="section-kicker"><i></i> Independent finds. Everyday favorites.</p>
-          <h1>Objects.<br /><em>With a little</em><br />more meaning.</h1>
+          <h1>
+            <span class="hero-line">Find your</span
+            ><span class="hero-line"><em>kind of good.</em></span>
+          </h1>
           <p class="hero-description">
-            Discover your next favorite. From the first look to your front door, make it yours.
+            Objects with a little more meaning. Discover your next favorite, from first look to
+            front door.
           </p>
           <div class="hero-actions">
             <a class="primary-action" href="#products" (click)="scrollToSection($event, 'products')"
@@ -61,12 +76,6 @@
             <a class="secondary-action" routerLink="/register">Open your shop ↗</a>
           </div>
         </div>
-        <div class="hero-bottom">
-          <span>NEXORA / THE EVERYDAY EDIT</span
-          ><a href="#products" (click)="scrollToSection($event, 'products')"
-            >Scroll to discover ↓</a
-          >
-        </div>
       </div>
     </section>
     <div class="collection-ribbon" aria-hidden="true">
@@ -74,7 +83,7 @@
       ><span>Your next favorite</span><i>✳</i><span>Considered design</span>
     </div>
     <section class="product-section" id="products" tabindex="-1">
-      <div class="section-heading">
+      <div class="section-heading" data-sc-in>
         <div>
           <p class="section-kicker"><i></i> Shop the collection</p>
           <h2>Find your next favorite.</h2>
@@ -86,7 +95,11 @@
       <form class="discovery-bar" [formGroup]="filters">
         <label class="keyword-field"
           ><span>Search products</span
-          ><input formControlName="q" placeholder="What are you looking for?" /><i>⌕</i></label
+          ><input
+            formControlName="q"
+            aria-label="Search products"
+            placeholder="What are you looking for?"
+          /><i aria-hidden="true">⌕</i></label
         >
         <label
           ><span>Category</span
@@ -215,10 +228,9 @@
       }
     </section>
 
-    <section class="about-section" id="about" data-sc-act="pin" data-sc-span="1.8">
+    <section class="about-section" id="about" data-sc-act="pin" data-sc-span="1.65">
       <div class="sc-stage story-stage">
         <div class="about-copy">
-          <p class="section-kicker"><i></i> A closer connection</p>
           <h2>A good find.<br /><em>A better feeling.</em></h2>
           <p>
             One place for the things you love and the people who make them. Discover freely, save
@@ -231,23 +243,21 @@
             >From find to front door ↓</a
           >
         </div>
-        <div class="story-cards">
+        <div class="story-cards" aria-label="From discovery to delivery">
           <article class="story-card card-one">
-            <span>01 / DISCOVER</span
-            ><strong>Something<br />for your<br /><em>everyday.</em></strong>
+            <span>01 / DISCOVER</span><strong>Something for your <em>everyday.</em></strong>
             <p>Find the right fit with categories, prices and search.</p>
             <a href="#products" (click)="scrollToSection($event, 'products')"
               >Explore the collection ↗</a
             >
           </article>
           <article class="story-card card-two">
-            <span>02 / MAKE IT YOURS</span><strong>A little<br /><em>less ordinary.</em></strong>
+            <span>02 / MAKE IT YOURS</span><strong>A little <em>less ordinary.</em></strong>
             <p>Save favorites, build your bag, and check out at your pace.</p>
             <a routerLink="/wishlist">Your saved finds ↗</a>
           </article>
           <article class="story-card card-three">
-            <span>03 / STAY CONNECTED</span
-            ><strong>From their<br />shop.<br /><em>To your door.</em></strong>
+            <span>03 / STAY CONNECTED</span><strong>From their shop. <em>To your door.</em></strong>
             <p>Follow each step from confirmation to delivery.</p>
             <a routerLink="/orders">Follow your orders ↗</a>
           </article>
@@ -257,14 +267,13 @@
     <section class="steps-section" id="how-it-works">
       <div class="section-heading">
         <div>
-          <p class="section-kicker"><i></i> Simple from start to finish</p>
           <h2>Find. Love. Repeat.</h2>
         </div>
         <a class="text-action" href="#products" (click)="scrollToSection($event, 'products')"
           >Back to the collection ↗</a
         >
       </div>
-      <div class="step-grid" data-sc-stagger="100">
+      <div class="step-grid" data-sc-stagger="65">
         <article data-sc-in>
           <span>01</span>
           <h3>Follow your curiosity.</h3>
@@ -282,7 +291,7 @@
         </article>
       </div>
     </section>
-    <section class="join-section">
+    <section class="join-section" data-sc-in>
       <div>
         <p class="section-kicker"><i></i> For the independently minded</p>
         <h2>Your next<br /><em>favorite awaits.</em></h2>

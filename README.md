@@ -4,7 +4,7 @@ A complete marketplace built with **Angular, Java 17, Spring Boot, MongoDB,
 Kafka, and S3-compatible storage**. One repository takes the application from
 product discovery to checkout, order fulfilment, automated testing, and deployment.
 
-![Nexora's cinematic storefront](frontend/public/assets/nexora-hero.png)
+![Nexora's dimensional storefront](docs/evidence/motion-desktop.png)
 
 ## Run locally
 
@@ -55,8 +55,10 @@ The demo does not charge real cards or connect to a courier.
 
 ## Included
 
-- Responsive storefront with the ScrollCraft engine used in Neo4flix: pinned
-  sections, scroll-driven depth, a spreading card composition, and entry reveals.
+- Responsive storefront with the ScrollCraft engine used in Neo4flix: a floating
+  collection frame, scroll-driven depth, readable sliding panels, and entry reveals.
+- Product galleries with directional image transitions, synchronized thumbnails
+  and counters, previous/next controls, and arrow-key navigation.
 - Reduced-motion and compact-screen layouts, keyboard navigation, real loading
   and error states, and motion cleanup when routes change.
 - JWT authentication, BCrypt passwords, role and ownership checks, gateway rate
@@ -72,6 +74,8 @@ The demo does not charge real cards or connect to a courier.
 
 See the [five-brief requirements matrix](docs/REQUIREMENTS_CHECKLIST.md) for
 coverage and the [verification record](docs/VALIDATION.md) for measured results.
+The [motion design and browser review](docs/MOTION_DESIGN.md) explains the animation
+reference, responsive composition, and visual verification.
 The standalone Nexus artifact verifier builds on Java 11; the marketplace uses
 Java 17. A strict Java 11 requirement for the entire storefront remains a platform
 migration decision.

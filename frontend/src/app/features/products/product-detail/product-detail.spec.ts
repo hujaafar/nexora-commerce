@@ -81,4 +81,29 @@ describe('ProductDetail', () => {
     expect(page.querySelector('.loading-experience')).toBeNull();
     expect(page.querySelector('.detail-error h1')?.textContent).toContain("isn't here");
   });
+
+  it('keeps thumbnail selection, keyboard navigation, and the image counter synchronized', () => {
+    const fixture = TestBed.createComponent(ProductDetail);
+    routeParams.next(convertToParamMap({ id: product.id }));
+    response.next({ ...product, imageUrls: ['/first.png', '/second.png', '/third.png'] });
+    response.complete();
+    fixture.detectChanges();
+    const page = fixture.nativeElement as HTMLElement;
+    const thumbnails = page.querySelectorAll<HTMLButtonElement>('.thumbnail-row button');
+    thumbnails[1].click();
+    fixture.detectChanges();
+    expect(page.querySelector('.image-index')?.textContent).toContain('02 / 03');
+    expect(thumbnails[1].getAttribute('aria-pressed')).toBe('true');
+    page
+      .querySelector('.gallery')
+      ?.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
+    fixture.detectChanges();
+    expect(page.querySelector('.image-index')?.textContent).toContain('03 / 03');
+    page.querySelector<HTMLButtonElement>('[aria-label="Next product image"]')?.click();
+    fixture.detectChanges();
+    expect(page.querySelector('.image-index')?.textContent).toContain('01 / 03');
+    page.querySelector<HTMLButtonElement>('[aria-label="Previous product image"]')?.click();
+    fixture.detectChanges();
+    expect(page.querySelector('.image-index')?.textContent).toContain('03 / 03');
+  });
 });

@@ -25,6 +25,7 @@ export class StorefrontMotion implements AfterViewInit {
       const host = this.element.nativeElement;
       let engine: MotionEngine | undefined;
       let frame = 0;
+      let layoutFrame = 0;
       let disposed = false;
       const sync = () => {
         engine?.destroy();
@@ -43,9 +44,22 @@ export class StorefrontMotion implements AfterViewInit {
       globalThis.addEventListener('load', sync, { once: true });
       reduced.addEventListener?.('change', sync);
       compact.addEventListener?.('change', sync);
+      // API results and image sizes change the position of later pinned sections.
+      // Re-measure the existing scene without replaying entrances or remounting it.
+      const resize =
+        typeof ResizeObserver === 'undefined'
+          ? undefined
+          : new ResizeObserver(() => {
+              if (disposed || !engine) return;
+              cancelAnimationFrame(layoutFrame);
+              layoutFrame = requestAnimationFrame(() => engine?.layout());
+            });
+      resize?.observe(host);
       this.destroyRef.onDestroy(() => {
         disposed = true;
         cancelAnimationFrame(frame);
+        cancelAnimationFrame(layoutFrame);
+        resize?.disconnect();
         globalThis.removeEventListener('load', sync);
         reduced.removeEventListener?.('change', sync);
         compact.removeEventListener?.('change', sync);
