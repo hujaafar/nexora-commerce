@@ -13,7 +13,7 @@
     <dependency><groupId>org.junit.jupiter</groupId><artifactId>junit-jupiter</artifactId><version>5.13.4</version><scope>test</scope></dependency>
   </dependencies>
   <build><plugins>
-    <plugin><groupId>org.jacoco</groupId><artifactId>jacoco-maven-plugin</artifactId><version>0.8.13</version><executions><execution><goals><goal>prepare-agent</goal></goals></execution><execution><phase>verify</phase><goals><goal>report</goal></goals></execution></executions></plugin>
+    <plugin><groupId>org.jacoco</groupId><artifactId>jacoco-maven-plugin</artifactId><version>0.8.13</version><executions><execution><id>prepare-coverage</id><goals><goal>prepare-agent</goal></goals></execution><execution><id>report-coverage</id><phase>verify</phase><goals><goal>report</goal></goals></execution></executions></plugin>
     <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-dependency-plugin</artifactId><version>3.8.1</version><executions><execution><phase>test-compile</phase><goals><goal>copy-dependencies</goal></goals></execution></executions></plugin>
     <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-compiler-plugin</artifactId><version>3.14.1</version></plugin>
     <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-surefire-plugin</artifactId><version>3.5.6</version></plugin>
