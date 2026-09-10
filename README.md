@@ -65,7 +65,7 @@ The demo does not charge real cards or connect to a courier.
   scroll-driven image motion, and a complete paper-and-ink design across all routes.
 - Product galleries with directional image transitions, synchronized thumbnails
   and counters, previous/next controls, and arrow-key navigation.
-- Reduced-motion and compact-screen layouts, keyboard navigation, real loading
+- Always-on scroll effects, compact-screen layouts, keyboard navigation, real loading
   and error states, and motion cleanup when routes change.
 - JWT authentication, BCrypt passwords, role and ownership checks, gateway rate
   limits, validated uploads, seller media library, and profile avatars.

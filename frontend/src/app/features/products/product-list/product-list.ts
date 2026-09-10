@@ -22,7 +22,6 @@ import { NotificationService } from '../../../core/services/notification.service
 import { ProductService } from '../../../core/services/product.service';
 import { Product } from '../../../models/product.model';
 import { StorefrontMotion } from './storefront-motion';
-import { MotionPreferenceService } from '../../../core/services/motion-preference.service';
 
 @Component({
   selector: 'app-product-list',
@@ -37,7 +36,6 @@ export class ProductList implements OnInit, OnDestroy {
   private readonly formBuilder = inject(FormBuilder);
   private readonly destroyRef = inject(DestroyRef);
   protected readonly authService = inject(AuthService);
-  protected readonly motion = inject(MotionPreferenceService);
   protected readonly products = signal<Product[]>([]);
   protected readonly categories = signal<string[]>([]);
   protected readonly totalItems = signal(0);
@@ -138,10 +136,6 @@ export class ProductList implements OnInit, OnDestroy {
     this.filters.reset({ q: '', category: '', minPrice: null, maxPrice: null, sort: 'newest' });
   }
 
-  protected changeMotion(event: Event): void {
-    this.motion.setMode((event.target as HTMLSelectElement).value);
-  }
-
   @HostListener('window:wheel')
   @HostListener('window:touchstart')
   @HostListener('window:keydown')
@@ -156,10 +150,6 @@ export class ProductList implements OnInit, OnDestroy {
     if (!section) return;
     this.cancelAnimatedScroll();
     history.replaceState(null, '', `#${sectionId}`);
-    if (this.motion.reduced()) {
-      section.scrollIntoView({ behavior: 'auto', block: 'start' });
-      return;
-    }
     const start = globalThis.scrollY;
     const headerHeight = document.querySelector<HTMLElement>('.site-header')?.offsetHeight ?? 0;
     const destination =

@@ -44,16 +44,20 @@ describe('ScrollCraft route lifecycle', () => {
       host: fixture.nativeElement.querySelector('section') as HTMLElement,
     };
   }
-  it('mounts on desktop, responds to accessibility changes, and releases handlers on navigation', () => {
+  it('keeps desktop motion on, adapts to compact screens, and releases handlers on navigation', () => {
     const state = setup();
     expect(state.mount).toHaveBeenCalledWith(state.host, { reducedMotion: false });
     expect(state.host.classList.contains('motion-ready')).toBe(true);
     state.reduced.matches = true;
     state.reduced.dispatchEvent(new Event('change'));
+    expect(state.mount).toHaveBeenCalledTimes(1);
+    expect(state.engine.destroy).not.toHaveBeenCalled();
+    state.compact.matches = true;
+    state.compact.dispatchEvent(new Event('change'));
     expect(state.engine.destroy).toHaveBeenCalledTimes(1);
     expect(state.host.classList.contains('motion-ready')).toBe(false);
-    state.reduced.matches = false;
-    state.reduced.dispatchEvent(new Event('change'));
+    state.compact.matches = false;
+    state.compact.dispatchEvent(new Event('change'));
     expect(state.mount).toHaveBeenCalledTimes(2);
     state.fixture.destroy();
     expect(state.engine.destroy).toHaveBeenCalledTimes(2);
@@ -63,13 +67,16 @@ describe('ScrollCraft route lifecycle', () => {
     expect(state.mount).toHaveBeenCalledTimes(2);
   });
   it.each([
-    [true, false],
+    [true, true],
     [false, true],
-  ])('keeps content readable when motion is disabled (%s, %s)', (reduced, compact) => {
-    const state = setup(reduced, compact);
-    expect(state.mount).not.toHaveBeenCalled();
-    expect(state.host.classList.contains('motion-ready')).toBe(false);
-  });
+  ])(
+    'uses mobile motion without desktop pinning on compact screens (%s, %s)',
+    (reduced, compact) => {
+      const state = setup(reduced, compact);
+      expect(state.mount).not.toHaveBeenCalled();
+      expect(state.host.classList.contains('motion-ready')).toBe(false);
+    },
+  );
   it('falls back to static content if the runtime is unavailable or cannot mount', () => {
     const state = setup();
     vi.stubGlobal('ScrollCraft', undefined);

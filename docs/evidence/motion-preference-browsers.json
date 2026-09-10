@@ -2,7 +2,7 @@
   {
     "name": "firefox",
     "initial": {
-      "url": "http://127.0.0.1:4200/products?motion=full",
+      "url": "http://127.0.0.1:4200/products",
       "viewport": [
         1870,
         920
@@ -36,7 +36,7 @@
       "errors": []
     },
     "middle": {
-      "url": "http://127.0.0.1:4200/products?motion=full",
+      "url": "http://127.0.0.1:4200/products",
       "viewport": [
         1870,
         920
@@ -70,7 +70,7 @@
       "errors": []
     },
     "campaignStart": {
-      "url": "http://127.0.0.1:4200/products?motion=full",
+      "url": "http://127.0.0.1:4200/products",
       "viewport": [
         1870,
         920
@@ -104,7 +104,7 @@
       "errors": []
     },
     "campaignEnd": {
-      "url": "http://127.0.0.1:4200/products?motion=full",
+      "url": "http://127.0.0.1:4200/products",
       "viewport": [
         1870,
         920
@@ -137,8 +137,8 @@
       "aperture": "inset(12.2688% 17.892%)",
       "errors": []
     },
-    "afterDisabling": {
-      "url": "http://127.0.0.1:4200/products?motion=reduced",
+    "afterReloadWithSavedOff": {
+      "url": "http://127.0.0.1:4200/products",
       "viewport": [
         1870,
         920
@@ -146,29 +146,29 @@
       "reduced": true,
       "y": 0,
       "engine": "object",
-      "ready": "storefront",
+      "ready": "storefront motion-ready",
       "scenes": [
         {
           "id": "top",
-          "progress": "0",
-          "height": 834
+          "progress": "0.0000",
+          "height": 1564
         },
         {
           "id": "about",
-          "progress": "0",
-          "height": 834
+          "progress": "0.0000",
+          "height": 2024
         }
       ],
       "image": {
-        "translate": "none",
-        "rotate": "none",
+        "translate": "0px",
+        "rotate": "0deg",
         "top": 120.35000610351562
       },
       "stage": {
-        "position": "relative",
+        "position": "sticky",
         "top": 87
       },
-      "aperture": "inset(0px)",
+      "aperture": "inset(24% 35%)",
       "errors": []
     },
     "wheelInputVerified": true

@@ -1,5 +1,4 @@
 import { AfterViewInit, DestroyRef, Directive, ElementRef, inject, NgZone } from '@angular/core';
-import { MotionPreferenceService } from '../../../core/services/motion-preference.service';
 
 interface MotionEngine {
   destroy(): void;
@@ -17,12 +16,10 @@ export class StorefrontMotion implements AfterViewInit {
   private readonly element = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly zone = inject(NgZone);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly motion = inject(MotionPreferenceService);
 
   ngAfterViewInit(): void {
     this.zone.runOutsideAngular(() => {
       if (typeof matchMedia !== 'function') return;
-      const reduced = () => this.motion.reduced();
       const compact = matchMedia('(max-width: 800px)');
       const host = this.element.nativeElement;
       let engine: MotionEngine | undefined;
@@ -32,7 +29,7 @@ export class StorefrontMotion implements AfterViewInit {
       let disposed = false;
       const scenes = Array.from(host.querySelectorAll<HTMLElement>('[data-sc-act]'));
       const updateMobile = () => {
-        if (disposed || reduced() || !compact.matches || document.hidden) return;
+        if (disposed || !compact.matches || document.hidden) return;
         for (const scene of scenes) {
           const rect = scene.getBoundingClientRect();
           const progress = Math.max(
@@ -43,7 +40,7 @@ export class StorefrontMotion implements AfterViewInit {
         }
       };
       const scrollMobile = () => {
-        if (disposed || reduced() || !compact.matches) return;
+        if (disposed || !compact.matches) return;
         cancelAnimationFrame(mobileFrame);
         mobileFrame = requestAnimationFrame(updateMobile);
       };
@@ -51,13 +48,13 @@ export class StorefrontMotion implements AfterViewInit {
         engine?.destroy();
         engine = undefined;
         host.classList.remove('motion-ready');
-        host.classList.toggle('mobile-motion', !disposed && !reduced() && compact.matches);
+        host.classList.toggle('mobile-motion', !disposed && compact.matches);
         updateMobile();
         const runtime = (globalThis as typeof globalThis & Window).ScrollCraft;
-        if (disposed || reduced() || compact.matches || !runtime) return;
+        if (disposed || compact.matches || !runtime) return;
         try {
           host.classList.add('motion-ready');
-          engine = runtime.mount(host, { reducedMotion: reduced() });
+          engine = runtime.mount(host, { reducedMotion: false });
         } catch {
           host.classList.remove('motion-ready');
         }
@@ -65,7 +62,6 @@ export class StorefrontMotion implements AfterViewInit {
       frame = requestAnimationFrame(sync);
       globalThis.addEventListener('load', sync, { once: true });
       globalThis.addEventListener('scroll', scrollMobile, { passive: true });
-      const preferenceChanges = this.motion.changes.subscribe(sync);
       compact.addEventListener?.('change', sync);
       // API results and image sizes change the position of later pinned sections.
       // Re-measure the existing scene without replaying entrances or remounting it.
@@ -87,7 +83,6 @@ export class StorefrontMotion implements AfterViewInit {
         globalThis.removeEventListener('load', sync);
         globalThis.removeEventListener('scroll', scrollMobile);
         host.classList.remove('mobile-motion');
-        preferenceChanges.unsubscribe();
         compact.removeEventListener?.('change', sync);
         engine?.destroy();
       });

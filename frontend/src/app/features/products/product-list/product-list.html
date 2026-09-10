@@ -17,16 +17,6 @@
               >Shop the collection <span>↗</span></a
             >
           </div>
-          <div class="motion-control">
-            <label for="scroll-effects">Scroll effects</label>
-            <select id="scroll-effects" [value]="motion.mode()" (change)="changeMotion($event)">
-              <option value="system">
-                Device setting{{ motion.mode() === 'system' && motion.reduced() ? ' (off)' : '' }}
-              </option>
-              <option value="full">On</option>
-              <option value="reduced">Off</option>
-            </select>
-          </div>
         </div>
       </div>
       <div class="hero-scene" aria-hidden="true">

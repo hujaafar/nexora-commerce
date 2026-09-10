@@ -78,6 +78,5 @@ the alpha headphone subject moves independently in front, with a small cropped
 sneaker foreground providing near depth. The generated cutouts are explicitly
 floating studio objects, with no ground-contact illusion to break. The campaign
 room has no duplicated extracted object. Typography remains readable above
-the room or on paper; no full-image dark scrim. All assets retain a stable
-static layout when reduced motion is enabled. Phone layouts recompose images
+the room or on paper; no full-image dark scrim. The owner requested scroll effects remain permanently enabled, without a selector. Phone layouts recompose images
 and labels and eliminate extended pinning. Offscreen motion work is released.

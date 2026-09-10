@@ -113,7 +113,7 @@ test('desktop scroll and pointer move the rendered collection, and route navigat
 for (const mode of [
   { name: 'phone', width: 390, height: 844, reduced: false },
   { name: 'compact-phone', width: 360, height: 640, reduced: false },
-  { name: 'reduced-motion', width: 1440, height: 900, reduced: true },
+  { name: 'phone-with-reduced-motion', width: 390, height: 844, reduced: true },
 ]) {
   test(`${mode.name} keeps all content and controls visible without extra pinned scrolling`, async ({
     page,
@@ -145,12 +145,6 @@ for (const mode of [
       await expect(link).toBeFocused();
       await expect(link).toBeInViewport();
     }
-    if (mode.reduced) {
-      const running = await page
-        .locator('.hero-stage')
-        .evaluate((el) => el.getAnimations({ subtree: true }).length);
-      expect(running).toBe(0);
-    }
   });
 }
 
@@ -174,15 +168,13 @@ test('gallery thumbnails cross-slide, count correctly, and support keyboard navi
   await page.screenshot({ path: 'test-results/browser-motion-gallery.png' });
 });
 
-test('a visitor can enable scroll effects with reduced motion set by the device, then turn them off', async ({
+test('scroll effects stay on without a control despite device preferences or a saved off choice', async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.addInitScript(() => localStorage.setItem('nexora.motion', 'reduced'));
   await page.goto('/products');
-  const control = page.getByLabel('Scroll effects', { exact: true });
-  await expect(control).toHaveValue('system');
-  await expect(page.locator('.storefront')).not.toHaveClass(/motion-ready/);
-  await control.selectOption('full');
+  await expect(page.getByLabel('Scroll effects', { exact: true })).toHaveCount(0);
   await expect(page.locator('.storefront')).toHaveClass(/motion-ready/);
   await sampleAct(page, '#top', 0);
   const start = await page
@@ -201,23 +193,19 @@ test('a visitor can enable scroll effects with reduced motion set by the device,
     await page.locator('.campaign-image').evaluate((el) => getComputedStyle(el).clipPath),
   ).not.toBe(aperture);
   await page.reload();
-  await expect(control).toHaveValue('full');
   await expect(page.locator('.storefront')).toHaveClass(/motion-ready/);
-  await control.selectOption('reduced');
-  await expect(page.locator('.storefront')).not.toHaveClass(/motion-ready/);
-  expect(await page.evaluate(() => (window as any).ScrollCraft.instances.length)).toBe(0);
-  await expect(page.locator('.section-heading')).toHaveCSS('opacity', '1');
-  await control.selectOption('system');
-  await expect(page.locator('.storefront')).not.toHaveClass(/motion-ready/);
+  await page.goto('/products?motion=reduced');
+  await expect(page.locator('.storefront')).toHaveClass(/motion-ready/);
+  await expect(page.getByLabel('Scroll effects', { exact: true })).toHaveCount(0);
 });
 
-test('the full-motion preview link works on a phone without adding desktop pinning', async ({
+test('phone scrolling stays animated without desktop pinning when the device requests reduced motion', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto('/products?motion=full');
-  await expect(page.getByLabel('Scroll effects', { exact: true })).toHaveValue('full');
+  await page.goto('/products');
+  await expect(page.getByLabel('Scroll effects', { exact: true })).toHaveCount(0);
   await expect(page.locator('.storefront')).toHaveClass(/mobile-motion/);
   await expect(page.locator('.storefront')).not.toHaveClass(/motion-ready/);
   const before = await page
