@@ -27,7 +27,7 @@ public class CorsConfig {
                 .filter(origin -> !origin.isBlank())
                 .toList();
         configuration.setAllowedOrigins(origins);
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of(
                 "Authorization",
                 "Content-Type",

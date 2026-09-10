@@ -18,8 +18,8 @@ PY
 bash scripts/ci/build-artifact-images.sh
 docker compose -f compose.yml -f compose.jenkins.yml up -d --no-build --wait --wait-timeout 600
 bash scripts/ci/health-check.sh http://localhost:4200 360
-API_BASE=http://localhost:4200/api node scripts/integration-test.mjs | tee test-results/acceptance/http-api.log
-(cd frontend && npm run test:e2e) | tee test-results/acceptance/browser.log
+API_BASE=http://localhost:4200/api node scripts/integration-test.mjs 2>&1 | tee test-results/acceptance/http-api.log
+(cd frontend && npm run test:e2e) 2>&1 | tee test-results/acceptance/browser.log
 
 # Reuse the same persistent test databases but switch every HTTP service hop
 # to separately issued TLS identities. No certificate verification is disabled.
@@ -33,5 +33,5 @@ for attempt in $(seq 1 60); do
   sleep 3
 done
 NODE_EXTRA_CA_CERTS="$PWD/certs/tls/trust/ca.pem" API_BASE=https://localhost:8443/api \
-  node scripts/integration-test.mjs | tee test-results/acceptance/https-api.log
+  node scripts/integration-test.mjs 2>&1 | tee test-results/acceptance/https-api.log
 echo 'PASS: production browser journeys and certificate-verified HTTPS API journeys.'

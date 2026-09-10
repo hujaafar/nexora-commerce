@@ -249,7 +249,7 @@ services:
       AUTH_RATE_LIMIT_WINDOW: ${AUTH_RATE_LIMIT_WINDOW:-60s}
       MEDIA_RATE_LIMIT_REQUESTS: ${MEDIA_RATE_LIMIT_REQUESTS:-60}
       MEDIA_RATE_LIMIT_WINDOW: ${MEDIA_RATE_LIMIT_WINDOW:-60s}
-      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:4200,http://localhost}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:4200,http://127.0.0.1:4200,http://localhost}
     ports:
       - "${BIND_ADDRESS:-127.0.0.1}:${GATEWAY_HOST_PORT:-8080}:8080"
     depends_on:

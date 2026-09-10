@@ -88,7 +88,7 @@ test('seller publishes, edits, and deletes through the responsive dashboard', as
   await expect(page.getByRole('heading', { name: 'Manage your shop.' })).toBeVisible();
   await page.getByLabel('Product name').fill('Browser ceramic bowl');
   await page.getByLabel('Product story').fill('Handmade ceramic bowl for acceptance testing');
-  await page.getByLabel('Category', { exact: true }).fill('Home');
+  await page.getByLabel(/^Category/).fill('Home');
   await page.getByLabel('Price / USD').fill('25');
   await page.getByLabel('Quantity', { exact: true }).fill('4');
   await page.getByRole('button', { name: /Launch product/ }).click();
