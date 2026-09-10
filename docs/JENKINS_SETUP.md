@@ -50,6 +50,11 @@ services. Deployment must pass the real API acceptance journey before a candidat
 is promoted to current. The staging-only recovery drill uses a disposable broken
 frontend image and verifies restoration of the recorded healthy release.
 
+The same deployment and rollback scripts run in the required hosted
+`Deployment and rollback acceptance` job, independently of local Jenkins.
+The [validation record](VALIDATION.md) distinguishes that successful recovery
+test from the local Jenkins run interrupted by insufficient disk space.
+
 JVM heaps are bounded for local use. A laptop may still need to stop its ordinary
 development stack while running all CI infrastructure plus staging. Named volumes
 retain data and release history. `NEXORA_GIT_BRANCH` can select a trusted audit

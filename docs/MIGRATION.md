@@ -30,7 +30,10 @@ exported. Git bundles preserve Git history and refs, not GitHub issues or settin
 
 Nexus is integrated as infrastructure for the actual six-service Java 17 reactor.
 Its separate Java 11 demonstration app and duplicate Jenkins pipeline are not
-part of the running marketplace. Provisioning uses new ports, random credentials,
+part of the running marketplace. A new Java 11 artifact verifier provides tested
+version retrieval and SHA-256 checking without duplicating the application.
+This does not convert the six Java 17 services to Java 11.
+Provisioning uses new ports, random credentials,
 and a new volume. No old screenshots, credentials, or machine-specific evidence
 were imported. Its full original Git history is retained in `nexus.bundle`.
 

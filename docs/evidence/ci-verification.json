@@ -1,0 +1,47 @@
+{
+  "checks": [
+    {
+      "conclusion": "success",
+      "name": "Java 11 artifact verifier",
+      "url": "https://github.com/hujaafar/nexora-commerce/actions/runs/34425862509/job/102710829267"
+    },
+    {
+      "conclusion": "success",
+      "name": "backend",
+      "url": "https://github.com/hujaafar/nexora-commerce/actions/runs/34425862509/job/102710829372"
+    },
+    {
+      "conclusion": "success",
+      "name": "frontend",
+      "url": "https://github.com/hujaafar/nexora-commerce/actions/runs/34425862509/job/102710829428"
+    },
+    {
+      "conclusion": "success",
+      "name": "configuration",
+      "url": "https://github.com/hujaafar/nexora-commerce/actions/runs/34425862509/job/102710829450"
+    },
+    {
+      "conclusion": "success",
+      "name": "Deployment and rollback acceptance",
+      "url": "https://github.com/hujaafar/nexora-commerce/actions/runs/34425862509/job/102711278193"
+    },
+    {
+      "conclusion": "success",
+      "name": "Browser and HTTPS acceptance",
+      "url": "https://github.com/hujaafar/nexora-commerce/actions/runs/34425862509/job/102711278255"
+    },
+    {
+      "conclusion": "success",
+      "name": "SonarQube quality gate",
+      "url": "https://github.com/hujaafar/nexora-commerce/actions/runs/34425862509/job/102711278260"
+    }
+  ],
+  "commit": "31cd5384490084b96dd519506826f35e6672148a",
+  "conclusion": "success",
+  "createdAt": "2026-09-10T01:32:08Z",
+  "event": "push",
+  "runId": 34425862509,
+  "status": "completed",
+  "updatedAt": "2026-09-10T01:42:13Z",
+  "url": "https://github.com/hujaafar/nexora-commerce/actions/runs/34425862509"
+}

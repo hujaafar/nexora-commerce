@@ -2,7 +2,9 @@
 
 The first live SonarQube analysis found 45 code smells, four security hotspots, and 39.5% overall coverage. The default first-analysis gate passed because it had no new-code baseline. The audit therefore added overall conditions as well as the existing Sonar way new-code conditions.
 
-The verified GitHub scan of commit `6acc99f` reported **66.6% coverage, 1.1% duplicated lines, zero bugs, zero vulnerabilities, and zero code smells**. [GitHub run and downloadable evidence](https://github.com/hujaafar/nexora-commerce/actions/runs/34420193520). Subsequent runs must pass the same gate; this historical result is not a promise about future commits.
+The verified GitHub scan of commit `6acc99f` reported **66.6% coverage, 1.1% duplicated lines, zero bugs, zero vulnerabilities, and zero code smells**. [Initial green run](https://github.com/hujaafar/nexora-commerce/actions/runs/34420193520).
+
+After the Java 11 verifier and browser CORS regression tests were added, [run 34425304219](https://github.com/hujaafar/nexora-commerce/actions/runs/34425304219) reported **69.1% coverage**, with duplication still 1.1% and zero bugs, vulnerabilities, or code smells. Four security hotspots remain a separate technical-review category, described below. Subsequent runs must pass the same gate; these recorded results are not a promise about future commits.
 
 ## Changes driven by the findings
 

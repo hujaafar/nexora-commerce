@@ -1,9 +1,12 @@
 # Nexus artifact management
 
 Nexus stores the actual Nexora Commerce build: the parent Maven POM, six Java 17
-service JARs and their POMs, and seven Docker images including the Angular frontend.
-It also proxies Maven Central. The old standalone Java 11 demo is replaced by
-the marketplace services in this integrated repository.
+service JARs and their POMs, seven Docker images including the Angular frontend,
+and a separate Java 11 artifact verifier. It also proxies Maven Central.
+The verifier retrieves a versioned artifact and checks its SHA-256 against the
+producing build. It is a useful JDK 11 component; the six Spring Boot 3 marketplace
+services still require Java 17. A requirement to run buy-02 itself on Java 11 is
+not satisfied by this split.
 
 ```mermaid
 flowchart LR
@@ -146,6 +149,21 @@ This retrieves and tags all seven images under the local names expected by
 `compose.jenkins.yml`. Use the existing deployment/rollback scripts with that
 tag and the appropriate environment credentials. Copying artifacts does not
 restore databases or roll back database migrations.
+
+### Verify multiple Maven versions with Java 11
+
+The standalone [artifact verifier](../tools/artifact-verifier/README.md) builds
+and runs on JDK 11. Its seven tests cover valid retrieval, mismatched bytes,
+HTTP failures, redirects, and invalid coordinates. Jenkins builds and publishes
+it alongside the services after the quality gate; the local service-only
+`publish-nexus.ps1` command above does not publish this separate tool.
+
+Two discovery-service releases were independently retrieved from Nexus and
+matched against the SHA-256 of each producing Jenkins build's archived JAR:
+`1.0.4-6acc99f8a8cf` and `1.0.5-97b1d83c9c78`. The
+[verification record](evidence/artifact-versions.json) identifies both versions
+and hashes. The [repository screenshot](evidence/nexus-browser.png) shows the
+configured hosted, proxy, and group repositories.
 
 Stop Nexus without deleting artifacts:
 
