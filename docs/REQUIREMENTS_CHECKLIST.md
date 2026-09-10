@@ -35,7 +35,7 @@ This matrix covers the supplied buy-01, buy-02, Jenkins, SonarQube, and Nexus br
 
 | Requirement | Implementation and evidence |
 |---|---|
-| Install and agents | Docker/JCasC controller with zero executors and two Docker agents |
+| Install and agents | Docker/JCasC controller with zero executors; one Docker agent by default and an optional second agent |
 | Git fetch and trigger | Public SCM, polling every two minutes, exact commit and unique artifact/image versions |
 | Build, test, deploy | Parallel Java/Angular, Java 11 tool, quality gate, Maven/image publication, immutable staging deployment |
 | Stop on failure | Fail-fast tests and enforced gate; observed failed runs blocked later stages |

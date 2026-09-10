@@ -26,9 +26,15 @@ bash scripts/start.sh
 ```
 
 Open **[localhost:4200](http://localhost:4200)**. The startup script generates
-random local secrets, builds the services, waits for health checks, and adds the
+random local secrets, builds missing images, waits for health checks, and adds the
 sample catalog without replacing existing products. The initial build downloads
 dependencies and takes several minutes.
+
+Startup uses [laptop mode](docs/DOCKER_LAPTOP.md) by default: bounded CPU/RAM,
+smaller JVM heaps, rotating logs, and sequential builds. Existing images are reused;
+after source changes run `./scripts/start.ps1 -Build` or `bash scripts/start.sh --build`.
+Allow at least 3 GB free host RAM and 5 GB free disk (4 GB RAM / 10 GB disk for builds).
+Keep Jenkins, SonarQube, and Nexus stopped while using the storefront on a laptop.
 
 | Demo role | Email | Password |
 |---|---|---|

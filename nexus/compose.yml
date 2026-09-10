@@ -3,7 +3,7 @@ services:
   nexus:
     image: ${NEXUS_IMAGE:-sonatype/nexus3:3.95.3@sha256:c0b9c4a98e231a5865f67a07cea477c13bd3d5f3cac67746afa28622f9c15296}
     user: "200:200"
-    restart: unless-stopped
+    restart: "no"
     environment:
       INSTALL4J_ADD_VM_PARAMS: >-
         -Xms512m -Xmx1024m -XX:MaxDirectMemorySize=1024m

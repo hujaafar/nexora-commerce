@@ -15,7 +15,9 @@ Mailpit captures local notifications at localhost:8025. The startup script
 creates random credentials in ignored `jenkins/.env`. Never commit this file.
 
 JCasC creates the `nexora-commerce` job, a controller with no build executors,
-two Docker agents, and deployment credentials. The public source URL defaults
+two Docker agent definitions, and deployment credentials. One worker with one
+executor starts by default. The second worker is optional via the `distributed`
+Compose profile; see [laptop operation](DOCKER_LAPTOP.md). The public source URL defaults
 to https://github.com/hujaafar/nexora-commerce.git. No personal Git password is
 required. The controller polls main; it does not execute arbitrary fork PRs.
 

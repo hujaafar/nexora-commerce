@@ -16,17 +16,18 @@ pathlib.Path('.env').write_text('\n'.join(
 pathlib.Path('.env').chmod(0o600)
 PY
 bash scripts/ci/build-artifact-images.sh
-docker compose -f compose.yml -f compose.jenkins.yml up -d --no-build --wait --wait-timeout 600
+docker compose -f compose.yml -f compose.jenkins.yml -f compose.laptop.yml up -d --no-build --wait --wait-timeout 600
 bash scripts/ci/health-check.sh http://localhost:4200 360
 API_BASE=http://localhost:4200/api node scripts/integration-test.mjs 2>&1 | tee test-results/acceptance/http-api.log
 (cd frontend && npm run test:e2e) 2>&1 | tee test-results/acceptance/browser.log
+python3 scripts/ci/check-laptop-runtime.py | tee test-results/acceptance/laptop-http-resources.json
 
 # Reuse the same persistent test databases but switch every HTTP service hop
 # to separately issued TLS identities. No certificate verification is disabled.
 docker run --rm -v "$PWD:/workspace" -w /workspace maven:3.9.11-eclipse-temurin-17 bash scripts/tls-init.sh
 sudo chown "$(id -u):$(id -g)" certs/tls/.env
 docker compose --env-file .env --env-file certs/tls/.env \
-  -f compose.yml -f compose.jenkins.yml -f compose.tls.yml \
+  -f compose.yml -f compose.jenkins.yml -f compose.laptop.yml -f compose.tls.yml \
   up -d --no-build --wait --wait-timeout 600
 for attempt in $(seq 1 60); do
   if curl --fail --silent --cacert certs/tls/trust/ca.pem https://localhost:8443/api/products > /dev/null; then break; fi
@@ -34,4 +35,5 @@ for attempt in $(seq 1 60); do
 done
 NODE_EXTRA_CA_CERTS="$PWD/certs/tls/trust/ca.pem" API_BASE=https://localhost:8443/api \
   node scripts/integration-test.mjs 2>&1 | tee test-results/acceptance/https-api.log
+python3 scripts/ci/check-laptop-runtime.py | tee test-results/acceptance/laptop-https-resources.json
 echo 'PASS: production browser journeys and certificate-verified HTTPS API journeys.'

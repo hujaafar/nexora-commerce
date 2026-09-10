@@ -1,6 +1,9 @@
 # File purpose: Builds Angular and serves the optimized files with Nginx.
 FROM node:22.12-alpine AS build
 
+ENV NODE_OPTIONS="--max-old-space-size=1024" \
+    NG_BUILD_MAX_WORKERS=2
+
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci

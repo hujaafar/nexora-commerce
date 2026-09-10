@@ -6,7 +6,8 @@ x-java-tls: &java-tls
   SERVER_SSL_KEYSTORE: file:/certs/server.p12
   SERVER_SSL_KEYSTORETYPE: PKCS12
   SERVER_SSL_KEYSTOREPASSWORD: ${TLS_KEYSTORE_PASSWORD:?Generate certificates with scripts/tls-init.sh}
-  JAVA_TOOL_OPTIONS: -Xms64m -Xmx256m -Djavax.net.ssl.trustStore=/trust/truststore.p12 -Djavax.net.ssl.trustStorePassword=changeit
+  # Keep heap sizing from the selected runtime profile, including laptop mode.
+  JDK_JAVA_OPTIONS: -Djavax.net.ssl.trustStore=/trust/truststore.p12 -Djavax.net.ssl.trustStorePassword=changeit
 x-discovery-tls: &discovery-tls
   EUREKA_URL: https://discovery-service:8761/eureka/
   EUREKA_CLIENT_TLS_ENABLED: 'true'

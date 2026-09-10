@@ -16,7 +16,7 @@ services:
   docker:
     image: docker:28-dind
     privileged: true
-    restart: unless-stopped
+    restart: "no"
     command:
       - --storage-driver=overlay2
       - --insecure-registry=${NEXUS_DOCKER_REGISTRY:-host.docker.internal:18082}
@@ -54,7 +54,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    restart: unless-stopped
+    restart: "no"
     depends_on:
       docker:
         condition: service_healthy
@@ -127,7 +127,7 @@ services:
     build:
       context: agent
       dockerfile: Dockerfile
-    restart: unless-stopped
+    restart: "no"
     depends_on:
       docker:
         condition: service_healthy
@@ -168,6 +168,8 @@ services:
   # node identity and workspace volume. This keeps both distributed workers
   # consistent without duplicating their security and health-check settings.
   agent-2:
+    # Distributed builds are opt-in; the ordinary lab runs one worker.
+    profiles: [distributed]
     extends:
       service: agent
     environment:
@@ -180,7 +182,7 @@ services:
   # success and failure emails. Its web interface is exposed only for review.
   mailpit:
     image: axllent/mailpit:v1.27@sha256:e22dce5b36f93c77082e204a3942fb6b283b7896e057458400a4c88344c3df68
-    restart: unless-stopped
+    restart: "no"
     environment:
       MP_DATABASE: /data/mailpit.db
     volumes:

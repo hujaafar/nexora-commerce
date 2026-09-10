@@ -39,6 +39,7 @@ done < <(find scripts -type f -name '*.sh' -print0)
 # IMAGE_TAG is supplied because the deployment override uses immutable tags.
 IMAGE_TAG=validation \
   docker compose -f compose.yml -f compose.jenkins.yml config --quiet
+docker compose -f compose.yml -f compose.laptop.yml config --quiet
 # Compose requires the SonarQube token at runtime. This command only parses the
 # YAML, so a clearly fake value is safer than exposing Jenkins credentials to a
 # syntax check. The real scan still receives the masked `sonarqube-token`

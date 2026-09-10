@@ -77,7 +77,7 @@ jenkins:
     - permanent:
         name: docker-agent
         remoteFS: /home/jenkins/agent
-        numExecutors: 2
+        numExecutors: 1
         labelString: docker-agent docker-agent-1 docker linux
         mode: EXCLUSIVE
         retentionStrategy: always
@@ -90,7 +90,7 @@ jenkins:
     - permanent:
         name: docker-agent-2
         remoteFS: /home/jenkins/agent-2
-        numExecutors: 2
+        numExecutors: 1
         labelString: docker-agent docker-agent-2 docker linux
         mode: EXCLUSIVE
         retentionStrategy: always
