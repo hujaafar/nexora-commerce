@@ -5,6 +5,10 @@ work alongside email/password authentication and issue Nexora's existing JWT.
 They can be configured independently. The login and shopper registration pages
 show each provider's availability; missing credentials do not break email login.
 
+![Nexora login with Google and GitHub options](screenshots/oauth-login.jpg)
+
+The screenshot shows an installation awaiting its provider credentials.
+
 ## Configure separate Nexora apps
 
 Do not change the callback of an existing Neo4flix app: it would interrupt that
@@ -130,6 +134,12 @@ routes, and competing bindings. Browser tests use explicitly mocked provider
 responses to check the screens without real provider credentials. After adding
 real clients, separately test Google and GitHub signup, linking, returning login,
 and cancellation in your own browser.
+
+On Windows installations where Java reports `Unable to establish loopback
+connection` in these local HTTP tests, run them in the Linux build image or set
+`$env:JAVA_TOOL_OPTIONS='-Djdk.net.unixdomain.tmpdir=NUL'` in the test shell.
+This makes Java fall back to TCP for its local selector pipe on the affected
+Windows runtime. It is unnecessary in the Linux application containers.
 
 Official references: [Google server flow](https://developers.google.com/identity/protocols/oauth2/web-server),
 [Google OpenID Connect](https://developers.google.com/identity/openid-connect/openid-connect),
