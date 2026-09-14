@@ -5,11 +5,13 @@ package com.nexora.user.oauth;
 
 import java.net.http.HttpClient;
 import java.time.Duration;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.client.JdkClientHttpRequestFactory;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
@@ -40,7 +42,7 @@ final class GitHubUserService implements OAuth2UserService<OAuth2UserRequest, OA
         try {
             OAuth2User user = delegate.loadUser(request);
             Object rawId = user.getAttribute("id");
-            if (!(rawId instanceof Number) || !rawId.toString().matches("[1-9][0-9]{0,18}")) {
+            if (!(rawId instanceof Number) || !rawId.toString().matches("[1-9]\\d{0,18}")) {
                 throw invalid();
             }
             String subject = Long.toString(Long.parseLong(rawId.toString()));
@@ -87,15 +89,31 @@ final class GitHubUserService implements OAuth2UserService<OAuth2UserRequest, OA
                 "GitHub could not verify the account and primary email");
     }
 
-    static final class VerifiedUser extends DefaultOAuth2User {
+    static final class VerifiedUser implements OAuth2User {
 
         final OAuthIdentity identity;
+        private final OAuth2User principal;
 
         VerifiedUser(OAuth2User user, OAuthIdentity identity) {
-            super(user.getAuthorities(), Map.of(
+            this.principal = new DefaultOAuth2User(user.getAuthorities(), Map.of(
                     "id", identity.subject(),
                     "name", identity.name()), "id");
             this.identity = identity;
+        }
+
+        @Override
+        public Map<String, Object> getAttributes() {
+            return principal.getAttributes();
+        }
+
+        @Override
+        public Collection<? extends GrantedAuthority> getAuthorities() {
+            return principal.getAuthorities();
+        }
+
+        @Override
+        public String getName() {
+            return principal.getName();
         }
     }
 }

@@ -13,7 +13,6 @@ import com.nexora.user.domain.Role;
 import com.nexora.user.domain.UserAccount;
 import com.nexora.user.repository.UserAccountRepository;
 import com.nexora.user.security.JwtService;
-import java.time.Instant;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,14 +43,31 @@ class OAuthServiceTest {
     @BeforeEach
     void setUp() {
         passwordEncoder = new BCryptPasswordEncoder(4);
-        service = new OAuthService(repository, passwordEncoder, jwtService, linker);
+        service = new OAuthService(repository, passwordEncoder, jwtService, linker, OAuthTestTime.CLOCK);
+    }
+
+    @Test
+    void completionExpiresAtTheFiveMinuteBoundary() {
+        OAuthIdentity identity = new OAuthIdentity(
+                OAuthProvider.GOOGLE, "expiring-subject", "expires@example.test", "Member");
+        when(repository.findByGoogleSubject(identity.subject())).thenReturn(Optional.empty());
+        when(repository.findByEmailIgnoreCase(identity.email())).thenReturn(Optional.empty());
+        OAuthService.Pending pending = service.begin(identity, "/products");
+        assertThat(pending.expiresAtEpochSecond())
+                .isEqualTo(OAuthTestTime.NOW.plusSeconds(300).getEpochSecond());
+
+        OAuthService later = new OAuthService(repository, passwordEncoder, jwtService, linker,
+                java.time.Clock.offset(OAuthTestTime.CLOCK, java.time.Duration.ofSeconds(300)));
+        assertThatThrownBy(() -> later.complete(pending, "Member", "Password1"))
+                .isInstanceOf(OAuthFlowException.class).hasMessageContaining("expired");
+        org.mockito.Mockito.verifyNoInteractions(jwtService, linker);
     }
 
     @Test
     void linkedIdentitySignsInWithoutChangingTheExistingRole() {
         stubJwt();
         UserAccount seller = user("seller-id", "seller@example.com", "Password1", Role.SELLER);
-        seller.linkOAuthIdentity("google", "google-123", Instant.now());
+        seller.linkOAuthIdentity("google", "google-123", OAuthTestTime.NOW);
         when(repository.findByGoogleSubject("google-123")).thenReturn(Optional.of(seller));
 
         OAuthService.Pending pending = service.begin(
@@ -73,7 +89,7 @@ class OAuthServiceTest {
         when(repository.findByGithubSubject("98765")).thenReturn(Optional.empty());
         when(repository.findByEmailIgnoreCase(client.getEmail())).thenReturn(Optional.of(client));
         when(linker.link(client, github)).thenAnswer(call -> {
-            client.linkOAuthIdentity("github", github.subject(), Instant.now());
+            client.linkOAuthIdentity("github", github.subject(), OAuthTestTime.NOW);
             return client;
         });
 
@@ -124,7 +140,7 @@ class OAuthServiceTest {
     @Test
     void aSecondIdentityCannotReplaceAnAlreadyLinkedProvider() {
         UserAccount client = user("client-id", "client@example.com", "Password1", Role.CLIENT);
-        client.linkOAuthIdentity("google", "first-google", Instant.now());
+        client.linkOAuthIdentity("google", "first-google", OAuthTestTime.NOW);
         when(repository.findByGoogleSubject("second-google")).thenReturn(Optional.empty());
         when(repository.findByEmailIgnoreCase(client.getEmail())).thenReturn(Optional.of(client));
 
@@ -141,13 +157,13 @@ class OAuthServiceTest {
 
     private UserAccount user(String id, String email, String password, Role role) {
         UserAccount user = new UserAccount(
-                "Member", email, passwordEncoder.encode(password), role, Instant.now());
+                "Member", email, passwordEncoder.encode(password), role, OAuthTestTime.NOW);
         ReflectionTestUtils.setField(user, "id", id);
         return user;
     }
 
     private void stubJwt() {
         when(jwtService.issue(any(UserAccount.class)))
-                .thenReturn(new JwtService.IssuedToken("jwt", Instant.now().plusSeconds(60)));
+                .thenReturn(new JwtService.IssuedToken("jwt", OAuthTestTime.NOW.plusSeconds(60)));
     }
 }

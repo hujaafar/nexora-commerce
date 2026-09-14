@@ -6,6 +6,7 @@ package com.nexora.user.oauth;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.Clock;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.ObjectProvider;
@@ -39,6 +40,11 @@ import org.springframework.security.web.context.NullSecurityContextRepository;
 public class OAuthSecurity {
 
     static final String RETURN_URL = "nexora.oauth.return";
+
+    @Bean
+    Clock oauthClock() {
+        return Clock.systemUTC();
+    }
 
     @Bean
     @Order(1)
@@ -145,11 +151,11 @@ public class OAuthSecurity {
         if (!(authentication instanceof OAuth2AuthenticationToken token)) {
             throw new IllegalArgumentException("Unexpected OAuth principal");
         }
-        if ("google".equals(token.getAuthorizedClientRegistrationId())
+        if (OAuthProvider.GOOGLE.id.equals(token.getAuthorizedClientRegistrationId())
                 && token.getPrincipal() instanceof OidcUser user) {
             return GoogleIdentity.from(user);
         }
-        if ("github".equals(token.getAuthorizedClientRegistrationId())
+        if (OAuthProvider.GITHUB.id.equals(token.getAuthorizedClientRegistrationId())
                 && token.getPrincipal() instanceof GitHubUserService.VerifiedUser user) {
             return user.identity;
         }
@@ -164,7 +170,7 @@ public class OAuthSecurity {
             String githubSecret) {
         List<ClientRegistration> result = new ArrayList<>();
         if (!googleId.isBlank() && !googleSecret.isBlank()) {
-            result.add(ClientRegistration.withRegistrationId("google")
+            result.add(ClientRegistration.withRegistrationId(OAuthProvider.GOOGLE.id)
                     .clientId(googleId)
                     .clientSecret(googleSecret)
                     .clientName("Google")
@@ -181,7 +187,7 @@ public class OAuthSecurity {
                     .build());
         }
         if (!githubId.isBlank() && !githubSecret.isBlank()) {
-            result.add(ClientRegistration.withRegistrationId("github")
+            result.add(ClientRegistration.withRegistrationId(OAuthProvider.GITHUB.id)
                     .clientId(githubId)
                     .clientSecret(githubSecret)
                     .clientName("GitHub")
@@ -205,7 +211,8 @@ public class OAuthSecurity {
         if (request.getSession(false) != null) {
             request.getSession(false).invalidate();
         }
-        String provider = request.getRequestURI().endsWith("/github") ? "github" : "google";
+        String provider = request.getRequestURI().endsWith("/github")
+                ? OAuthProvider.GITHUB.id : OAuthProvider.GOOGLE.id;
         response.sendRedirect(publicOrigin + "/login?oauthError=" + provider);
     }
 

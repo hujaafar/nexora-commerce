@@ -14,7 +14,7 @@
   </div>
   <div class="auth-card surface-card">
     @if (loading()) {
-      <p role="status">Checking your sign-in…</p>
+      <output class="auth-status">Checking your sign-in…</output>
     } @else if (pending(); as identity) {
       <p class="eyebrow">{{ identity.providerName }} SIGN-IN</p>
       @if (identity.mode === 'register') {
@@ -31,9 +31,9 @@
         </p>
       } @else {
         <h2>Welcome back.</h2>
-        <p role="status">
+        <output class="auth-status">
           {{ submitting() ? 'Opening your account…' : 'Your account is ready to continue.' }}
-        </p>
+        </output>
       }
       <p class="verified-email">
         Verified email <strong>{{ identity.email }}</strong>
@@ -47,6 +47,7 @@
           <input
             class="form-control mb-3"
             id="oauth-name"
+            type="text"
             autocomplete="name"
             formControlName="name"
           />

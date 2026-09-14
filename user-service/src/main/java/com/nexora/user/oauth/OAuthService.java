@@ -9,6 +9,7 @@ import com.nexora.user.dto.AuthResponse;
 import com.nexora.user.repository.UserAccountRepository;
 import com.nexora.user.security.JwtService;
 import java.io.Serializable;
+import java.time.Clock;
 import java.time.Instant;
 import java.util.Optional;
 import org.springframework.dao.DuplicateKeyException;
@@ -24,16 +25,19 @@ public class OAuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final OAuthAccountLinker linker;
+    private final Clock clock;
 
     public OAuthService(
             UserAccountRepository repository,
             PasswordEncoder passwordEncoder,
             JwtService jwtService,
-            OAuthAccountLinker linker) {
+            OAuthAccountLinker linker,
+            Clock clock) {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.linker = linker;
+        this.clock = clock;
     }
 
     Pending begin(OAuthIdentity identity, String returnUrl) {
@@ -60,11 +64,11 @@ public class OAuthService {
                 mode,
                 userId,
                 safeReturnUrl(returnUrl),
-                Instant.now().getEpochSecond() + PENDING_LIFETIME_SECONDS);
+                clock.instant().getEpochSecond() + PENDING_LIFETIME_SECONDS);
     }
 
     AuthResponse complete(Pending pending, String requestedName, String password) {
-        if (pending.expiresAtEpochSecond() <= Instant.now().getEpochSecond()) {
+        if (pending.expiresAtEpochSecond() <= clock.instant().getEpochSecond()) {
             throw new OAuthFlowException(401, "Social sign-in expired. Please start again.");
         }
 
@@ -121,7 +125,7 @@ public class OAuthService {
             throw new OAuthFlowException(409, "This account changed. Please start again.");
         }
 
-        Instant now = Instant.now();
+        Instant now = clock.instant();
         // Social registration always starts as CLIENT. Elevated roles require the normal controlled path.
         UserAccount user = new UserAccount(
                 name,

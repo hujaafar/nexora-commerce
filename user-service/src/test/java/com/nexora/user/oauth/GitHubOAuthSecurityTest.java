@@ -13,7 +13,6 @@ import com.nexora.user.dto.AuthResponse;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import org.junit.jupiter.api.*;
@@ -56,12 +55,12 @@ class GitHubOAuthSecurityTest {
     static final Map<String, Map<String, String>> codes = new ConcurrentHashMap<>();
     static final Map<String, String> tokens = new ConcurrentHashMap<>();
     static final HttpServer provider;
-    static final String providerUrl;
+    static final String PROVIDER_URL;
 
     static {
         try {
             provider = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
-            providerUrl = "http://127.0.0.1:" + provider.getAddress().getPort();
+            PROVIDER_URL = "http://127.0.0.1:" + provider.getAddress().getPort();
             provider.createContext("/token", GitHubOAuthSecurityTest::token);
             provider.createContext("/user", e -> {
                 String variant = variant(e);
@@ -107,6 +106,12 @@ class GitHubOAuthSecurityTest {
     static class Config {
 
         @Bean
+        @Primary
+        java.time.Clock testClock() {
+            return OAuthTestTime.CLOCK;
+        }
+
+        @Bean
         OAuthService oauth() {
             return mock(OAuthService.class);
         }
@@ -122,9 +127,9 @@ class GitHubOAuthSecurityTest {
                     .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                     .redirectUri(ORIGIN + "/api/auth/oauth2/callback/github")
                     .scope("read:user", "user:email")
-                    .authorizationUri(providerUrl + "/authorize")
-                    .tokenUri(providerUrl + "/token")
-                    .userInfoUri(providerUrl + "/user")
+                    .authorizationUri(PROVIDER_URL + "/authorize")
+                    .tokenUri(PROVIDER_URL + "/token")
+                    .userInfoUri(PROVIDER_URL + "/user")
                     .userNameAttributeName("id")
                     .build()
             );
@@ -149,11 +154,11 @@ class GitHubOAuthSecurityTest {
                 "login",
                 "user-1",
                 a.getArgument(1),
-                Instant.now().getEpochSecond() + 300
+                OAuthTestTime.NOW.getEpochSecond() + 300
             )
         );
         when(oauth.complete(any(), any(), any())).thenReturn(
-            new AuthResponse("app-jwt", "Bearer", Instant.now().plusSeconds(300), null)
+            new AuthResponse("app-jwt", "Bearer", OAuthTestTime.NOW.plusSeconds(300), null)
         );
     }
 

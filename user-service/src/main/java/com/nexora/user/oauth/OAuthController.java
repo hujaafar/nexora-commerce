@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
-import java.time.Instant;
+import java.time.Clock;
 import java.util.Arrays;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,15 +31,18 @@ public class OAuthController {
     private final OAuthService oauthService;
     private final Map<OAuthProvider, Boolean> enabled;
     private final String publicOrigin;
+    private final Clock clock;
 
     public OAuthController(
             OAuthService oauthService,
+            Clock clock,
             @Value("${app.public-origin}") String publicOrigin,
             @Value("${app.oauth2.google-client-id:}") String googleId,
             @Value("${app.oauth2.google-client-secret:}") String googleSecret,
             @Value("${app.oauth2.github-client-id:}") String githubId,
             @Value("${app.oauth2.github-client-secret:}") String githubSecret) {
         this.oauthService = oauthService;
+        this.clock = clock;
         this.publicOrigin = OAuthOrigin.validate(publicOrigin);
         this.enabled = Map.of(
                 OAuthProvider.GOOGLE, !googleId.isBlank() && !googleSecret.isBlank(),
@@ -112,7 +115,7 @@ public class OAuthController {
             try {
                 if (session.getAttribute(PENDING) instanceof OAuthService.Pending pending
                         && Boolean.TRUE.equals(enabled.get(pending.identity().provider()))
-                        && pending.expiresAtEpochSecond() > Instant.now().getEpochSecond()) {
+                        && pending.expiresAtEpochSecond() > clock.instant().getEpochSecond()) {
                     return pending;
                 }
             } catch (IllegalStateException ignored) {

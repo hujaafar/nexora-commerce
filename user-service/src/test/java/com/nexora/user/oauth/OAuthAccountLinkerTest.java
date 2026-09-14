@@ -6,7 +6,6 @@ import static org.mockito.Mockito.*;
 
 import com.nexora.user.domain.Role;
 import com.nexora.user.domain.UserAccount;
-import java.time.Instant;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.dao.DuplicateKeyException;
@@ -20,7 +19,7 @@ class OAuthAccountLinkerTest {
     @Test
     void bindingIsConditionalAndNeverReplacesRoleOrAnotherProvider() {
         MongoOperations mongo = mock(MongoOperations.class);
-        UserAccount user = new UserAccount("Seller", "seller@example.test", "hash", Role.SELLER, Instant.now());
+        UserAccount user = new UserAccount("Seller", "seller@example.test", "hash", Role.SELLER, OAuthTestTime.NOW);
         ReflectionTestUtils.setField(user, "id", "seller-id");
         when(mongo.findAndModify(any(Query.class), any(Update.class), any(FindAndModifyOptions.class), eq(UserAccount.class)))
                 .thenReturn(user);
@@ -39,7 +38,7 @@ class OAuthAccountLinkerTest {
     void changedAccountOrDuplicateBindingCannotSucceed() {
         MongoOperations mongo = mock(MongoOperations.class);
         OAuthAccountLinker linker = new OAuthAccountLinker(mongo);
-        UserAccount user = new UserAccount("Member", "member@example.test", "hash", Role.CLIENT, Instant.now());
+        UserAccount user = new UserAccount("Member", "member@example.test", "hash", Role.CLIENT, OAuthTestTime.NOW);
         OAuthIdentity identity = new OAuthIdentity(OAuthProvider.GITHUB, "1234", user.getEmail(), user.getName());
         assertThatThrownBy(() -> linker.link(user, identity)).isInstanceOf(OAuthFlowException.class);
         when(mongo.findAndModify(any(Query.class), any(Update.class), any(FindAndModifyOptions.class), eq(UserAccount.class)))

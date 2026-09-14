@@ -1,4 +1,8 @@
 @use '../auth-shared';
+.auth-status {
+  display: block;
+  margin-block: 1em;
+}
 .verified-email {
   padding: 14px 0;
   border-block: 1px solid var(--line-strong);

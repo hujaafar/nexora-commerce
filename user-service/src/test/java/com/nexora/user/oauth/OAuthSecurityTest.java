@@ -62,13 +62,13 @@ class OAuthSecurityTest {
     static final Map<String, Map<String, String>> codes = new ConcurrentHashMap<>();
     static final RSAKey key;
     static final HttpServer provider;
-    static final String providerUrl;
+    static final String PROVIDER_URL;
 
     static {
         try {
             key = new RSAKeyGenerator(2048).keyID("test-key").generate();
             provider = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
-            providerUrl = "http://127.0.0.1:" + provider.getAddress().getPort();
+            PROVIDER_URL = "http://127.0.0.1:" + provider.getAddress().getPort();
             provider.createContext("/jwks", e ->
                 json(e, 200, new JWKSet(key.toPublicJWK()).toString())
             );
@@ -92,10 +92,29 @@ class OAuthSecurityTest {
     static class Config {
 
         @Bean
+        @Primary
+        java.time.Clock testClock() {
+            return OAuthTestTime.CLOCK;
+        }
+
+        @Bean
         OAuthService oauth() {
             return mock(OAuthService.class);
         }
 
+
+        @Bean
+        org.springframework.security.oauth2.jwt.JwtDecoderFactory<ClientRegistration> tokenDecoders() {
+            var factory = new org.springframework.security.oauth2.client.oidc.authentication.OidcIdTokenDecoderFactory();
+            factory.setJwtValidatorFactory(registration -> {
+                var timestamp = new org.springframework.security.oauth2.jwt.JwtTimestampValidator();
+                timestamp.setClock(OAuthTestTime.CLOCK);
+                var identity = new org.springframework.security.oauth2.client.oidc.authentication.OidcIdTokenValidator(registration);
+                identity.setClock(OAuthTestTime.CLOCK);
+                return new DelegatingOAuth2TokenValidator<>(timestamp, identity);
+            });
+            return factory;
+        }
 
         @Bean
         ClientRegistrationRepository clients() {
@@ -107,11 +126,11 @@ class OAuthSecurityTest {
                     .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                     .redirectUri(ORIGIN + "/api/auth/oauth2/callback/google")
                     .scope("openid", "profile", "email")
-                    .authorizationUri(providerUrl + "/authorize")
-                    .tokenUri(providerUrl + "/token")
-                    .jwkSetUri(providerUrl + "/jwks")
+                    .authorizationUri(PROVIDER_URL + "/authorize")
+                    .tokenUri(PROVIDER_URL + "/token")
+                    .jwkSetUri(PROVIDER_URL + "/jwks")
                     .issuerUri("https://accounts.google.com")
-                    .userInfoUri(providerUrl + "/userinfo")
+                    .userInfoUri(PROVIDER_URL + "/userinfo")
                     .userNameAttributeName("sub")
                     .build()
             );
@@ -136,11 +155,11 @@ class OAuthSecurityTest {
                 "login",
                 "user-1",
                 a.getArgument(1),
-                Instant.now().getEpochSecond() + 300
+                OAuthTestTime.NOW.getEpochSecond() + 300
             )
         );
         when(oauth.complete(any(), any(), any())).thenReturn(
-            new AuthResponse("application-jwt", "Bearer", Instant.now().plusSeconds(300), null)
+            new AuthResponse("application-jwt", "Bearer", OAuthTestTime.NOW.plusSeconds(300), null)
         );
     }
 
@@ -211,7 +230,7 @@ class OAuthSecurityTest {
         mvc.perform(get("/auth/oauth2/pending").session(session))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.mode").value("login"));
-        var complete = mvc
+        mvc
             .perform(
                 post("/auth/oauth2/complete")
                     .session(session)
@@ -370,7 +389,7 @@ class OAuthSecurityTest {
                 return;
             }
             String variant = authorization.get("variant");
-            Instant now = Instant.now();
+            Instant now = OAuthTestTime.NOW;
             var claims = new JWTClaimsSet.Builder()
                 .issuer(
                     variant.equals("issuer")
@@ -405,7 +424,9 @@ class OAuthSecurityTest {
         } catch (Exception e) {
             try {
                 json(exchange, 500, "{\"error\":\"server_error\"}");
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+                // The provider connection may already be closed after a rejected request.
+            }
         }
     }
 
