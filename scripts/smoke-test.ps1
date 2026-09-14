@@ -182,6 +182,7 @@ try {
     $productRequest = @{
         name = 'Nexora Commerce Smoke-Test Camera'
         description = 'Temporary product created by the automated end-to-end smoke test.'
+        category = 'Test fixtures'
         price = 149.90
         quantity = 3
         imageUrls = @()
