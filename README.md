@@ -20,7 +20,7 @@ The room photograph expands as you scroll through the “Make room for good” s
 
 ### Sign in
 
-![Nexora sign-in page with a sunlit room and the account form](docs/screenshots/sign-in.jpg)
+![Nexora sign-in page with Google, GitHub, and email options](docs/screenshots/oauth-login.jpg)
 
 <details>
 <summary><strong>See the mobile storefront</strong></summary>
