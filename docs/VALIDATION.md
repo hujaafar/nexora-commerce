@@ -26,6 +26,11 @@ All seven jobs passed for implementation commit `31cd538` in [run 34425862509](h
 
 ## Acceptance and recovery
 
+The Nexus repository browser captured during the original setup shows the hosted,
+proxy, and group repositories used in the artifact checks:
+
+![Nexus Maven and Docker repository configuration](evidence/nexus-artifacts.png)
+
 The original consolidated stack passed 35 real API checks. The expanded journey adds oversized-upload/error-contract checks, and is now required before Jenkins promotes a release. Hosted CI also builds the exact tested JAR/frontend artifacts into a fresh full stack, runs the API journey and two real browser journeys, then switches all HTTP hops to certificate-verified TLS and repeats the API journey.
 
 Fresh runs revealed and fixed service-discovery startup timing, missing loopback/PATCH CORS permissions, and TLS parent-directory traversal permissions. Run 34425304219 passed the expanded API, browser and TLS journeys. The acceptance job in run 34425865741 repeated them after correcting the mobile toast layout; its screenshots above contain synthetic test fixtures. Readiness retries are restricted to read-only probes; failed mutations are not retried away.

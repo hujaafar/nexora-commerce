@@ -22,6 +22,10 @@ File purpose: Defines the accessible auth feature template.
     <p class="eyebrow">YOUR NEXORA ACCOUNT</p>
     <h2>Welcome back.</h2>
     <p>Your favorites are right where you left them.</p>
+    @if (oauthError()) {
+      <p class="field-error" role="alert">{{ oauthError() }}</p>
+    }
+    <app-social-login [returnUrl]="returnUrl" />
     <div class="mb-3">
       <label class="form-label" for="email">Email address</label>
       <input

@@ -61,7 +61,7 @@ const asset = {
   createdAt: date,
 };
 
-async function prepare(page: Page) {
+async function prepare(page: Page, currentUser: () => Record<string, unknown> | null) {
   await page.addInitScript(() => {
     Element.prototype.requestPointerLock = () => Promise.reject(new Error('Disabled in UI tests'));
     Element.prototype.setPointerCapture = () => {};
@@ -69,11 +69,21 @@ async function prepare(page: Page) {
   });
   await page.route('**/api/**', async (route) => {
     const path = new URL(route.request().url()).pathname;
-    const user = await page.evaluate(
-      () => JSON.parse(localStorage.getItem('nexora.session') || 'null')?.user,
-    );
+    // Keep fixture state outside the page so an in-flight request survives navigation.
+    const user = currentUser();
     const metric = { productId: product.id, name: product.name, units: 3, amount: 237 };
     const responses: Record<string, unknown> = {
+      '/api/auth/oauth2/providers': [
+        { id: 'google', name: 'Google' },
+        { id: 'github', name: 'GitHub' },
+      ].map((provider) => ({
+        ...provider,
+        enabled: true,
+        authorizationUrl: new URL(
+          `/api/auth/oauth2/authorize/${provider.id}`,
+          route.request().url(),
+        ).href,
+      })),
       '/api/me': user,
       '/api/products/mine': [product],
       '/api/products/moderation': [product],
@@ -121,7 +131,8 @@ for (const width of [1440, 390, 360]) {
   test(`redesigned account and commerce routes stay readable at ${width}px`, async ({ page }) => {
     test.setTimeout(90_000);
     await page.setViewportSize({ width, height: width === 360 ? 640 : 900 });
-    await prepare(page);
+    let fixtureUser: Record<string, unknown> | null = null;
+    await prepare(page, () => fixtureUser);
     const errors: string[] = [];
     page.on('pageerror', (error) => errors.push(error.message));
     await page.goto('/login');
@@ -141,8 +152,18 @@ for (const width of [1440, 390, 360]) {
       ['admin', 'ADMIN'],
     ] as const;
     for (const [path, role] of routes) {
-      await page.evaluate((role) => {
-        if (!role) {
+      fixtureUser = role
+        ? {
+            id: 'design-user',
+            name: 'Alex Studio',
+            email: 'alex@example.com',
+            role,
+            avatarUrl: null,
+            createdAt: date,
+          }
+        : null;
+      await page.evaluate((user) => {
+        if (!user) {
           localStorage.removeItem('nexora.session');
           return;
         }
@@ -151,19 +172,16 @@ for (const width of [1440, 390, 360]) {
           JSON.stringify({
             accessToken: 'visual-fixture-only',
             expiresAt: new Date(Date.now() + 3600000).toISOString(),
-            user: {
-              id: 'design-user',
-              name: 'Alex Studio',
-              email: 'alex@example.com',
-              role,
-              avatarUrl: null,
-              createdAt: '2026-09-10T00:00:00Z',
-            },
+            user,
           }),
         );
-      }, role);
+      }, fixtureUser);
       await page.goto(`/${path}`);
       await expect(page.locator('h1').first()).toBeVisible();
+      if (path === 'login' || path === 'register') {
+        await expect(page.getByRole('link', { name: /Continue with Google/ })).toBeVisible();
+        await expect(page.getByRole('link', { name: /Continue with GitHub/ })).toBeVisible();
+      }
       await page.evaluate(() => document.fonts.ready);
       await page.waitForTimeout(300);
       expect(

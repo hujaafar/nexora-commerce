@@ -11,6 +11,8 @@ import {
   RegisterRequest,
   UpdateProfileRequest,
   UserProfile,
+  OAuthPending,
+  OAuthProviderOption,
 } from '../../models/user.model';
 
 interface StoredSession {
@@ -48,6 +50,24 @@ export class AuthService {
     return this.http
       .get<UserProfile>(`${environment.apiUrl}/me`)
       .pipe(tap((profile) => this.updateUser(profile)));
+  }
+
+  oauthProviders(): Observable<OAuthProviderOption[]> {
+    return this.http.get<OAuthProviderOption[]>(`${environment.apiUrl}/auth/oauth2/providers`);
+  }
+
+  pendingOAuth(): Observable<OAuthPending> {
+    return this.http.get<OAuthPending>(`${environment.apiUrl}/auth/oauth2/pending`);
+  }
+
+  completeOAuth(request: { name?: string; password?: string }): Observable<AuthResponse> {
+    return this.http
+      .post<AuthResponse>(`${environment.apiUrl}/auth/oauth2/complete`, request)
+      .pipe(tap((response) => this.storeSession(response)));
+  }
+
+  cancelOAuth(): Observable<void> {
+    return this.http.post<void>(`${environment.apiUrl}/auth/oauth2/cancel`, {});
   }
 
   updateProfile(request: UpdateProfileRequest): Observable<UserProfile> {

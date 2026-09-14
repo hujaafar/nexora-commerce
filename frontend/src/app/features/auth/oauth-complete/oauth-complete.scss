@@ -1,0 +1,24 @@
+@use '../auth-shared';
+.auth-status {
+  display: block;
+  margin-block: 1em;
+}
+.verified-email {
+  padding: 14px 0;
+  border-block: 1px solid var(--line-strong);
+  overflow-wrap: anywhere;
+}
+.verified-email strong {
+  display: block;
+  margin-top: 5px;
+  color: var(--ink);
+}
+.cancel-button {
+  display: block;
+  margin: 20px auto 0;
+  border: 0;
+  background: none;
+  text-decoration: underline;
+  color: var(--muted);
+  font-size: 13px;
+}

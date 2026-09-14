@@ -108,6 +108,12 @@ services:
       EUREKA_URL: http://discovery-service:8761/eureka/
       MONGODB_URI: mongodb://${MONGO_ROOT_USERNAME:-marketplace}:${MONGO_ROOT_PASSWORD:-marketplace-dev-password}@mongo:27017/nexora_users?authSource=admin
       JWT_SECRET: ${JWT_SECRET:-change-this-development-secret-to-at-least-32-characters}
+      PUBLIC_ORIGIN: ${PUBLIC_ORIGIN:-http://127.0.0.1:4200}
+      OAUTH_COOKIE_SECURE: ${OAUTH_COOKIE_SECURE:-false}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID:-}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET:-}
       SEED_DEMO_USERS: ${SEED_DEMO_USERS:-true}
     ports:
       - "${BIND_ADDRESS:-127.0.0.1}:${USER_SERVICE_HOST_PORT:-8081}:8081"

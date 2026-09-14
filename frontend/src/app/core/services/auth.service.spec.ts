@@ -63,4 +63,29 @@ describe('Session handling', () => {
     http.expectOne('/api/me').flush({ ...seller, name: 'Updated client', role: 'CLIENT' });
     expect(auth.currentUser()?.name).toBe('Updated client');
   });
+
+  it('stores social login only after successful completion and preserves the role', () => {
+    const auth = TestBed.inject(AuthService);
+    const http = TestBed.inject(HttpTestingController);
+    auth.pendingOAuth().subscribe();
+    http.expectOne('/api/auth/oauth2/pending').flush({ mode: 'link', provider: 'github' });
+    expect(auth.isAuthenticated()).toBe(false);
+    auth.completeOAuth({ password: 'incorrect' }).subscribe({ error: () => undefined });
+    http
+      .expectOne('/api/auth/oauth2/complete')
+      .flush({}, { status: 401, statusText: 'Unauthorized' });
+    expect(auth.token()).toBeNull();
+    auth.completeOAuth({ password: 'correct' }).subscribe();
+    const completion = http.expectOne('/api/auth/oauth2/complete');
+    expect(completion.request.method).toBe('POST');
+    completion.flush({
+      accessToken: 'social-token',
+      expiresAt: '2099-01-01T00:00:00Z',
+      user: seller,
+    });
+    expect(auth.isSeller()).toBe(true);
+    expect(auth.token()).toBe('social-token');
+    auth.cancelOAuth().subscribe();
+    expect(http.expectOne('/api/auth/oauth2/cancel').request.method).toBe('POST');
+  });
 });

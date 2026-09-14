@@ -52,6 +52,16 @@ const address = { fullName: 'Integration Customer', phone: '+97333333333', addre
 const products = [];
 let seller, buyer, outsider, mediaId;
 try {
+  // Exercise OAuth through the actual ingress/gateway, including its forwarded /api prefix.
+  const providers = await api('GET', '/auth/oauth2/providers');
+  assert.deepEqual(providers.map((provider) => provider.id).sort(), ['github', 'google']);
+  for (const provider of providers) {
+    assert.equal(typeof provider.enabled, 'boolean');
+    assert.ok(provider.authorizationUrl.endsWith(`/api/auth/oauth2/authorize/${provider.id}`));
+    assert.equal(provider.clientSecret, undefined);
+  }
+  await api('GET', '/auth/oauth2/pending', null, undefined, 401);
+  await api('POST', '/auth/oauth2/complete', null, {}, 403);
   const catalog = await api('GET', '/products/search');
   assert.ok(Array.isArray(catalog.items));
   await api('GET', '/cart', null, undefined, 401);
