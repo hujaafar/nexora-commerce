@@ -36,6 +36,7 @@ async function prepare(
   mode: 'register' | 'link' | 'login' = 'register',
   provider = 'google',
 ) {
+  await page.route('**/api/wishlist', (route) => route.fulfill({ json: { items: [] } }));
   await page.route('**/api/products/search*', (route) =>
     route.fulfill({ json: { items: [], total: 0, page: 0, size: 12 } }),
   );

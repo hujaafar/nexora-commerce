@@ -10,7 +10,11 @@ export const authInterceptor: HttpInterceptorFn = (request, next) => {
   const authService = inject(AuthService);
   const token = authService.token();
 
-  if (!token || !request.url.startsWith(environment.apiUrl)) {
+  if (
+    !token ||
+    !request.url.startsWith(environment.apiUrl) ||
+    request.url.startsWith(`${environment.apiUrl}/auth/oauth2/`)
+  ) {
     return next(request);
   }
 

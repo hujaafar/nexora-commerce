@@ -48,16 +48,22 @@ GITHUB_CLIENT_SECRET=
 ```
 
 For public deployment use HTTPS, `OAUTH_COOKIE_SECURE=true`, the public domain in
-`ALLOWED_ORIGINS`, and exactly matching provider callback URLs. The Nginx proxy
-supplies `/api` as the forwarded prefix so Spring validates the externally
-registered redirect URI correctly. Apply the same rule to any replacement proxy.
+`ALLOWED_ORIGINS`, and exactly matching provider callback URLs. Nginx strips
+`/api`; the gateway restores it as a forwarded prefix after matching the OAuth
+route so Spring validates the external redirect URI. Apply the same rule to
+replacement proxies; adding the prefix before gateway route matching causes 404s.
+
+With `compose.tls.yml`, the canonical origin is `https://localhost:8443` (override
+with `TLS_PUBLIC_ORIGIN`). With `compose.https.yml`, it is `https://${DOMAIN}`.
+Register the callbacks for the profile you actually run; both HTTPS profiles
+enable Secure cookies automatically.
 
 ## Build and apply
 
 Build the changed images sequentially, retaining the laptop resource limits:
 
 ```powershell
-docker compose -f compose.yml -f compose.laptop.yml --parallel 1 build user-service frontend
+docker compose -f compose.yml -f compose.laptop.yml --parallel 1 build user-service gateway-service frontend
 docker compose -f compose.yml -f compose.laptop.yml up -d --no-build --wait
 ```
 
@@ -98,8 +104,8 @@ linking preserves concurrent profile updates and rejects a competing binding.
 No provider IDs or tokens are exposed in user profile responses or app JWT claims.
 
 The temporary `NEXORA_OAUTH` cookie is HttpOnly, SameSite=Lax, restricted to
-`/api/auth/oauth2`, and Secure with HTTPS configuration. State lasts at most ten
-minutes. Successful provider verification rotates the session into a five-minute
+`/api/auth/oauth2`, and Secure with HTTPS configuration. The authorization session
+expires after ten minutes of inactivity. Provider verification rotates it into a five-minute
 completion proof. Completion has at most five attempts, checks exact Origin,
 and consumes the session once. OAuth principals cannot authenticate the normal
 JWT API. Nexora's existing application session storage remains unchanged.

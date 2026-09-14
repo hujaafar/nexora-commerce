@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -34,6 +35,7 @@ import org.springframework.security.web.context.NullSecurityContextRepository;
 
 // @Configuration contributes a higher-priority filter chain only for OAuth endpoints.
 @Configuration
+@EnableConfigurationProperties(OAuthCredentials.class)
 public class OAuthSecurity {
 
     static final String RETURN_URL = "nexora.oauth.return";
@@ -45,10 +47,7 @@ public class OAuthSecurity {
             OAuthService oauthService,
             ObjectProvider<ClientRegistrationRepository> configuredClients,
             @Value("${app.public-origin}") String rawPublicOrigin,
-            @Value("${app.oauth2.google-client-id:}") String googleId,
-            @Value("${app.oauth2.google-client-secret:}") String googleSecret,
-            @Value("${app.oauth2.github-client-id:}") String githubId,
-            @Value("${app.oauth2.github-client-secret:}") String githubSecret) throws Exception {
+            OAuthCredentials credentials) throws Exception {
         String publicOrigin = OAuthOrigin.validate(rawPublicOrigin);
         http.securityMatcher("/auth/oauth2/**")
                 // OAuth state protects the callback; controller POSTs also enforce the exact Origin.
@@ -63,7 +62,8 @@ public class OAuthSecurity {
                 .authorizeHttpRequests(requests -> requests.anyRequest().permitAll());
 
         List<ClientRegistration> registrations = registrations(
-                publicOrigin, googleId, googleSecret, githubId, githubSecret);
+                publicOrigin, credentials.googleClientId(), credentials.googleClientSecret(),
+                credentials.githubClientId(), credentials.githubClientSecret());
         if (registrations.isEmpty()) {
             return http.build();
         }
@@ -226,6 +226,7 @@ public class OAuthSecurity {
                 Authentication principal,
                 HttpServletRequest request,
                 HttpServletResponse response) {
+            // Intentionally discard provider tokens after the identity lookup.
         }
 
         @Override
@@ -234,6 +235,7 @@ public class OAuthSecurity {
                 Authentication principal,
                 HttpServletRequest request,
                 HttpServletResponse response) {
+            // No provider tokens are persisted, so there is nothing to remove.
         }
     }
 }
