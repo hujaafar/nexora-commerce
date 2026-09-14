@@ -37,3 +37,19 @@ export interface UpdateProfileRequest {
   name: string;
   avatarUrl: string | null;
 }
+
+export interface OAuthProviderOption {
+  id: 'google' | 'github';
+  name: string;
+  enabled: boolean;
+  authorizationUrl: string;
+}
+
+export interface OAuthPending {
+  provider: OAuthProviderOption['id'];
+  providerName: string;
+  mode: 'login' | 'link' | 'register';
+  email: string;
+  name: string;
+  returnUrl: string;
+}

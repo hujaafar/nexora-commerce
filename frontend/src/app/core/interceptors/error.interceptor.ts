@@ -28,7 +28,9 @@ export const errorInterceptor: HttpInterceptorFn = (request, next) => {
 
       notifications.error(message);
       const isAuthRequest =
-        request.url.includes('/auth/login') || request.url.includes('/auth/register');
+        request.url.includes('/auth/login') ||
+        request.url.includes('/auth/register') ||
+        request.url.includes('/auth/oauth2/');
       if (error.status === 401 && !isAuthRequest) {
         authService.logout();
         void router.navigate(['/login']);

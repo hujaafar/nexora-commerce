@@ -35,6 +35,9 @@ File purpose: Defines the accessible auth feature template.
       </label>
     </div>
 
+    @if (form.controls.role.value === 'CLIENT') {
+      <app-social-login />
+    }
     <div class="mb-3">
       <label class="form-label" for="name">Full name</label>
       <input

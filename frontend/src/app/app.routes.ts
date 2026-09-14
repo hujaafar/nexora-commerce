@@ -35,6 +35,13 @@ export const routes: Routes = [
       import('./features/auth/register/register').then((module) => module.Register),
   },
   {
+    path: 'oauth2/complete',
+    loadComponent: () =>
+      import('./features/auth/oauth-complete/oauth-complete').then(
+        (module) => module.OAuthComplete,
+      ),
+  },
+  {
     path: 'seller',
     canActivate: [authGuard, sellerGuard],
     loadComponent: () =>

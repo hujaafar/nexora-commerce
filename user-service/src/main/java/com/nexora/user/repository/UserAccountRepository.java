@@ -12,4 +12,8 @@ public interface UserAccountRepository extends MongoRepository<UserAccount, Stri
     Optional<UserAccount> findByEmailIgnoreCase(String email);
 
     boolean existsByEmailIgnoreCase(String email);
+
+    Optional<UserAccount> findByGoogleSubject(String subject);
+
+    Optional<UserAccount> findByGithubSubject(String subject);
 }

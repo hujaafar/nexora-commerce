@@ -92,6 +92,13 @@ public class ApiExceptionHandler {
     }
 
     // Learning annotation: @ExceptionHandler routes the listed exception type(s) to this method for a controlled HTTP response.
+    @ExceptionHandler(com.nexora.user.oauth.OAuthFlowException.class)
+    ResponseEntity<ApiError> handleOAuth(
+            com.nexora.user.oauth.OAuthFlowException exception,
+            HttpServletRequest request) {
+        return error(HttpStatus.valueOf(exception.getStatus()), exception.getMessage(), request);
+    }
+
     @ExceptionHandler(Exception.class)
     ResponseEntity<ApiError> handleUnexpected(
             Exception exception,

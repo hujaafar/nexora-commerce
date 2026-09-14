@@ -35,7 +35,8 @@ test('customer buys through the wizard, tracks, cancels, reorders, and removes h
     await login(page, buyer);
     await page.goto(`/products/${product.id}`);
     await page.getByRole('button', { name: /Add to bag/ }).click();
-    await page.goto('/cart');
+    await expect(page.locator('.toast-message')).toContainText('was added to your cart.');
+    await page.getByRole('link', { name: 'Bag', exact: true }).click();
     await expect(page.locator('.cart-line')).toContainText(product.name);
     await page.locator('.quantity-control').getByRole('button', { name: '+', exact: true }).click();
     await expect(page.locator('.cart-summary')).toContainText('$84.90');

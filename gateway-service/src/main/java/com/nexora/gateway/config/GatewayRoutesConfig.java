@@ -18,6 +18,11 @@ public class GatewayRoutesConfig {
     @Bean
     RouteLocator marketplaceRoutes(RouteLocatorBuilder builder) {
         return builder.routes()
+                .route("user-oauth", route -> route
+                        .path("/auth/oauth2/**")
+                        // Apply only after gateway route matching; the servlet callback needs /api.
+                        .filters(filters -> filters.setRequestHeader("X-Forwarded-Prefix", "/api"))
+                        .uri(USER_SERVICE_URI))
                 .route("user-auth", route -> route
                         .path("/auth/**")
                         .uri(USER_SERVICE_URI))

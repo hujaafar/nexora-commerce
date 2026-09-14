@@ -24,6 +24,8 @@ services:
   user-service:
     environment:
       <<: [*java-tls, *discovery-tls]
+      PUBLIC_ORIGIN: ${TLS_PUBLIC_ORIGIN:-https://localhost:8443}
+      OAUTH_COOKIE_SECURE: 'true'
       EUREKA_INSTANCE_HOSTNAME: user-service
       EUREKA_INSTANCE_SECUREPORT: '8081'
     volumes:

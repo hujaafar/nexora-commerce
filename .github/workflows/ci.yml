@@ -113,6 +113,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: bash scripts/ci/validate.sh
+      - name: Verify OAuth HTTPS ingress routing
+        run: python3 scripts/ci/check-oauth-ingress.py
   quality:
     name: SonarQube quality gate
     needs: [backend, frontend, java11]

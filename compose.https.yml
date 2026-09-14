@@ -1,5 +1,9 @@
 # File purpose: Adds the HTTPS ingress override to the base Compose stack.
 services:
+  user-service:
+    environment:
+      PUBLIC_ORIGIN: https://${DOMAIN:-localhost}
+      OAUTH_COOKIE_SECURE: 'true'
   caddy:
     image: caddy:2.10-alpine
     environment:
