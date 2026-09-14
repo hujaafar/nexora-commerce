@@ -5,9 +5,10 @@ work alongside email/password authentication and issue Nexora's existing JWT.
 They can be configured independently. The login and shopper registration pages
 show each provider's availability; missing credentials do not break email login.
 
-![Nexora login with Google and GitHub options](screenshots/oauth-login.jpg)
+![Nexora login with enabled Google and GitHub buttons](screenshots/oauth-login-enabled.jpg)
 
-The screenshot shows an installation awaiting its provider credentials.
+The screenshot shows the local installation with both providers configured.
+Follow the steps below to configure your own Google and GitHub OAuth apps.
 
 ## Configure separate Nexora apps
 

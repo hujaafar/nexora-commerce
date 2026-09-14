@@ -20,7 +20,10 @@ The room photograph expands as you scroll through the “Make room for good” s
 
 ### Sign in
 
-![Nexora sign-in page with Google, GitHub, and email options](docs/screenshots/oauth-login.jpg)
+![Nexora sign-in page with enabled Google and GitHub buttons and email login](docs/screenshots/oauth-login-enabled.jpg)
+
+Google and GitHub sign-in are enabled in this local installation. Follow the
+[OAuth setup guide](docs/oauth2.md) to connect your own provider apps.
 
 <details>
 <summary><strong>See the mobile storefront</strong></summary>
