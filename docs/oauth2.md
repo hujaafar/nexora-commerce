@@ -40,6 +40,11 @@ Save credentials without showing them in terminal history:
 
 The script prompts privately, preserves other settings, and sets
 `PUBLIC_ORIGIN`, `OAUTH_COOKIE_SECURE`, and the appropriate client ID/secret.
+Copy GitHub's **Client ID** from your Nexora application under
+[Settings > Developer settings > OAuth Apps](https://github.com/settings/developers),
+then enter the **Client secret** at the second prompt. Paste only each value,
+without labels or quotes. Surrounding copied whitespace is removed automatically.
+If validation fails, nothing is saved; rerun only the failed provider's command.
 Alternatively edit these variables directly in `.env`:
 
 ```dotenv

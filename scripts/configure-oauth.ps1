@@ -29,14 +29,20 @@ function Read-PrivateValue([string]$Prompt) {
     finally { [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($valuePointer) }
 }
 
-$clientId = Read-PrivateValue 'Client ID (input hidden)'
-$clientSecret = Read-PrivateValue 'Client secret (input hidden)'
+$clientId = (Read-PrivateValue 'Client ID (input hidden)').Trim()
 if ($Provider -eq 'google' -and $clientId -notmatch '^[a-zA-Z0-9._-]+\.apps\.googleusercontent\.com$') {
     throw 'The Google Client ID must end in .apps.googleusercontent.com. Nothing was saved.'
 }
-if ($Provider -eq 'github' -and $clientId -notmatch '^[a-zA-Z0-9]{16,24}$') {
-    throw 'Use the GitHub OAuth App Client ID, not its client secret. Nothing was saved.'
+if ($Provider -eq 'github') {
+    if ($clientId -match '^[a-fA-F0-9]{40}$' -or $clientId -match '^(gh[pousr]_|github_pat_)') {
+        throw 'This looks like a secret or access token. Copy the Client ID from https://github.com/settings/developers > your Nexora OAuth App. Nothing was saved.'
+    }
+    # Client IDs are opaque identifiers; avoid assuming a fixed provider format.
+    if ($clientId -notmatch '^[a-zA-Z0-9._-]{16,128}$') {
+        throw 'The Client ID contains unexpected characters or has an invalid length. Copy only the Client ID value from https://github.com/settings/developers > your Nexora OAuth App, without a label or quotes. Nothing was saved.'
+    }
 }
+$clientSecret = (Read-PrivateValue 'Client secret (input hidden)').Trim()
 if ($clientSecret -notmatch '^[a-zA-Z0-9._-]{16,256}$') { throw 'The client secret format is invalid. Nothing was saved.' }
 $values = @{
     PUBLIC_ORIGIN = $PublicOrigin
