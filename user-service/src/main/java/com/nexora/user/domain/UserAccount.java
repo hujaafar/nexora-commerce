@@ -25,6 +25,12 @@ public class UserAccount {
     private String passwordHash;
     private Role role;
     private String avatarUrl;
+    @Indexed(unique = true, sparse = true)
+    private String googleSubject;
+
+    @Indexed(unique = true, sparse = true)
+    private String githubSubject;
+
     private Instant createdAt;
     private Instant updatedAt;
 
@@ -50,6 +56,18 @@ public class UserAccount {
         this.avatarUrl = avatarUrl;
         this.updatedAt = now;
     }
+
+    public void linkOAuthIdentity(String provider, String subject, Instant now) {
+        switch (provider) {
+            case "google" -> this.googleSubject = subject;
+            case "github" -> this.githubSubject = subject;
+            default -> throw new IllegalArgumentException("Unsupported OAuth provider");
+        }
+        this.updatedAt = now;
+    }
+
+    public String getGoogleSubject() { return googleSubject; }
+    public String getGithubSubject() { return githubSubject; }
 
     public String getId() {
         return id;

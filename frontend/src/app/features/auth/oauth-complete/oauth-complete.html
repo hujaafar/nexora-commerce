@@ -1,0 +1,92 @@
+<section class="auth-page">
+  <div class="auth-story">
+    <img
+      class="auth-photo"
+      src="/assets/editorial-room.webp"
+      alt="Sunlit room with an orange chair and a ceramic vase"
+    />
+    <div class="auth-photo-copy">
+      <span>THE EVERYDAY EDIT</span>
+      <h1>A little<br />more you.</h1>
+      <p>Your next favorite starts here.</p>
+    </div>
+    <a class="auth-explore" routerLink="/products">Explore the collection <span>↗</span></a>
+  </div>
+  <div class="auth-card surface-card">
+    @if (loading()) {
+      <p role="status">Checking your sign-in…</p>
+    } @else if (pending(); as identity) {
+      <p class="eyebrow">{{ identity.providerName }} SIGN-IN</p>
+      @if (identity.mode === 'register') {
+        <h2>Make it yours.</h2>
+        <p>
+          Choose your name and a Nexora password for your new shopper account. Next time, just use
+          {{ identity.providerName }}.
+        </p>
+      } @else if (identity.mode === 'link') {
+        <h2>One account.<br />All your favorites.</h2>
+        <p>
+          You already have a Nexora account. Enter its password once to connect
+          {{ identity.providerName }} and keep your profile, orders, and saved finds.
+        </p>
+      } @else {
+        <h2>Welcome back.</h2>
+        <p role="status">
+          {{ submitting() ? 'Opening your account…' : 'Your account is ready to continue.' }}
+        </p>
+      }
+      <p class="verified-email">
+        Verified email <strong>{{ identity.email }}</strong>
+      </p>
+      @if (error()) {
+        <p class="field-error" role="alert">{{ error() }}</p>
+      }
+      <form [formGroup]="form" (ngSubmit)="finish()">
+        @if (identity.mode === 'register') {
+          <label class="form-label" for="oauth-name">Display name</label>
+          <input
+            class="form-control mb-3"
+            id="oauth-name"
+            autocomplete="name"
+            formControlName="name"
+          />
+          @if (form.controls.name.touched && form.controls.name.invalid) {
+            <p class="field-error">Use a name between 2 and 80 characters.</p>
+          }
+        }
+        @if (identity.mode !== 'login') {
+          <label class="form-label" for="oauth-password">{{
+            identity.mode === 'register' ? 'Create a password' : 'Current password'
+          }}</label>
+          <input
+            class="form-control"
+            id="oauth-password"
+            type="password"
+            formControlName="password"
+            [attr.autocomplete]="identity.mode === 'register' ? 'new-password' : 'current-password'"
+          />
+          @if (form.controls.password.touched && form.controls.password.invalid) {
+            <p class="field-error">
+              {{
+                identity.mode === 'register'
+                  ? 'Use 8–72 characters with a letter and a number.'
+                  : 'Enter your current Nexora password.'
+              }}
+            </p>
+          }
+        }
+        <button class="btn btn-brand w-100" type="submit" [disabled]="submitting()">
+          {{ submitting() ? 'Signing in…' : 'Continue to Nexora →' }}
+        </button>
+        <button class="cancel-button" type="button" [disabled]="submitting()" (click)="cancel()">
+          Cancel sign-in
+        </button>
+      </form>
+    } @else {
+      <p class="eyebrow">SIGN-IN EXPIRED</p>
+      <h2>Let’s try again.</h2>
+      <p>Your sign-in session ended. Start again to connect your account.</p>
+      <a class="btn btn-brand w-100" routerLink="/login">Back to sign in →</a>
+    }
+  </div>
+</section>

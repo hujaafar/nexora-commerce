@@ -47,6 +47,11 @@ before exposing an installation on the internet.
 
 Stop with `docker compose down`. Named volumes keep your data for the next run.
 
+Google and GitHub sign-in are also supported. Create separate OAuth apps for
+Nexora and follow the [social sign-in setup guide](docs/oauth2.md). Existing
+accounts require password confirmation before linking; their roles and orders
+are preserved. Client secrets stay in your ignored local `.env`.
+
 ## Try the complete journey
 
 1. Browse and filter the catalog without an account.
@@ -69,6 +74,8 @@ The demo does not charge real cards or connect to a courier.
   and error states, and motion cleanup when routes change.
 - JWT authentication, BCrypt passwords, role and ownership checks, gateway rate
   limits, validated uploads, seller media library, and profile avatars.
+- Google OpenID Connect and GitHub OAuth2 login with PKCE, verified email,
+  browser-bound completion, and explicit existing-account linking.
 - Search, category and price filters, sorting, pagination, cart, wishlist,
   checkout, stock reservations, order history, cancellation, and seller analytics.
 - Six independently packaged Spring services, service discovery, persistent

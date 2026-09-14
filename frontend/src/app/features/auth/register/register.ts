@@ -8,10 +8,11 @@ import { finalize } from 'rxjs';
 import { AuthService } from '../../../core/services/auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { RegistrationRole } from '../../../models/user.model';
+import { SocialLogin } from '../social-login/social-login';
 
 @Component({
   selector: 'app-register',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, SocialLogin],
   templateUrl: './register.html',
   styleUrl: './register.scss',
 })

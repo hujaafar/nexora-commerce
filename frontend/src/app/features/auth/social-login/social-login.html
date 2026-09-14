@@ -1,0 +1,46 @@
+<div class="social-options" aria-label="Social sign-in">
+  @for (provider of providers(); track provider.id) {
+    <a
+      class="social-button"
+      [class.unavailable]="!provider.enabled"
+      [attr.href]="provider.enabled ? authorizationUrl(provider) : null"
+      [attr.aria-disabled]="!provider.enabled"
+      [attr.tabindex]="provider.enabled ? 0 : -1"
+    >
+      @if (provider.id === 'google') {
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            fill="#4285f4"
+            d="M21.6 12.23c0-.71-.06-1.39-.18-2.05H12v3.88h5.38a4.6 4.6 0 0 1-2 3.02v2.51h3.23c1.89-1.74 2.99-4.31 2.99-7.36Z"
+          />
+          <path
+            fill="#34a853"
+            d="M12 22c2.7 0 4.96-.9 6.61-2.41l-3.23-2.51c-.9.6-2.06.96-3.38.96-2.61 0-4.82-1.76-5.61-4.12H3.05v2.59A10 10 0 0 0 12 22Z"
+          />
+          <path
+            fill="#fbbc05"
+            d="M6.39 13.92a6 6 0 0 1 0-3.84V7.49H3.05a10 10 0 0 0 0 9.02l3.34-2.59Z"
+          />
+          <path
+            fill="#ea4335"
+            d="M12 5.96c1.47 0 2.79.5 3.82 1.49l2.87-2.87A9.63 9.63 0 0 0 12 2a10 10 0 0 0-8.95 5.49l3.34 2.59C7.18 7.72 9.39 5.96 12 5.96Z"
+          />
+        </svg>
+      } @else {
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path
+            d="M12 .8a11.2 11.2 0 0 0-3.54 21.83c.56.1.76-.24.76-.54v-2.1c-3.12.68-3.78-1.33-3.78-1.33-.51-1.3-1.25-1.64-1.25-1.64-1.02-.7.08-.69.08-.69 1.13.08 1.73 1.16 1.73 1.16 1 1.72 2.63 1.22 3.27.94.1-.73.39-1.22.71-1.5-2.49-.28-5.11-1.25-5.11-5.54 0-1.23.44-2.23 1.15-3.02-.12-.28-.5-1.43.11-2.98 0 0 .94-.3 3.08 1.15a10.73 10.73 0 0 1 5.6 0c2.14-1.45 3.08-1.15 3.08-1.15.61 1.55.23 2.7.11 2.98.72.79 1.15 1.79 1.15 3.02 0 4.3-2.62 5.26-5.12 5.54.4.35.76 1.03.76 2.07v3.09c0 .3.2.65.77.54A11.2 11.2 0 0 0 12 .8Z"
+          />
+        </svg>
+      }
+      <span>Continue with {{ provider.name }}</span
+      ><span aria-hidden="true">↗</span>
+    </a>
+  }
+</div>
+@for (provider of providers(); track provider.id) {
+  @if (!loading() && !provider.enabled) {
+    <p class="social-note">{{ provider.name }} sign-in is not available yet.</p>
+  }
+}
+<div class="social-divider"><span>or use your email</span></div>

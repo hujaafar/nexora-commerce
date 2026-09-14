@@ -1,0 +1,63 @@
+:host {
+  display: block;
+  margin: 24px 0;
+}
+.social-options {
+  display: grid;
+  gap: 10px;
+}
+.social-button {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 15px 18px;
+  min-height: 54px;
+  border: 1px solid var(--line-strong, #cccfc1);
+  color: var(--ink);
+  background: transparent;
+  text-decoration: none;
+  font-size: 13px;
+  transition:
+    background 0.2s,
+    transform 0.2s;
+}
+.social-button svg {
+  width: 21px;
+  height: 21px;
+  flex-shrink: 0;
+}
+.social-button span:last-child {
+  margin-left: auto;
+}
+.social-button:not(.unavailable):hover {
+  background: #e9e5db;
+  transform: translateY(-2px);
+}
+.social-button:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 4px;
+}
+.unavailable {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.social-note {
+  color: var(--muted);
+  font-size: 12px;
+  margin: 8px 0 0;
+}
+.social-divider {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: var(--muted);
+  font-size: 11px;
+  margin: 24px 0;
+}
+.social-divider::before,
+.social-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--line-strong, #cccfc1);
+}
