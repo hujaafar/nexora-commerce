@@ -67,6 +67,11 @@ with `TLS_PUBLIC_ORIGIN`). With `compose.https.yml`, it is `https://${DOMAIN}`.
 Register the callbacks for the profile you actually run; both HTTPS profiles
 enable Secure cookies automatically.
 
+The Caddy HTTPS ingress sends OAuth requests directly to the gateway after
+stripping `/api`, preserving the public HTTPS scheme for callback validation.
+CI tests this route with a trusted local certificate and fixture upstreams;
+ordinary pages and API traffic continue through the frontend proxy.
+
 ## Build and apply
 
 Build the changed images sequentially, retaining the laptop resource limits:
