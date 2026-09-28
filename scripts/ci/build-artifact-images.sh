@@ -9,6 +9,10 @@ docker buildx version >/dev/null
 export DOCKER_BUILDKIT=1
 mkdir -p test-results/images
 : > test-results/images/manifest.txt
+docker build -f docker/Dockerfile.minio \
+  -t nexora-commerce/minio:RELEASE.2025-04-22T22-12-26Z .
+docker image inspect --format '{{.Id}} {{index .RepoTags 0}}' \
+  nexora-commerce/minio:RELEASE.2025-04-22T22-12-26Z >> test-results/images/manifest.txt
 for service in discovery-service gateway-service user-service product-service media-service order-service frontend; do
   dockerfile=docker/Dockerfile.artifact
   [[ "$service" != frontend ]] || dockerfile=docker/Dockerfile.frontend-artifact

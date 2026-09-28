@@ -34,7 +34,7 @@ if [ "$FULL" = false ]; then
     fi
   done
 fi
-IMAGES=$(compose config --images discovery-service user-service product-service media-service order-service gateway-service frontend)
+IMAGES=$(compose config --images discovery-service user-service product-service media-service order-service gateway-service frontend minio)
 for app_image in $IMAGES; do
   if ! docker image inspect "$app_image" >/dev/null 2>&1; then BUILD=true; fi
 done

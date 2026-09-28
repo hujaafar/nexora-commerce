@@ -5,7 +5,7 @@
 # - Container health says a process is alive; this script proves users can reach it.
 # - The deadline prevents an unhealthy deployment from waiting forever.
 # - Transient startup failures are retried because service discovery needs time.
-# - Success requires both the static UI and a request through the backend chain.
+# - Success requires the static UI and both product and authentication routes.
 set -Eeuo pipefail
 
 base_url="${1:?Usage: health-check.sh <base-url> [timeout-seconds]}"
@@ -41,13 +41,23 @@ until ((SECONDS >= deadline)); do
     --max-time 10 \
     "${base_url%/}/api/products" || true)"
 
-  if [[ "${frontend_status}" == "200" && "${api_status}" == "200" ]]; then
+  # The authentication service may register with Eureka after the product
+  # service. Wait for its public route before starting acceptance requests.
+  auth_status="$(curl \
+    --silent \
+    --show-error \
+    --output /dev/null \
+    --write-out '%{http_code}' \
+    --max-time 10 \
+    "${base_url%/}/api/auth/oauth2/providers" || true)"
+
+  if [[ "${frontend_status}" == "200" && "${api_status}" == "200" && "${auth_status}" == "200" ]]; then
     echo "Health verification passed after ${attempt} attempt(s)."
-    echo "Frontend=${frontend_status}, API=${api_status}, URL=${base_url}"
+    echo "Frontend=${frontend_status}, API=${api_status}, Auth=${auth_status}, URL=${base_url}"
     exit 0
   fi
 
-  echo "Waiting for deployment: frontend=${frontend_status:-unreachable}, api=${api_status:-unreachable}"
+  echo "Waiting for deployment: frontend=${frontend_status:-unreachable}, api=${api_status:-unreachable}, auth=${auth_status:-unreachable}"
   sleep 5
 done
 
