@@ -33,7 +33,7 @@ foreach ($project in @('nexora-commerce-ci', 'nexora-commerce-quality', 'nexora-
         throw 'Optional DevOps tools are running. Use scripts/stop-tools.ps1 before starting the laptop stack.'
     }
 }
-$appServices = @('discovery-service', 'user-service', 'product-service', 'media-service', 'order-service', 'gateway-service', 'frontend')
+$appServices = @('discovery-service', 'user-service', 'product-service', 'media-service', 'order-service', 'gateway-service', 'frontend', 'minio')
 $images = @(docker @composeArguments config --images @appServices)
 if ($LASTEXITCODE -ne 0) { throw 'Compose configuration is invalid.' }
 $needsBuild = $Build.IsPresent

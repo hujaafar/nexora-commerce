@@ -13,6 +13,7 @@ required_files=(
   "pom.xml"
   "frontend/package-lock.json"
   "compose.yml"
+  "docker/Dockerfile.minio"
   "compose.jenkins.yml"
   "jenkins/compose.yml"
   "quality/compose.yml"

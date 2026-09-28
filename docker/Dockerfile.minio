@@ -1,0 +1,15 @@
+# The upstream community image is no longer available for anonymous pulls.
+# Build the same release from its archived, pinned source instead.
+FROM golang:1.24.2-alpine AS build
+
+RUN apk add --no-cache git
+RUN git clone --depth 1 --branch RELEASE.2025-04-22T22-12-26Z \
+      https://github.com/minio/minio.git /src \
+    && test "$(git -C /src rev-parse HEAD)" = "0d7408fc9969caf07de6a8c3a84f9fbb10a6739e"
+WORKDIR /src
+RUN CGO_ENABLED=0 GOMAXPROCS=2 go build -p 2 -tags kqueue -trimpath -ldflags="-s -w" -o /out/minio .
+
+FROM alpine:3.22
+RUN apk add --no-cache ca-certificates curl
+COPY --from=build /out/minio /usr/local/bin/minio
+ENTRYPOINT ["minio"]
